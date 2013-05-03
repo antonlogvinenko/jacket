@@ -4,12 +4,13 @@
 (def LB :LB)
 (def RB :RB)
 
+;;write tests for all functions
 ;;more whitespaces?
 ;;exceptions on unknown characters
-;;write tests for all functions
 ;;/string, integer, float contstants
 ;;keywords - def lambda + - / * . readln println ' cons car cdr fn
-;;
+;;better tokens info - map or data type?
+;;lines numbers - change parser to read line by line
 
 (defn is-letter [ch]
   (if (nil? ch) false (Character/isLetter ch)))
