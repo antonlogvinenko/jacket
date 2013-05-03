@@ -4,25 +4,37 @@
 (def LB :LB)
 (def RB :RB)
 
+;;more whitespaces?
+;;exceptions on unknown characters
+;;write tests for all functions
+;;/string, integer, float contstants
+;;keywords - def lambda + - / * . readln println ' cons car cdr fn
+;;
+
 (defn is-letter [ch]
   (if (nil? ch) false (Character/isLetter ch)))
 
 (defn read-word [reader]
   (let [word (StringBuffer.)]
-    (while (is-letter (rt/peek-char reader))
-      (.append word (rt/read-char reader)))
+    (while (->> reader rt/peek-char is-letter)
+      (->> reader rt/read-char (.append word)))
     word))
+
+(defn matches [coll key]
+  (if (coll? coll)
+    (some (partial = key) coll)
+    (= coll key)))
 
 (defn read-token [reader]
   (loop [reader reader]
-    (let [ch (rt/peek-char reader)]
-      (condp = ch
-        \( (do (rt/read-char reader) LB)
-        \) (do (rt/read-char reader) RB)
-        \space (do (rt/read-char reader)
-                (recur reader))
+    (let [ch (rt/read-char reader)]
+      (condp matches ch
+        \( LB
+        \) RB
+        [\space \return \tab \newline] (recur reader)
         nil nil
-        (read-word reader)))))
+        (do (rt/unread reader ch)
+            (read-word reader))))))
 
 (defn tokenize [text]
   (loop [tokens [] reader (rt/string-push-back-reader text)]
