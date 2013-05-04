@@ -4,12 +4,9 @@
 (def LB :LB)
 (def RB :RB)
 
-;;write tests for all functions
-
-;;exceptions on unknown characters
-
-;;/string, integer, float contstants
+;;constants: string, integer, float, #t/#f
 ;;keywords - def lambda + - / * . readln println ' cons car cdr fn
+;;exceptions on unknown characters
 
 ;;better tokens info - map or data type?
 ;;lines numbers - change parser to read line by line
@@ -17,7 +14,7 @@
 (defn is-letter [ch]
   (if (nil? ch) false (Character/isLetter ch)))
 
-(defn read-word [reader]
+(defn read-literal [reader]
   (let [word (StringBuffer.)]
     (while (->> reader rt/peek-char is-letter)
       (->> reader rt/read-char (.append word)))
@@ -37,7 +34,7 @@
         [\space \return \tab \newline] (recur reader)
         nil nil
         (do (rt/unread reader ch)
-            (read-word reader))))))
+            (read-literal reader))))))
 
 (defn tokenize [text]
   (loop [tokens [] reader (rt/string-push-back-reader text)]
