@@ -5,10 +5,12 @@
 (def RB :RB)
 
 ;;write tests for all functions
-;;more whitespaces?
+
 ;;exceptions on unknown characters
+
 ;;/string, integer, float contstants
 ;;keywords - def lambda + - / * . readln println ' cons car cdr fn
+
 ;;better tokens info - map or data type?
 ;;lines numbers - change parser to read line by line
 
@@ -19,11 +21,11 @@
   (let [word (StringBuffer.)]
     (while (->> reader rt/peek-char is-letter)
       (->> reader rt/read-char (.append word)))
-    word))
+    (.toString word)))
 
 (defn matches [coll key]
   (if (coll? coll)
-    (some (partial = key) coll)
+    (-> (partial = key) (some coll) nil? not)
     (= coll key)))
 
 (defn read-token [reader]
