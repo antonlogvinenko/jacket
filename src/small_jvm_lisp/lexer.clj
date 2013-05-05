@@ -3,11 +3,13 @@
 
 (def LB :LB)
 (def RB :RB)
+(def TRUE :true)
+(def FALSE :false)
 
-
-;;read-string-constant
 ;;read-number-constant
-;;read and validate keywords - def lambda + - / * . readln println ' cons car cdr fn
+;;read and validate keywords - def lambda + - / * . readln println quote cons car cdr fn
+;;http://www.drdobbs.com/architecture-and-design/the-clojure-philosophy/240150710
+;;read plain simple names
 ;;test all read-literal cases and subfunctions
 
 ;;exceptions on unknown characters
@@ -15,6 +17,8 @@
 
 ;;better tokens info - map or data type?
 ;;lines numbers - change parser to read line by line
+
+;;weird string characters
 
 (defn is-letter [ch]
   (if (nil? ch) false (Character/isLetter ch)))
@@ -32,13 +36,46 @@
         second-char (rt/read-char reader)]
     (if (= \# first-char)
       (case second-char
-        \t :true
-        \f :false
+        \t TRUE
+        \f FALSE
         :else (throw (RuntimeException. "Oops")))
       (throw (RuntimeException. "Ooops")))))
         
-(defn read-string-constant [reader])
-(defn read-number-constant [reader])
+(defn read-string-constant [reader]
+  (let [ch (rt/read-char reader)]
+    (if (= \" ch)
+      (let [sb (StringBuffer.)]
+        (while (->> reader rt/peek-char (not= \"))
+          (->> reader rt/read-char (.append sb)))
+        (if (->> reader rt/read-char (not= \"))
+          (throw (RuntimeException. "Ooops"))
+          (.toString sb)))
+      (throw (RuntimeException. "Ooops")))))
+        
+(defn is-digit [ch]
+  (and (-> ch nil? not) (Character/isDigit ch)))
+
+(defn whitespace? [ch]
+  (or (nil? ch) (Character/isWhitespace ch)))
+
+(defn peep [pred reader]
+  (-> reader rt/peek-char pred))
+
+(defn read-while [reader pred sb]
+  (while (peep pred reader)
+    (->> reader rt/read-char (.append sb))))
+
+(defn read-number-constant [reader]
+  (let [sb (StringBuffer.)]
+    (read-while reader is-digit sb)
+    (condp peep reader
+      whitespace? (-> sb .toString Integer/parseInt)
+      (partial = \.) (do (->> reader rt/read-char (.append sb))
+                         (read-while reader is-digit sb)
+                         (condp peep reader
+                           whitespace? (-> sb .toString Double/parseDouble)
+                           (throw (RuntimeException. "Ooops XD"))))
+      (throw (RuntimeException. "Oops")))))
 
 (defn read-literal [reader]
   (let [first-char (rt/peek-char reader)
@@ -71,6 +108,3 @@
       (if (nil? token)
         tokens
         (recur (conj tokens token) reader)))))
-      
-    
-    
