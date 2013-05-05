@@ -13,9 +13,9 @@
 ;;exceptions on unknown characters
 ;;lines numbers - change parser to read line by line
 
-;;tests errors
+;;test errors
 
-;;complete lexer
+;;complete lexer overview
 ;;master test - tokenize-test
 ;;terminating cases for all methods
 

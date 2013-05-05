@@ -83,5 +83,8 @@
        "a ( b" ["a" :LB "b"]
        "a ) c" ["a" :RB "c"]
 
+       "(def a (fn (a b) (+ a b)))"
+       [:LB :def "a" :LB :fn :LB "a" "b" :RB :LB :plus "a" "b" :RB :RB :RB]
+
        "ab\rcd\tef\ngh ij" ["ab" "cd" "ef" "gh" "ij"]
        ))
