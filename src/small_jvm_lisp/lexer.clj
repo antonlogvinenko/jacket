@@ -7,15 +7,15 @@
 (def FALSE :false)
 
 
-;;1 exceptions on unknown characters
-;;exceptions at all
+;;better tokens info - map or data type?
+;;exception messages
 
-;;2 better tokens info - map or data type?
-;;3 lines numbers - change parser to read line by line
+;;exceptions on unknown characters
+;;lines numbers - change parser to read line by line
 
-;;4 tests errors
+;;tests errors
 
-;;5 complete lexer
+;;complete lexer
 ;;master test - tokenize-test
 ;;terminating cases for all methods
 
@@ -36,6 +36,9 @@
 (defn digit? [ch]
   (and (-> ch nil? not) (Character/isDigit ch)))
 
+(defn word-symbol? [ch]
+  (or (letter? ch) (matches [\+ \- \/ \*] ch)))
+
 (defn whitespace? [ch]
   (or (nil? ch) (Character/isWhitespace ch)))
 
@@ -51,7 +54,7 @@
 (def KEYWORDS {"lambda" :lambda
                "def" :def
                "+" :plus "-" :minus
-               "//" :divide
+               "/" :divide
                "*" :multiply
                "car" :car "cdr" :cdr "fn" :fn "cons" :cons "quote" :quote
                "print" :print "read" :read
@@ -59,7 +62,7 @@
 
 (defn read-keyword [reader]
   (let [word (->> (StringBuffer.)
-                  (read-while reader (comp not whitespace?))
+                  (read-while reader word-symbol?)
                   .toString)
         keyword (KEYWORDS word)]
     (if (nil? keyword) word keyword)))
