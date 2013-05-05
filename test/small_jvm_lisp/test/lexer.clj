@@ -3,8 +3,8 @@
   (:use [clojure.test]
         [small-jvm-lisp.lexer]))
 
-(deftest is-letter-test
-  (are [char result] (= result (is-letter char))
+(deftest letter?-test
+  (are [char result] (= result (letter? char))
        nil false
        \a true
        \b true
@@ -12,12 +12,16 @@
        \1 false
        ))
 
-(deftest read-literal-test
-  (are [text word] (= (->> text rt/string-push-back-reader read-literal) word)
-       "cake is a lie" "cake"
-       " cake is a lie" ""
-       "(cake is a lie" ""
-        "" ""
+(deftest digit?-test
+  (are [chars pred] (->> chars (map digit?) (every? pred))
+       [\0 \1 \2 \3 \4 \5 \6 \7 \8 \9] true?
+       [\a \space \tab \\ \"] false?
+       ))
+
+(deftest whitespace?-test
+  (are [chars pred] (->> chars (map whitespace?) (every? pred))
+       [\space nil \tab \return \newline] true?
+       [\1 \a \\ \=] false?
        ))
 
 (deftest matches-test
@@ -26,6 +30,24 @@
        [1 2 3] 4 false
        1 1 true
        1 2 false
+       ))
+
+
+
+(deftest read-boolean-constant-test)
+
+(deftest read-string-constant-test)
+
+(deftest read-number-constant-test)
+
+(deftest read-keyword-test)
+
+(deftest read-literal-test
+  (are [text word] (= (->> text rt/string-push-back-reader read-literal) word)
+       "cake is a lie" "cake"
+       " cake is a lie" ""
+       "(cake is a lie" ""
+        "" ""
        ))
 
 (deftest read-token-test

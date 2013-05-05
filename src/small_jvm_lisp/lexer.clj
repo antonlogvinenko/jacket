@@ -6,7 +6,8 @@
 (def TRUE :true)
 (def FALSE :false)
 
-;;read-number-constant
+;;test reading booleans, strings, numbers
+
 ;;read and validate keywords - def lambda + - / * . readln println quote cons car cdr fn
 ;;http://www.drdobbs.com/architecture-and-design/the-clojure-philosophy/240150710
 ;;read plain simple names
@@ -20,15 +21,34 @@
 
 ;;weird string characters
 
-(defn is-letter [ch]
+(defn matches [coll key]
+  (if (coll? coll)
+    (-> (partial = key) (some coll) nil? not)
+    (= coll key)))
+
+(defn letter? [ch]
   (if (nil? ch) false (Character/isLetter ch)))
+
+(defn digit? [ch]
+  (and (-> ch nil? not) (Character/isDigit ch)))
+
+(defn whitespace? [ch]
+  (or (nil? ch) (Character/isWhitespace ch)))
+
+(defn peep [pred reader]
+  (-> reader rt/peek-char pred))
+
+(defn read-while [reader pred sb]
+  (while (peep pred reader)
+    (->> reader rt/read-char (.append sb))))
+
+
 
 ;;make read-word from read-literal
 ;;parsing #t #f numbers strings, then word if created, then exception
 (defn read-keyword [reader]
   (let [word (StringBuffer.)]
-    (while (->> reader rt/peek-char is-letter)
-      (->> reader rt/read-char (.append word)))
+    (read-while reader letter? word)
     (.toString word)))
 
 (defn read-boolean-constant [reader]
@@ -42,36 +62,22 @@
       (throw (RuntimeException. "Ooops")))))
         
 (defn read-string-constant [reader]
-  (let [ch (rt/read-char reader)]
-    (if (= \" ch)
-      (let [sb (StringBuffer.)]
-        (while (->> reader rt/peek-char (not= \"))
-          (->> reader rt/read-char (.append sb)))
-        (if (->> reader rt/read-char (not= \"))
-          (throw (RuntimeException. "Ooops"))
-          (.toString sb)))
-      (throw (RuntimeException. "Ooops")))))
+  (if (-> reader rt/read-char (= \"))
+    (let [sb (StringBuffer.)]
+      (read-while reader (not= \") sb)
+      (if (-> reader rt/read-char (not= \"))
+        (throw (RuntimeException. "Ooops"))
+        (.toString sb)))
+    (throw (RuntimeException. "Ooops"))))
         
-(defn is-digit [ch]
-  (and (-> ch nil? not) (Character/isDigit ch)))
-
-(defn whitespace? [ch]
-  (or (nil? ch) (Character/isWhitespace ch)))
-
-(defn peep [pred reader]
-  (-> reader rt/peek-char pred))
-
-(defn read-while [reader pred sb]
-  (while (peep pred reader)
-    (->> reader rt/read-char (.append sb))))
 
 (defn read-number-constant [reader]
   (let [sb (StringBuffer.)]
-    (read-while reader is-digit sb)
+    (read-while reader digit? sb)
     (condp peep reader
       whitespace? (-> sb .toString Integer/parseInt)
       (partial = \.) (do (->> reader rt/read-char (.append sb))
-                         (read-while reader is-digit sb)
+                         (read-while reader digit? sb)
                          (condp peep reader
                            whitespace? (-> sb .toString Double/parseDouble)
                            (throw (RuntimeException. "Ooops XD"))))
@@ -85,11 +91,6 @@
                  [\0 \1 \2 \3 \4 \5 \6 \7 \8 \9] read-number-constant
                  read-keyword)]
     (method reader)))
-
-(defn matches [coll key]
-  (if (coll? coll)
-    (-> (partial = key) (some coll) nil? not)
-    (= coll key)))
 
 (defn read-token [reader]
   (loop [reader reader]
