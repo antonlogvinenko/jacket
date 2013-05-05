@@ -6,8 +6,6 @@
 (def TRUE :true)
 (def FALSE :false)
 
-;;write some tests
-
 ;;read and validate keywords - def lambda + - / * . readln println quote cons car cdr fn
 ;;http://www.drdobbs.com/architecture-and-design/the-clojure-philosophy/240150710
 ;;read plain simple names
@@ -19,8 +17,11 @@
 ;;better tokens info - map or data type?
 ;;lines numbers - change parser to read line by line
 
-
 ;;tests errors
+
+;;complete lexer
+
+
 
 ;;weird string characters
 ;;weird numbers format
