@@ -51,6 +51,7 @@
   (are [text keyword] (->> text (rt/string-push-back-reader) read-keyword (= keyword))
        "asd" "asd"
        "" ""
+       "lambda" :lambda "def" :def "+" :plus "print" :print
        ))
 
 (deftest read-literal-test

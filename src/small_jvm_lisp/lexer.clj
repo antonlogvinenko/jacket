@@ -6,10 +6,6 @@
 (def TRUE :true)
 (def FALSE :false)
 
-;;read and validate keywords - def lambda + - / * . readln println quote cons car cdr fn
-;;http://www.drdobbs.com/architecture-and-design/the-clojure-philosophy/240150710
-;;read plain simple names
-;;test all read-literal cases and subfunctions
 
 ;;exceptions on unknown characters
 ;;exceptions at all
@@ -20,13 +16,13 @@
 ;;tests errors
 
 ;;complete lexer
+;;master test - tokenize-test
 
 
-
+;;use automata, reduce code
 ;;weird string characters
 ;;weird numbers format
 
-;;use automata
 
 (defn matches [coll key]
   (if (coll? coll)
@@ -47,16 +43,25 @@
 
 (defn read-while [reader pred sb]
   (while (peep pred reader)
-    (->> reader rt/read-char (.append sb))))
+    (->> reader rt/read-char (.append sb)))
+  sb)
 
 
+(def KEYWORDS {"lambda" :lambda
+               "def" :def
+               "+" :plus "-" :minus
+               "//" :divide
+               "*" :multiply
+               "car" :car "cdr" :cdr "fn" :fn "cons" :cons "quote" :quote
+               "print" :print "read" :read
+               })
 
-;;make read-word from read-literal
-;;parsing #t #f numbers strings, then word if created, then exception
 (defn read-keyword [reader]
-  (let [word (StringBuffer.)]
-    (read-while reader letter? word)
-    (.toString word)))
+  (let [word (->> (StringBuffer.)
+                  (read-while reader (comp not whitespace?))
+                  .toString)
+        keyword (KEYWORDS word)]
+    (if (nil? keyword) word keyword)))
 
 (defn read-boolean-constant [reader]
   (let [first-char (rt/read-char reader)
