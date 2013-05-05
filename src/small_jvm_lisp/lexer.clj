@@ -7,16 +7,17 @@
 (def FALSE :false)
 
 
-;;exceptions on unknown characters
+;;1 exceptions on unknown characters
 ;;exceptions at all
 
-;;better tokens info - map or data type?
-;;lines numbers - change parser to read line by line
+;;2 better tokens info - map or data type?
+;;3 lines numbers - change parser to read line by line
 
-;;tests errors
+;;4 tests errors
 
-;;complete lexer
+;;5 complete lexer
 ;;master test - tokenize-test
+;;terminating cases for all methods
 
 
 ;;use automata, reduce code
