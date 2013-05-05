@@ -6,7 +6,7 @@
 (def TRUE :true)
 (def FALSE :false)
 
-;;test reading booleans, strings, numbers
+;;write some tests
 
 ;;read and validate keywords - def lambda + - / * . readln println quote cons car cdr fn
 ;;http://www.drdobbs.com/architecture-and-design/the-clojure-philosophy/240150710
@@ -19,7 +19,13 @@
 ;;better tokens info - map or data type?
 ;;lines numbers - change parser to read line by line
 
+
+;;tests errors
+
 ;;weird string characters
+;;weird numbers format
+
+;;use automata
 
 (defn matches [coll key]
   (if (coll? coll)
@@ -64,7 +70,7 @@
 (defn read-string-constant [reader]
   (if (-> reader rt/read-char (= \"))
     (let [sb (StringBuffer.)]
-      (read-while reader (not= \") sb)
+      (read-while reader (partial not= \") sb)
       (if (-> reader rt/read-char (not= \"))
         (throw (RuntimeException. "Ooops"))
         (.toString sb)))

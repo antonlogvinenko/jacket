@@ -36,11 +36,22 @@
 
 (deftest read-boolean-constant-test)
 
-(deftest read-string-constant-test)
+(deftest read-string-constant-test
+  (are [text result] (->> text (rt/string-push-back-reader) read-string-constant (= result))
+       "\"cake\"" "cake"))
 
-(deftest read-number-constant-test)
+(deftest read-number-constant-test
+  (are [text number] (->> text (rt/string-push-back-reader) read-number-constant (= number))
+       "3" 3
+       "4." 4.0
+       "4.1" 4.1
+       ))
 
-(deftest read-keyword-test)
+(deftest read-keyword-test
+  (are [text keyword] (->> text (rt/string-push-back-reader) read-keyword (= keyword))
+       "asd" "asd"
+       "" ""
+       ))
 
 (deftest read-literal-test
   (are [text word] (= (->> text rt/string-push-back-reader read-literal) word)
