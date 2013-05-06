@@ -17,7 +17,7 @@
 ;;terminating cases for all methods
 
 ;;complete lexer overview;
-;master test - tokenize-test
+;;master test - tokenize-test
 
 ;;weird string characters
 ;;weird numbers format
@@ -40,15 +40,6 @@
 (defn whitespace? [ch]
   (or (nil? ch) (Character/isWhitespace ch)))
 
-(defn peep [pred reader]
-  (-> reader rt/peek-char pred))
-
-(defn read-while [reader pred sb]
-  (while (peep pred reader)
-    (->> reader rt/read-char (.append sb)))
-  sb)
-
-
 (defn append [sb reader char]
   (.append sb char))
 (defn skip-char [sb reader char]
@@ -59,12 +50,12 @@
   (-> sb .toString Double/parseDouble))
 (defn keywordize [sb]
   (-> sb .toString keyword))
-(defn skip-all [sb reader f] nil)
+(defn skip-all [sb reader f]
+  nil)
 (defn return-char [sb reader char]
   (rt/unread reader char)
   sb)
-;;  (rt/unread reader char))
-;; :smth -> :done always returns character
+
 (def grammar {:done {\( [:done :LB]
                      \) [:done :RB]
                      \" [:string skip-char]
