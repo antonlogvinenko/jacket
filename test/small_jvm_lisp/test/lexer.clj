@@ -84,4 +84,8 @@
        [:LB :def :a :LB :fn :LB :a :b :RB :LB :+ :a :b :RB :RB :RB]
 
        "ab\rcd\tef\ngh ij" [:ab :cd :ef :gh :ij]
+
+       "(def sum (a b) (+ a b))"
+       [:LB :def :sum :LB :a :b :RB :LB :+ :a :b :RB :RB]
+       
        ))
