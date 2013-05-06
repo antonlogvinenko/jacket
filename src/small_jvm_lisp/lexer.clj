@@ -3,9 +3,15 @@
 
 (def LB :LB)
 (def RB :RB)
-(def TRUE :true)
-(def FALSE :false)
 
+(def KEYWORDS {"lambda" :lambda
+               "def" :def
+               "+" :plus "-" :minus
+               "/" :divide
+               "*" :multiply
+               "car" :car "cdr" :cdr "fn" :fn "cons" :cons "quote" :quote
+               "print" :print "read" :read
+               })
 
 ;;better tokens info - map or data type?
 ;;exception messages
@@ -51,29 +57,20 @@
   sb)
 
 
-(def KEYWORDS {"lambda" :lambda
-               "def" :def
-               "+" :plus "-" :minus
-               "/" :divide
-               "*" :multiply
-               "car" :car "cdr" :cdr "fn" :fn "cons" :cons "quote" :quote
-               "print" :print "read" :read
-               })
 
 (defn read-keyword [reader]
-  (let [word (->> (StringBuffer.)
-                  (read-while reader word-symbol?)
-                  .toString)
-        keyword (KEYWORDS word)]
-    (if (nil? keyword) word keyword)))
+  (->> (StringBuffer.)
+       (read-while reader word-symbol?)
+       .toString
+       keyword))
 
 (defn read-boolean-constant [reader]
   (let [first-char (rt/read-char reader)
         second-char (rt/read-char reader)]
     (if (= \# first-char)
       (case second-char
-        \t TRUE
-        \f FALSE
+        \t true
+        \f false
         :else (throw (RuntimeException. "Oops")))
       (throw (RuntimeException. "Ooops")))))
         
@@ -91,11 +88,11 @@
   (let [sb (StringBuffer.)]
     (read-while reader digit? sb)
     (condp peep reader
-      whitespace? (-> sb .toString Integer/parseInt)
+      whitespace? (->> sb .toString Integer/parseInt)
       (partial = \.) (do (->> reader rt/read-char (.append sb))
                          (read-while reader digit? sb)
                          (condp peep reader
-                           whitespace? (-> sb .toString Double/parseDouble)
+                           whitespace? (->> sb .toString Double/parseDouble)
                            (throw (RuntimeException. "Ooops XD"))))
       (throw (RuntimeException. "Oops")))))
 

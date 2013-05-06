@@ -41,7 +41,8 @@
        "\"cake\"" "cake"))
 
 (deftest read-number-constant-test
-  (are [text number] (->> text (rt/string-push-back-reader) read-number-constant (= number))
+  (are [text number] (->> text (rt/string-push-back-reader) read-number-constant
+                          (= number))
        "3" 3
        "4." 4.0
        "4.1" 4.1
@@ -49,22 +50,18 @@
 
 (deftest read-keyword-test
   (are [text keyword] (->> text (rt/string-push-back-reader) read-keyword (= keyword))
-       "asd" "asd"
-       "" ""
-       "lambda" :lambda "def" :def "+" :plus "print" :print
+       "asd" :asd
+       "lambda" :lambda "def" :def "+" :+ "print" :print
        ))
 
 (deftest read-literal-test
   (are [text word] (= (->> text rt/string-push-back-reader read-literal) word)
-       "cake is a lie" "cake"
-       " cake is a lie" ""
-       "(cake is a lie" ""
-        "" ""
+       "cake is a lie" :cake
        ))
 
 (deftest read-token-test
   (are [text token] (= token (-> text rt/string-push-back-reader read-token))
-       "a" "a"
+       "a" :a
        "(" :LB
        ")" :RB
        "" nil
@@ -72,19 +69,19 @@
        "\r" nil
        "\n" nil
 
-       "a asdasd (" "a"
-       "a\t(asdasd asdas" "a"
-       "a(b" "a"
+       "a asdasd (" :a
+       "a\t(asdasd asdas" :a
+       "a(b" :a
        ))
 
 (deftest tokenize-test
   (are [text tokens] (= tokens (tokenize text))
-       "a b c" ["a" "b" "c"]
-       "a ( b" ["a" :LB "b"]
-       "a ) c" ["a" :RB "c"]
+       "a b c" [:a :b :c]
+       "a ( b" [:a :LB :b]
+       "a ) c" [:a :RB :c]
 
        "(def a (fn (a b) (+ a b)))"
-       [:LB :def "a" :LB :fn :LB "a" "b" :RB :LB :plus "a" "b" :RB :RB :RB]
+       [:LB :def :a :LB :fn :LB :a :b :RB :LB :+ :a :b :RB :RB :RB]
 
-       "ab\rcd\tef\ngh ij" ["ab" "cd" "ef" "gh" "ij"]
+       "ab\rcd\tef\ngh ij" [:ab :cd :ef :gh :ij]
        ))
