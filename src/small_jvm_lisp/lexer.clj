@@ -66,39 +66,32 @@
   sb)
 ;;  (rt/unread reader char))
 ;; :smth -> :done always returns character
-(def grammar {:done {
-                      \( [:done :LB]
-                      \) [:done :RB]
-                      \" [:string skip-char]
-                      whitespace? [:done skip-all]
-                      \# [:boolean skip-char]
-                      digit? [:integer append]
-                      word-symbol? [:name append]
-                      }
-              :string {
-                       letter? [:string append]
-                       \" [:done skip-char #(.toString %)]
-                       }
-              :boolean {
-                        \t [:boolean true]
+(def grammar {:done {\( [:done :LB]
+                     \) [:done :RB]
+                     \" [:string skip-char]
+                     whitespace? [:done skip-all]
+                     \# [:boolean skip-char]
+                     digit? [:integer append]
+                     word-symbol? [:name append]}
+
+              :string {letter? [:string append]
+                       \" [:done skip-char #(.toString %)]}
+
+              :boolean {\t [:boolean true]
                         \f [:boolean false]
                         whitespace? [:done return-char]
                         \) [:done return-char]
-                        \( [:done return-char]
-                        }
-              :integer {
-                        digit? [:integer append]
+                        \( [:done return-char]}
+
+              :integer {digit? [:integer append]
                         \. [:double append]
-                        (comp not digit?) [:done return-char parse-integer]
-                        }
-              :double {
-                       digit? [:double append]
-                       whitespace? [:done return-char parse-double]
-                       }
-              :name {
-                     word-symbol? [:name append]
-                     (comp not word-symbol?) [:done return-char keywordize]
-                     }
+                        (comp not digit?) [:done return-char parse-integer]}
+
+              :double {digit? [:double append]
+                       whitespace? [:done return-char parse-double]}
+              
+              :name {word-symbol? [:name append]
+                     (comp not word-symbol?) [:done return-char keywordize]}
               })
 
 (defn find-action [directions ch]
