@@ -36,31 +36,31 @@
 
 (deftest read-boolean-constant-test)
 
+
 (deftest read-string-constant-test
-  (are [text result] (->> text (rt/string-push-back-reader) read-string-constant (= result))
+  (are [text result] (->> text tokenize first (= result))
        "\"cake\"" "cake"))
 
 (deftest read-number-constant-test
-  (are [text number] (->> text (rt/string-push-back-reader) read-number-constant
-                          (= number))
+  (are [text number] (->> text tokenize first (= number))
        "3" 3
        "4." 4.0
        "4.1" 4.1
        ))
 
 (deftest read-keyword-test
-  (are [text keyword] (->> text (rt/string-push-back-reader) read-keyword (= keyword))
+  (are [text keyword] (->> text tokenize first (= keyword))
        "asd" :asd
        "lambda" :lambda "def" :def "+" :+ "print" :print
        ))
 
 (deftest read-literal-test
-  (are [text word] (= (->> text rt/string-push-back-reader read-literal) word)
+  (are [text word] (->> text tokenize first (= word))
        "cake is a lie" :cake
        ))
 
 (deftest read-token-test
-  (are [text token] (= token (-> text rt/string-push-back-reader read-token))
+  (are [text token] (-> text tokenize first (= token))
        "a" :a
        "(" :LB
        ")" :RB
