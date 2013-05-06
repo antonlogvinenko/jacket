@@ -13,12 +13,11 @@
 ;;exception messages
 ;;exceptions on unknown characters
 ;;lines numbers - change parser to read line by line
-
 ;;test errors
+;;terminating cases for all methods
 
 ;;complete lexer overview;
 ;master test - tokenize-test
-;;terminating cases for all methods
 
 ;;weird string characters
 ;;weird numbers format

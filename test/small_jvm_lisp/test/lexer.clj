@@ -34,7 +34,10 @@
 
 
 
-(deftest read-boolean-constant-test)
+(deftest read-boolean-constant-test
+  (are [text result] (->> text tokenize first (= result))
+       "#t" true
+       "#f" false))
 
 
 (deftest read-string-constant-test
