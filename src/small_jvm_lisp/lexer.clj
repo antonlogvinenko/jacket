@@ -12,14 +12,14 @@
 
 ;;terminating cases for all methods
 ;;automatic exceptions on unknown characters
-;;lines numbers - change parser to read line by line
+;;add line numbers at all exceptions
 ;;test errors
+
+;;parsing keywords
+;;weird string characters
 
 ;;complete lexer overview;
 ;;master test - tokenize-test
-
-;;weird string characters
-;;weird numbers format
 
 (defn matches [coll key]
   (if (coll? coll)
