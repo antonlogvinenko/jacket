@@ -1,7 +1,7 @@
 (ns small-jvm-lisp.lexer
   (:require [clojure.tools.reader.reader-types :as rt]))
 
-(def KEYWORDS ["-" "*" "+" "=" "!=" "<" ">"
+(def KEYWORDS ["-" "*" "+" "=" "!=" "<" ">" ">=" "<="
                "def" "lambda"
                "and" "or" "not"
                "car" "cdr" "cons" "quote"])
@@ -10,7 +10,11 @@
 ;;Once lexer signals a error for a correct lexem sequence, the grammar must be fixed,
 ;;regression test written
 
+
+
+
 ;;parsing keywords, add not equal
+;;2chars, differ between keywords and names
 
 ;;terminating cases for all methods + tests
 ;;complete lexer overview;
