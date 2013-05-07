@@ -19,17 +19,14 @@
   (if (coll? coll)
     (-> (partial = key) (some coll) nil? not)
     (= coll key)))
-
 (defn letter? [ch]
   (if (nil? ch) false (Character/isLetter ch)))
-
 (defn digit? [ch]
   (and (-> ch nil? not) (Character/isDigit ch)))
-
 (defn whitespace? [ch]
-  (or (nil? ch)  (Character/isWhitespace ch)))
+  (or (eof? ch)  (Character/isWhitespace ch)))
+(def eof? nil?)
 
-  
 (defn append [sb reader char]
   (.append sb char))
 (defn skip-char [sb reader char]
@@ -45,7 +42,7 @@
 (defn return-char [sb reader char]
   (rt/unread reader char)
   sb)
-(def eof? nil?)
+
 (defn transition-ok? [ch t]
   (cond (char? t) (= t ch)
         (fn? t) (t ch)
