@@ -19,13 +19,13 @@
   (if (coll? coll)
     (-> (partial = key) (some coll) nil? not)
     (= coll key)))
+(def eof? nil?)
 (defn letter? [ch]
-  (if (nil? ch) false (Character/isLetter ch)))
+  (if (eof? ch) false (Character/isLetter ch)))
 (defn digit? [ch]
   (and (-> ch nil? not) (Character/isDigit ch)))
 (defn whitespace? [ch]
   (or (eof? ch)  (Character/isWhitespace ch)))
-(def eof? nil?)
 
 (defn append [sb reader char]
   (.append sb char))
@@ -67,6 +67,12 @@
     (first modifications)
     ((apply comp (reverse modifications)) accum reader ch)))
 
+(defn raise-lexical-error [ch state tokens lexem]
+  (throw (RuntimeException. (str "Lexical error: character '" ch "', "
+                                 "building lexem \"" lexem "\", "
+                                 "tokens " tokens ", "))))
+  
+
 (defn tokenize-with-grammar [grammar reader]
   (loop [state :done accum nil reader reader tokens []]
     (let [tokens (if (and (= state :done) (-> accum nil? not))
@@ -75,10 +81,12 @@
           ch (rt/read-char reader)]
       (if (and (= state :done) (nil? ch))
         tokens
-        (let [transition (-> grammar state (find-transition ch))
-              next-state (first transition)
-              next-accum (modify accum reader ch (rest transition))]
-          (recur next-state next-accum reader tokens))))))
+        (let [transition (-> grammar state (find-transition ch))]
+          (if (nil? transition)
+            (raise-lexical-error ch state tokens accum)
+            (let [next-state (first transition)
+                  next-accum (modify accum reader ch (rest transition))]
+              (recur next-state next-accum reader tokens))))))))
 
 (def grammar {:done {\( [:done :LB]
                      \) [:done :RB]
