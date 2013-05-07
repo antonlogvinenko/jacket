@@ -5,8 +5,6 @@
                "def" "lambda"
                "car" "cdr" "cons" "quote"])
 
-;;automatic exceptions on unknown characters + tests
-;;add line numbers at all exceptions
 ;;test errors
 
 ;;parsing keywords
@@ -67,11 +65,15 @@
     (first modifications)
     ((apply comp (reverse modifications)) accum reader ch)))
 
-(defn raise-lexical-error [ch state tokens lexem]
-  (throw (RuntimeException. (str "Lexical error: character '" ch "', "
+(defn raise-lexical-error [line-num ch state tokens lexem]
+  (throw (RuntimeException. (str "Lexical error: "
+                                 "line " line-num ", "
+                                 "character '" ch "', "
                                  "building lexem \"" lexem "\", "
                                  "tokens " tokens ", "))))
-  
+
+(defn count-line-num [line-num ch]
+  (if (= ch \newline) (inc line-num) line-num))
 
 (defn tokenize-with-grammar [grammar reader]
   (loop [state :done accum nil reader reader tokens []]
@@ -81,10 +83,12 @@
           ch (rt/read-char reader)]
       (if (and (= state :done) (nil? ch))
         tokens
-        (let [transition (-> grammar state (find-transition ch))]
+        (let [transition (-> grammar state (find-transition ch))
+              line-num (rt/get-line-number reader)]
           (if (nil? transition)
-            (raise-lexical-error ch state tokens accum)
-            (let [next-state (first transition)
+            (raise-lexical-error line-num ch state tokens accum)
+            (let [
+                  next-state (first transition)
                   next-accum (modify accum reader ch (rest transition))]
               (recur next-state next-accum reader tokens))))))))
 
@@ -121,4 +125,5 @@
 (defn tokenize [string]
   (->> string
        rt/string-push-back-reader
+       rt/indexing-push-back-reader
        (tokenize-with-grammar grammar)))
