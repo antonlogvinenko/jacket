@@ -36,8 +36,9 @@
   (or (letter? ch) (matches [\+ \- \/ \*] ch)))
 
 (defn whitespace? [ch]
-  (or (nil? ch) (Character/isWhitespace ch)))
+  (or (nil? ch)  (Character/isWhitespace ch)))
 
+  
 (defn append [sb reader char]
   (.append sb char))
 (defn skip-char [sb reader char]
@@ -61,24 +62,24 @@
                      \# [:boolean skip-char]
                      digit? [:integer append]
                      word-symbol? [:name append]}
-
+              
               :string {letter? [:string append]
                        \" [:done skip-char #(.toString %)]
-                       \tab [:string append]}
-
+                       [\tab \newline \return] [:string append]}
+              
               :boolean {\t [:boolean true]
                         \f [:boolean false]
-                        [whitespace? \) \(] [:done return-char]}
+                        separator? [:done return-char]}
 
               :integer {digit? [:integer append]
                         \. [:double append]
-                        (comp not digit?) [:done return-char parse-integer]}
+                        separator? [:done return-char parse-integer]}
 
               :double {digit? [:double append]
-                       whitespace? [:done return-char parse-double]}
+                       separator? [:done return-char parse-double]}
               
               :name {word-symbol? [:name append]
-                     (comp not word-symbol?) [:done return-char keywordize]}
+                     separator? [:done return-char keywordize]}
               })
 
 (defn transition-ok? [ch t]
@@ -89,7 +90,9 @@
                          (some true?)
                          boolean)
         :else false))
-          
+
+(defn separator? [ch]
+  (transition-ok? ch [\( \) whitespace? eof?]))
 
 (defn find-transition [transitions ch]
   (->> transitions
