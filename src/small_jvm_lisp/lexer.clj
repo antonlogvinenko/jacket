@@ -10,8 +10,8 @@
                "print" :print "read" :read
                })
 
-;;terminating cases for all methods
-;;automatic exceptions on unknown characters
+;;terminating cases for all methods + tests
+;;automatic exceptions on unknown characters + tests
 ;;add line numbers at all exceptions
 ;;test errors
 
@@ -68,9 +68,7 @@
 
               :boolean {\t [:boolean true]
                         \f [:boolean false]
-                        whitespace? [:done return-char]
-                        \) [:done return-char]
-                        \( [:done return-char]}
+                        [whitespace? \) \(] [:done return-char]}
 
               :integer {digit? [:integer append]
                         \. [:double append]
@@ -83,10 +81,20 @@
                      (comp not word-symbol?) [:done return-char keywordize]}
               })
 
+(defn transition-ok? [ch t]
+  (cond (char? t) (= t ch)
+        (fn? t) (t ch)
+        (vector? t) (->> t
+                         (map (partial transition-ok? ch))
+                         (some true?)
+                         boolean)
+        :else false))
+          
+
 (defn find-transition [transitions ch]
   (->> transitions
        keys
-       (filter #(or (= ch %) (and (fn? %) (% ch))))
+       (filter (partial transition-ok? ch))
        first
        transitions))
   
