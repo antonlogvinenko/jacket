@@ -6,12 +6,16 @@
                "and" "or" "not"
                "car" "cdr" "cons" "quote"])
 
-;;test errors
+;;Lexer erros not to be tested, only correct lexem sequences are tested
+;;Once lexer signals a error for a correct lexem sequence, the grammar must be fixed,
+;;regression test written
 
 ;;parsing keywords, add not equal
+
 ;;terminating cases for all methods + tests
 ;;complete lexer overview;
 ;;master test - tokenize-test
+;;test all errors
 
 (defn matches [coll key]
   (if (coll? coll)
