@@ -3,12 +3,12 @@
 
 (def KEYWORDS ["-" "*" "+" "=" "!=" "<" ">"
                "def" "lambda"
+               "and" "or" "not"
                "car" "cdr" "cons" "quote"])
 
 ;;test errors
 
-;;parsing keywords
-;;add not equal
+;;parsing keywords, add not equal
 ;;terminating cases for all methods + tests
 ;;complete lexer overview;
 ;;master test - tokenize-test
@@ -71,9 +71,6 @@
                                  "character '" ch "', "
                                  "building lexem \"" lexem "\", "
                                  "tokens " tokens ", "))))
-
-(defn count-line-num [line-num ch]
-  (if (= ch \newline) (inc line-num) line-num))
 
 (defn tokenize-with-grammar [grammar reader]
   (loop [state :done accum nil reader reader tokens []]
