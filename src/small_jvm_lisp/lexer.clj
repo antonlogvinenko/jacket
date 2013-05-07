@@ -84,8 +84,7 @@
               line-num (rt/get-line-number reader)]
           (if (nil? transition)
             (raise-lexical-error line-num ch state tokens accum)
-            (let [
-                  next-state (first transition)
+            (let [next-state (first transition)
                   next-accum (modify accum reader ch (rest transition))]
               (recur next-state next-accum reader tokens))))))))
 
