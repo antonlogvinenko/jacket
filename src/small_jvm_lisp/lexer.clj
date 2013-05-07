@@ -10,18 +10,16 @@
                "print" :print "read" :read
                })
 
-;;exception messages
-;;exceptions on unknown characters
+;;terminating cases for all methods
+;;automatic exceptions on unknown characters
 ;;lines numbers - change parser to read line by line
 ;;test errors
-;;terminating cases for all methods
 
 ;;complete lexer overview;
 ;;master test - tokenize-test
 
 ;;weird string characters
 ;;weird numbers format
-
 
 (defn matches [coll key]
   (if (coll? coll)
@@ -65,7 +63,8 @@
                      word-symbol? [:name append]}
 
               :string {letter? [:string append]
-                       \" [:done skip-char #(.toString %)]}
+                       \" [:done skip-char #(.toString %)]
+                       \tab [:string append]}
 
               :boolean {\t [:boolean true]
                         \f [:boolean false]
