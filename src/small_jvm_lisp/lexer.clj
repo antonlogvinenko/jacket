@@ -11,9 +11,6 @@
 ;;Once lexer signals a error for a correct lexem sequence, the grammar must be fixed,
 ;;regression test written
 
-
-;;test keywordize eof? 
-
 (defn matches [coll key]
   (if (coll? coll)
     (-> (partial = key) (some coll) nil? not)
