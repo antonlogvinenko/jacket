@@ -15,7 +15,6 @@
 ;;terminating cases for all methods + tests
 ;;complete lexer overview;
 ;;master test - tokenize-test
-;;test all errors
 
 (defn matches [coll key]
   (if (coll? coll)
