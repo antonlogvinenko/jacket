@@ -4,17 +4,13 @@
 (def KEYWORDS ["-" "*" "+" "=" "!=" "<" ">" ">=" "<="
                "def" "lambda"
                "and" "or" "not"
-               "car" "cdr" "cons" "quote"])
+               "car" "cdr" "cons" "quote"
+               "print" "read"])
 
 ;;Lexer erros not to be tested, only correct lexem sequences are tested
 ;;Once lexer signals a error for a correct lexem sequence, the grammar must be fixed,
 ;;regression test written
 
-
-
-
-;;parsing keywords, add not equal
-;;2chars, differ between keywords and names
 
 ;;terminating cases for all methods + tests
 ;;complete lexer overview;
@@ -42,7 +38,11 @@
 (defn parse-double [sb]
   (-> sb .toString Double/parseDouble))
 (defn keywordize [sb]
-  (-> sb .toString keyword))
+  (let [str (.toString sb)]
+    (if (some (partial = str) KEYWORDS)
+      (keyword str)
+      (symbol str))))
+
 (defn skip-all [sb reader f]
   nil)
 (defn return-char [sb reader char]
@@ -103,8 +103,17 @@
                      \# [:boolean skip-char]
                      digit? [:integer append]
                      letter? [:name append]
-                     [\+ \- \\ \* \= \< \>] [:keyword append]}
-              
+                     [\!] [:not-equal append]
+                     [\< \>] [:strict-inequality append]
+                     [\+ \- \\ \* \=] [:keyword append]}
+
+              :not-equal {\= [:done append keywordize]}
+
+              :strict-inequality {separator? [:done return-char keywordize]
+                                  \= [:non-strict-inequality append]}
+
+              :non-strict-inequality {separator? [:done return-char keywordize]}
+
               :string {letter? [:string append]
                        \" [:done skip-char #(.toString %)]
                        [\tab \newline \return] [:string append]}

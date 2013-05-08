@@ -53,18 +53,18 @@
 
 (deftest read-keyword-test
   (are [text keyword] (->> text tokenize first (= keyword))
-       "asd" :asd
+       "asd" 'asd
        "lambda" :lambda "def" :def "+" :+ "print" :print
        ))
 
 (deftest read-literal-test
   (are [text word] (->> text tokenize first (= word))
-       "cake is a lie" :cake
+       "cake is a lie" 'cake
        ))
 
 (deftest read-token-test
   (are [text token] (-> text tokenize first (= token))
-       "a" :a
+       "a" 'a
        "(" :LB
        ")" :RB
        "" nil
@@ -72,23 +72,22 @@
        "\r" nil
        "\n" nil
 
-       "a asdasd (" :a
-       "a\t(asdasd asdas" :a
-       "a(b" :a
+       "a asdasd (" 'a
+       "a\t(asdasd asdas" 'a
+       "a(b" 'a
        ))
 
 (deftest tokenize-test
   (are [text tokens] (= tokens (tokenize text))
-       "a b c" [:a :b :c]
-       "a ( b" [:a :LB :b]
-       "a ) c" [:a :RB :c]
+       "a b c" ['a 'b 'c]
+       "a ( b" ['a :LB 'b]
+       "a ) c" ['a :RB 'c]
 
-       "(def a (fn (a b) (+ a b)))"
-       [:LB :def :a :LB :fn :LB :a :b :RB :LB :+ :a :b :RB :RB :RB]
+       "(def a (lambda (a b) (+ a b)))"
+       [:LB :def 'a :LB :lambda :LB 'a 'b :RB :LB :+ 'a 'b :RB :RB :RB]
 
-       "ab\rcd\tef\ngh ij" [:ab :cd :ef :gh :ij]
+       "ab\rcd\tef\ngh ij" ['ab 'cd 'ef 'gh 'ij]
 
        "(def sum (a b) (+ a b))"
-       [:LB :def :sum :LB :a :b :RB :LB :+ :a :b :RB :RB]
-       
+       [:LB :def 'sum :LB 'a 'b :RB :LB :+ 'a 'b :RB :RB]
        ))
