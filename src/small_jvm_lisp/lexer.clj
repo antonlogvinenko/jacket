@@ -7,6 +7,8 @@
                "car" "cdr" "cons" "quote"
                "print" "read"])
 
+;;May be I should build a Grammar State Machine separate project?
+
 ;;Lexer erros not to be tested, only correct lexem sequences are tested
 ;;Once lexer signals a error for a correct lexem sequence, the grammar must be fixed,
 ;;regression test written
