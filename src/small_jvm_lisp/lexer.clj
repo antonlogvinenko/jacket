@@ -21,8 +21,6 @@
 (def eof? nil?)
 (defn letter? [ch]
   (if (eof? ch) false (Character/isLetter ch)))
-
-
 (defn digit? [ch]
   (and (-> ch nil? not) (Character/isDigit ch)))
 (defn whitespace? [ch]
@@ -107,8 +105,12 @@
                      letter? [:name append]
                      [\!] [:not-equal append]
                      [\< \>] [:strict-inequality append]
-                     [\+ \- \\ \* \=] [:keyword append]}
+                     [\+ \\ \* \=] [:keyword append]
+                     \- [:minus append]}
 
+              :minus {digit? [:integer append]
+                      separator? [:done return-char keywordize]}
+              
               :not-equal {\= [:done append keywordize]}
 
               :strict-inequality {separator? [:done return-char keywordize]

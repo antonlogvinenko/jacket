@@ -101,6 +101,12 @@
        "(def sum (a b) (+ a b))"
        [:LB :def 'sum :LB 'a 'b :RB :LB :+ 'a 'b :RB :RB]
 
+       "- 1 2"
+       [:- 1 2]
+
+       "-1 -1.2"
+       [-1 -1.2]
+       
        "\"\n\"def\"asd\"4.56\"s\")lambda+4.56lambda\r\"\"lambda()quote"
        ["\n" :def "asd" 4.56 "s" :RB 'lambda+4.56lambda "" :lambda :LB :RB :quote]
        ))
