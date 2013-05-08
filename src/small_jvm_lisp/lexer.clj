@@ -12,9 +12,6 @@
 ;;regression test written
 
 
-;;terminating cases for all methods + tests
-;;complete lexer overview;
-;;master test - tokenize-test
 ;;test keywordize eof? 
 
 (defn matches [coll key]

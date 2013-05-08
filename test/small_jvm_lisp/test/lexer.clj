@@ -12,6 +12,11 @@
        \1 false
        ))
 
+(deftest eof?-test
+  (are [char result] (= result (eof? char))
+       nil true
+       42 false))
+
 (deftest digit?-test
   (are [chars pred] (->> chars (map digit?) (every? pred))
        [\0 \1 \2 \3 \4 \5 \6 \7 \8 \9] true?
@@ -23,6 +28,11 @@
        [\space nil \tab \return \newline] true?
        [\1 \a \\ \=] false?
        ))
+
+(deftest keywordize-test
+  (are [str result] (= result (keywordize str))
+       "def" :def
+       "asd" 'asd))
 
 (deftest matches-test
   (are [coll key result] (= result (matches coll key))
@@ -91,6 +101,6 @@
        "(def sum (a b) (+ a b))"
        [:LB :def 'sum :LB 'a 'b :RB :LB :+ 'a 'b :RB :RB]
 
-       "\"\n\"def\"asd\"4.56\"s\")lambda+\"\"lambda("
-       ["\n" :def "asd" 4.56 "s" :RB 'lambda+ "" :lambda :LB]
+       "\"\n\"def\"asd\"4.56\"s\")lambda+4.56lambda\r\"\"lambda()quote"
+       ["\n" :def "asd" 4.56 "s" :RB 'lambda+4.56lambda "" :lambda :LB :RB :quote]
        ))
