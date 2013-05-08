@@ -15,6 +15,7 @@
 ;;terminating cases for all methods + tests
 ;;complete lexer overview;
 ;;master test - tokenize-test
+;;test keywordize eof? 
 
 (defn matches [coll key]
   (if (coll? coll)
@@ -23,6 +24,8 @@
 (def eof? nil?)
 (defn letter? [ch]
   (if (eof? ch) false (Character/isLetter ch)))
+
+
 (defn digit? [ch]
   (and (-> ch nil? not) (Character/isDigit ch)))
 (defn whitespace? [ch]
@@ -58,7 +61,10 @@
         :else false))
 
 (defn separator? [ch]
-  (transition-ok? ch [\( \) whitespace? eof?]))
+  (transition-ok? ch [\( \) whitespace? eof? \"]))
+
+(defn word-symbol? [ch]
+  (not (separator? ch)))
 
 (defn find-transition [transitions ch]
   (->> transitions
@@ -128,7 +134,7 @@
               :double {digit? [:double append]
                        separator? [:done return-char parse-double]}
               
-              :name {letter? [:name append]
+              :name {word-symbol? [:name append]
                      separator? [:done return-char keywordize]}
 
               :keyword {separator? [:done return-char keywordize]}

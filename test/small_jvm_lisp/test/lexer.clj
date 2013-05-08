@@ -90,4 +90,7 @@
 
        "(def sum (a b) (+ a b))"
        [:LB :def 'sum :LB 'a 'b :RB :LB :+ 'a 'b :RB :RB]
+
+       "\"\n\"def\"asd\"4.56\"s\")lambda+\"\"lambda("
+       ["\n" :def "asd" 4.56 "s" :RB 'lambda+ "" :lambda :LB]
        ))
