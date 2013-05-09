@@ -24,7 +24,7 @@
                           (conj-last stack token))]
           (recur tokens new-stack))))))
 
-(defn read-expression [tokens]
+(defn read-expr [tokens]
   (let [token (first tokens)
         tokens (rest tokens)
         no-list? (->> not-list-preds (map #(% token)) (some true?))]
