@@ -18,13 +18,11 @@
         (if (-> stack count (= 1))
           {:expr (first stack) :tokens tokens}
           (throw (RuntimeException. "Ooops")))
-        (let [a (println token)
-              new-stack (case token
+        (let [new-stack (case token
                           :LB (conj stack [])
                           :RB (conj-last (pop stack) (peek stack))
                           (conj-last stack token))]
           (recur tokens new-stack))))))
-      
 
 (defn read-expression [tokens]
   (let [token (first tokens)
