@@ -12,7 +12,7 @@
         (conj (last stack) elem)))
 
 (defn read-sexpr [tokens]
-  (loop [tokens tokens stack [[]]]
+  (loop [tokens tokens stack []]
     (let [token (first tokens)
           tokens (rest tokens)]
       (if (nil? token)
@@ -27,11 +27,10 @@
   
 (defn read-expr [tokens]
   (let [token (first tokens)
-        tokens (rest tokens)
         no-list? (->> not-list-preds (map #(% token)) (some true?))]
      (cond
       (= :LB token) (read-sexpr tokens)
-      no-list? {:expr token :tokens tokens}
+      no-list? {:expr token :tokens (rest tokens)}
       :else (throw (RuntimeException. "Ooops")))))
 
 (defn read-program [tokens]
