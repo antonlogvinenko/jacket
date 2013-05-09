@@ -1,4 +1,5 @@
-(ns small-jvm-lisp.syntax)
+(ns small-jvm-lisp.syntax
+  (:use [small-jvm-lisp.lexer]))
 
 ;;two tail recursions may be used at a time
 ;;one for reading a program as a sequence of expressions
@@ -15,25 +16,27 @@
     (let [token (first tokens)
           tokens (rest tokens)]
       (if (nil? token)
-        (if (-> stack count (= 1))
+        (throw (RuntimeException. "Ooops"))
+        (if (and (-> stack count (= 1)) (= token :RB))
           {:expr (first stack) :tokens tokens}
-          (throw (RuntimeException. "Ooops")))
-        (let [new-stack (case token
-                          :LB (conj stack [])
-                          :RB (conj-last (pop stack) (peek stack))
-                          (conj-last stack token))]
-          (recur tokens new-stack))))))
-
+          (let [new-stack (case token
+                            :LB (conj stack [])
+                            :RB (conj-last (pop stack) (peek stack))
+                            (conj-last stack token))]
+            (recur tokens new-stack)))))))
+  
 (defn read-expr [tokens]
   (let [token (first tokens)
         tokens (rest tokens)
         no-list? (->> not-list-preds (map #(% token)) (some true?))]
-    (cond
-      no-list? {:expr token :tokens tokens}
+     (cond
       (= :LB token) (read-sexpr tokens)
+      no-list? {:expr token :tokens tokens}
       :else (throw (RuntimeException. "Ooops")))))
 
 (defn read-program [tokens]
   (loop [expressions [] tokens tokens]
-    (let [{expr :expr tokens :tokens} (read-next-expression tokens)]
-      (recur (conj expressions expr) tokens))))
+    (if (empty? tokens)
+      expressions
+      (let [{expr :expr tokens :tokens} (read-expr tokens)]
+        (recur (conj expressions expr) tokens)))))
