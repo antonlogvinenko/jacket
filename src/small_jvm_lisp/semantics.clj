@@ -7,7 +7,13 @@
   (vector? expr))
 
 (defn check-define [symtable sexpr]
-  {})
+  (let [length (count sexpr)
+        name (second sexpr)]
+    (cond
+      (not= length 3) {:errors [(str "Too many arguments to def (" length ")")]}
+      (-> name symbol? not) {:errors [(str "Not a symbol (" name ")")]}
+      :else {:symtable (conj symtable name)})))
+
 (defn check-lambda [symtable sexpr] {:symtable []})
 
 (defn analyze-sexpr [symtable sexpr]
