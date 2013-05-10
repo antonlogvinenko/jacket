@@ -12,8 +12,14 @@
 (defn skip-char [sb reader char]
   sb)
 
-
 (def eof? nil?)
+
+(defn parse-integer [sb]
+  (-> sb .toString Integer/parseInt))
+(defn parse-double [sb]
+  (-> sb .toString Double/parseDouble))
+(defn parse-string [sb]
+  (-> sb .toString))
 
 (defn transition-ok? [ch t]
   (cond (char? t) (= t ch)

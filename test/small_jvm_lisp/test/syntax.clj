@@ -1,7 +1,7 @@
 (ns small-jvm-lisp.test.syntax
   (:use [clojure.test]
         [small-jvm-lisp.syntax]
-        [small-jvm-lisp.lexer]
+        [small-jvm-lisp.grammar]
         ))
 
 (deftest conj-last-test

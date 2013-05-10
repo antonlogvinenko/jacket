@@ -1,4 +1,4 @@
-(ns small-jvm-lisp.lexer
+(ns small-jvm-lisp.grammar
   (:use [small-jvm-lisp.fsm])
   (:require [clojure.tools.reader.reader-types :as rt]))
 
@@ -9,12 +9,6 @@
                "print" "read"])
 
 (defrecord Token [value line column is-keyword])
-
-;;May be I should build a Grammar State Machine separate project?
-
-;;Lexer erros not to be tested, only correct lexem sequences are tested
-;;Once lexer signals a error for a correct lexem sequence, the grammar must be fixed,
-;;regression test written
 
 (defn matches [coll key]
   (if (coll? coll)
@@ -32,10 +26,6 @@
 (defn word-symbol? [ch]
   (-> ch separator? not))
 
-(defn parse-integer [sb]
-  (-> sb .toString Integer/parseInt))
-(defn parse-double [sb]
-  (-> sb .toString Double/parseDouble))
 (defn keywordize [sb]
   (let [str (.toString sb)]
     (if (some (partial = str) KEYWORDS)
@@ -65,7 +55,7 @@
               :non-strict-inequality {separator? [:done return-char keywordize]}
 
               :string {letter? [:string append]
-                       \" [:done skip-char #(.toString %)]
+                       \" [:done skip-char parse-string]
                        [\tab \newline \return] [:string append]}
               
               :boolean {\t [:boolean true]

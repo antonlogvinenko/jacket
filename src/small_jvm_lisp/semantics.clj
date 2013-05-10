@@ -1,5 +1,5 @@
 (ns small-jvm-lisp.semantics
-  (:use [small-jvm-lisp.lexer]
+  (:use [small-jvm-lisp.grammar]
         [small-jvm-lisp.errors]
         ))
 
