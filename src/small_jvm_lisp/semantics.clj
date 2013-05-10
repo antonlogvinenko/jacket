@@ -4,35 +4,36 @@
 (defn is-sexpr? [expr]
   (vector? expr))
 
-(defn check-define [sexpr] {:symtable [] :errors []})
-(defn check-lambda [sexpr] {:symtable [] :errors []})
+(defn check-define [symtable sexpr] {:symtable []})
+(defn check-lambda [symtable sexpr] {:symtable []})
 
 (defn analyze-sexpr [symtable sexpr]
   (let [f (first sexpr)
-        legal-fs (concat KEYWORDS symtable)]
+        legal-fs (concat (map keywordize KEYWORDS) symtable)]
     (cond
         (not-any? (partial = f) legal-fs) {:errors ["error1"]}
         (= :def f) (check-define symtable sexpr)
         (= :lambda f) (check-lambda symtable sexpr)
         :else {})))
 
-(defn analyze-sexpr-tree [sexpr]
-  (loop [{symtable :symtable :as analysis} {}
+(defn analyze-sexpr-tree [analysis sexpr]
+  (loop [{symtable :symtable :as analysis} analysis
          sexpr-stack [sexpr]]
     (if (empty? sexpr-stack)
-      (analysis :errors)
-      (let [new-analysis (->> sexpr-stack
-                              last
+      analysis
+      (let [current-sexpr (last sexpr-stack)
+            new-analysis (->> current-sexpr
                               (analyze-sexpr symtable)
                               (merge-with concat analysis))
-            new-sexpr-stack (->> sexpr
+            new-sexpr-stack (->> current-sexpr
                                  (filter is-sexpr?)
                                  reverse
-                                 (concat (pop sexpr-stack)))]
+                                 (concat (pop sexpr-stack))
+                                 vec)]
         (recur new-analysis new-sexpr-stack)))))
 
 ;;check def, lambda
-;;global defines?
+;;global definitions, outside all global s-expressions must work
 ;;test everything
 
 ;;check tail-recursively
@@ -48,7 +49,8 @@
 (defn semantics [program]
   (if-let [analysis (->> program
                          (filter is-sexpr?)
-                         (reduce analyze-sexpr-tree))]
+                         (reduce analyze-sexpr-tree {})
+                         :errors)]
     (raise-semantics-error analysis)
     program))
     
