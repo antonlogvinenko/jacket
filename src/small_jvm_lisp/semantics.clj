@@ -4,7 +4,8 @@
 (defn is-sexpr? [expr]
   (vector? expr))
 
-(defn check-define [symtable sexpr] {:symtable []})
+(defn check-define [symtable sexpr]
+  {})
 (defn check-lambda [symtable sexpr] {:symtable []})
 
 (defn analyze-sexpr [symtable sexpr]
