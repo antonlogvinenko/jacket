@@ -33,14 +33,6 @@
                                  vec)]
         (recur new-analysis new-sexpr-stack)))))
 
-;;check def, lambda
-;;global definitions, outside all global s-expressions must work
-;;test everything
-
-;;check tail-recursively
-;;if f is not keyword or defined symbol then error - what defines symbols in constructs?
-;;gather ALL semantics errors, do not throw on the first one!
-
 (defn raise-semantics-error [analysis]
   (->> analysis
        (str "Semantics analysis failed: ")
