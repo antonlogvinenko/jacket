@@ -59,7 +59,7 @@
   (transition-ok? ch [\( \) whitespace? eof? \"]))
 
 (defn word-symbol? [ch]
-  (not (separator? ch)))
+  (-> ch separator? not))
 
 (defn find-transition [transitions ch]
   (->> transitions
@@ -73,12 +73,15 @@
     (first modifications)
     ((apply comp (reverse modifications)) accum reader ch)))
 
-(defn raise-lexical-error [line-num ch state tokens lexem]
-  (raise-error (str "Lexical error: "
-                    "line " line-num ", "
-                    "character '" ch "', "
-                    "building lexem \"" lexem "\", "
-                    "tokens " tokens ", ")))
+(defn raise-lexical-error [reader ch state tokens lexem]
+  (let [line-num (rt/get-line-number reader)
+        column-num (rt/get-column-number reader)]
+    (raise-error (str "Lexical error: "
+                      "line " line-num ", "
+                      "column " column-num ", "
+                      "character '" ch "', "
+                      "building lexem \"" lexem "\", "
+                      "tokens " tokens ", "))))
 
 (defn tokenize-with-grammar [grammar reader]
   (loop [state :done accum nil reader reader tokens []]
@@ -88,10 +91,9 @@
           ch (rt/read-char reader)]
       (if (and (= state :done) (nil? ch))
         tokens
-        (let [transition (-> grammar state (find-transition ch))
-              line-num (rt/get-line-number reader)]
+        (let [transition (-> grammar state (find-transition ch))]
           (if (nil? transition)
-            (raise-lexical-error line-num ch state tokens accum)
+            (raise-lexical-error reader ch state tokens accum)
             (let [next-state (first transition)
                   next-accum (modify accum reader ch (rest transition))]
               (recur next-state next-accum reader tokens))))))))
