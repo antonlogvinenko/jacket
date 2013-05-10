@@ -3,6 +3,10 @@
         [small-jvm-lisp.errors]
         ))
 
+;;check tail-recursively
+;;if outside of quotation f is not keyword or defined symbol then error
+;;gather ALL semantics errors, do not throw on the first one!
+
 (defn is-sexpr? [expr]
   (vector? expr))
 
