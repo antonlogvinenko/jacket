@@ -1,4 +1,5 @@
 (ns small-jvm-lisp.lexer
+  (:use [small-jvm-lisp.errors])
   (:require [clojure.tools.reader.reader-types :as rt]))
 
 (def KEYWORDS ["-" "*" "+" "=" "!=" "<" ">" ">=" "<="
@@ -73,11 +74,11 @@
     ((apply comp (reverse modifications)) accum reader ch)))
 
 (defn raise-lexical-error [line-num ch state tokens lexem]
-  (throw (RuntimeException. (str "Lexical error: "
-                                 "line " line-num ", "
-                                 "character '" ch "', "
-                                 "building lexem \"" lexem "\", "
-                                 "tokens " tokens ", "))))
+  (raise-error (str "Lexical error: "
+                    "line " line-num ", "
+                    "character '" ch "', "
+                    "building lexem \"" lexem "\", "
+                    "tokens " tokens ", ")))
 
 (defn tokenize-with-grammar [grammar reader]
   (loop [state :done accum nil reader reader tokens []]

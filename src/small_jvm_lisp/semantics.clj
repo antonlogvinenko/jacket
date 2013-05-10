@@ -1,5 +1,7 @@
 (ns small-jvm-lisp.semantics
-  (:use [small-jvm-lisp.lexer]))
+  (:use [small-jvm-lisp.lexer]
+        [small-jvm-lisp.errors]
+        ))
 
 (defn is-sexpr? [expr]
   (vector? expr))
@@ -34,10 +36,7 @@
         (recur new-analysis new-sexpr-stack)))))
 
 (defn raise-semantics-error [analysis]
-  (->> analysis
-       (str "Semantics analysis failed: ")
-       RuntimeException.
-       throw))
+  (raise-error "Semantics analysis failed: "))
 
 (defn semantics [program]
   (if-let [analysis (->> program

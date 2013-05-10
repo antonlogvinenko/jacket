@@ -1,5 +1,7 @@
 (ns small-jvm-lisp.syntax
-  (:use [small-jvm-lisp.lexer]))
+  (:use [small-jvm-lisp.lexer]
+        [small-jvm-lisp.errors]
+        ))
 
 ;;two tail recursions may be used at a time
 ;;one for reading a program as a sequence of expressions
@@ -12,16 +14,10 @@
         (conj (last stack) elem)))
 
 (defn raise-unmatched-brace [stack]
-  (->> (last stack)
-       (str "Unmatched brace, s-expression: ")
-       RuntimeException.
-       throw))
+  (->> stack last (str "Unmatched brace, s-expression: ") raise-error))
 
 (defn raise-unknown-token [token]
-  (->> token
-       (str "Unknown token")
-       RuntimeException.
-       throw))
+  (->> token (str "Unknown token") raise-error))
 
 (defn read-sexpr [tokens]
   (loop [tokens tokens stack []]
