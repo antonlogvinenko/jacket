@@ -31,13 +31,13 @@
                                  (concat (pop sexpr-stack)))]
         (recur new-analysis new-sexpr-stack)))))
 
-;;check tail-recursively
-;;if f is not keyword or defined symbol then error - what defines symbols in constructs?
-;;gather ALL semantics errors, do not throw on the first one!
-
 ;;check def, lambda
 ;;global defines?
 ;;test everything
+
+;;check tail-recursively
+;;if f is not keyword or defined symbol then error - what defines symbols in constructs?
+;;gather ALL semantics errors, do not throw on the first one!
 
 (defn raise-semantics-error [analysis]
   (->> analysis
