@@ -14,11 +14,27 @@
   (let [length (count sexpr)
         name (second sexpr)]
     (cond
-      (not= length 3) {:errors [(str "Too many arguments to def (" length ")")]}
-      (-> name symbol? not) {:errors [(str "Not a symbol (" name ")")]}
-      :else {:symtable (conj symtable name)})))
+      (not= length 3)
+      {:errors [(str "Wrong arguments amount to def (" length ")")]}
+      
+      (-> name symbol? not)
+      {:errors [(str "Not a symbol (" name ")")]}
 
-(defn check-lambda [symtable sexpr] {:symtable []})
+      :else
+      {:symtable (conj symtable name)})))
+
+(defn check-lambda [symtable sexpr]
+  (let [length (count sexpr)
+        args (second sexpr)]
+    (cond
+      (not= length 3)
+      {:errors [(str "Wrong arguments amount to lambda (" length ")")]}
+      
+      (->> sexpr second (every? symbol?))
+      {:errors [(str "Wrongs arguments at lambda: " args)]}
+
+      :else {}
+      )))
 
 (defn analyze-sexpr [symtable sexpr]
   (let [f (first sexpr)
