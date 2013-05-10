@@ -54,11 +54,15 @@
             new-analysis (->> current-sexpr
                               (analyze-sexpr symtable)
                               (merge-with concat analysis))
-            new-sexpr-stack (->> current-sexpr
-                                 (filter is-sexpr?)
-                                 reverse
-                                 (concat (pop sexpr-stack))
-                                 vec)]
+            is-quoted (-> sexpr-stack first (= :quote))
+            cleaned-sexpr-stack (pop sexpr-stack)
+            new-sexpr-stack (if is-quoted
+                              cleaned-sexpr-stack
+                              (->> current-sexpr
+                                   (filter is-sexpr?)
+                                   reverse
+                                   (concat cleaned-sexpr-stack)
+                                   vec))]
         (recur new-analysis new-sexpr-stack)))))
 
 (defn raise-semantics-error [analysis]
