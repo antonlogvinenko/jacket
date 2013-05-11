@@ -1,7 +1,7 @@
 (ns small-jvm-lisp.errors)
 
-(defn raise-error [description]
-  (->> description
+(defn raise-error [message]
+  (->> message
        str
        RuntimeException.
        throw))

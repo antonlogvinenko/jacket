@@ -23,7 +23,7 @@
 (defn read-sexpr [tokens]
   (loop [tokens tokens stack []]
     (let [token (first tokens)
-          token-value (get-value token)
+          token-value (.value token)
           tokens (rest tokens)]
       (if (nil? token-value)
         (raise-unmatched-brace stack)
@@ -37,7 +37,7 @@
   
 (defn read-expr [tokens]
   (let [token (first tokens)
-        token-value (get-value token)
+        token-value (.value token)
         no-list? (->> not-list-preds (map #(% token-value)) (some true?))]
      (cond
       (= token-value :LB) (read-sexpr tokens)

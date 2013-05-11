@@ -57,13 +57,11 @@
 
 (defprotocol TokenProtocol
   (equals [this])
-  (is? [this pred])
-  (get-value [this]))
+  (is? [this pred]))
 
 (deftype Token [value line column]
   TokenProtocol
   (equals [this v] (= value v))
-  (get-value [this] value)
   (is? [this pred] true))
 
 (defn tokenize-with-grammar [grammar reader]
