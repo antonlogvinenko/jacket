@@ -42,13 +42,14 @@
     (first modifications)
     ((apply comp (reverse modifications)) accum reader ch)))
 
-(defn raise-lexical-error [position ch state tokens lexem]
+(defn raise-lexical-error [reader position ch state lexem]
   (raise-error (str "Lexical error: "
-                    "line " (first position) ", "
-                    "column " (second position) ", "
-                    "character '" ch "', "
+                    "line " (rt/get-line-number reader) ", "
+                    "column " (dec (rt/get-column-number reader)) ", "
+                    "character '" ch "', "                    
                     "building lexem \"" lexem "\", "
-                    "tokens " tokens ", ")))
+                    "line " (first position) ", "
+                    "column " (second position) ", ")))
 
 (defn get-position [reader]
   [(rt/get-line-number reader)
@@ -76,7 +77,7 @@
         (let [pos (if (= state :done) (get-position reader) pos)
               transition (-> grammar state (find-transition ch))]
           (if (nil? transition)
-            (raise-lexical-error pos ch state tokens accum)
+            (raise-lexical-error reader pos ch state accum)
             (let [next-state (first transition)
                   next-accum (modify accum reader ch (rest transition))]
               (recur next-state next-accum reader tokens pos))))))))
