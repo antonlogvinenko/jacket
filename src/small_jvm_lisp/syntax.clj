@@ -14,11 +14,14 @@
   (conj (pop stack)
         (conj (last stack) elem)))
 
-(defn raise-unmatched-brace [stack]
-  (->> stack last (str "Unmatched brace, s-expression: ") raise-error))
+(defn raise-unmatched-brace [stack token]
+  (raise-at-token token
+                  (->> stack
+                       last
+                       (str "Unmatched brace, s-expression: "))))
 
 (defn raise-unknown-token [token]
-  (->> token  (str "Unknown token ") raise-error))
+  (raise-at-token token "Unknown token"))
 
 (defn read-sexpr [tokens]
   (loop [tokens tokens stack []]
@@ -26,7 +29,7 @@
           token-value (.value token)
           tokens (rest tokens)]
       (if (nil? token-value)
-        (raise-unmatched-brace stack)
+        (raise-unmatched-brace stack token)
         (if (and (-> stack count (= 1)) (= token-value :RB))
           {:expr (first stack) :tokens tokens}
           (let [new-stack (case token-value

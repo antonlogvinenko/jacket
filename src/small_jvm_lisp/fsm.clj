@@ -43,13 +43,12 @@
     ((apply comp (reverse modifications)) accum reader ch)))
 
 (defn raise-lexical-error [reader position ch state lexem]
-  (raise-error (str "Lexical error: "
-                    "line " (rt/get-line-number reader) ", "
-                    "column " (dec (rt/get-column-number reader)) ", "
-                    "character '" ch "', "                    
-                    "building lexem \"" lexem "\", "
-                    "line " (first position) ", "
-                    "column " (second position) ", ")))
+  (raise-at-pos position
+                (str "Lexical error: "
+                     "line " (rt/get-line-number reader) ", "
+                     "column " (dec (rt/get-column-number reader)) ", "
+                     "character '" ch "', "                    
+                     "building lexem \"" lexem "\"")))
 
 (defn get-position [reader]
   [(rt/get-line-number reader)

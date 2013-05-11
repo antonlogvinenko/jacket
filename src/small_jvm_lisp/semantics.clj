@@ -66,7 +66,9 @@
         (recur new-analysis new-sexpr-stack)))))
 
 (defn raise-semantics-error [analysis]
-  (raise-error "Semantics analysis failed: "))
+  (->> analysis
+       (str "Semantics analysis failed: ")
+       raise))
 
 (defn semantics [program]
   (if-let [analysis (->> program
