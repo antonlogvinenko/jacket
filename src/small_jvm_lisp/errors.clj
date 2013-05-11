@@ -1,8 +1,8 @@
 (ns small-jvm-lisp.errors)
 
 (defn raise [message]
-  (->> str
-       message
+  (->> message
+       str
        RuntimeException.
        throw))
 
@@ -13,11 +13,11 @@
   (raise-at (str "At token '" (.value token) "', "
                  "line " (.line token)
                  ", column " (.column token)
-                 ":\n")
+                 "\n")
             message))
 
 (defn raise-at-pos [pos message]
   (raise-at (str "At line " (first pos)
                  ", column " (second pos)
-                 ":\n")
+                 "\n")
             message))

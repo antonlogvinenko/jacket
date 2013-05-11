@@ -26,13 +26,12 @@
 (defn read-sexpr [tokens]
   (loop [tokens tokens stack []]
     (let [token (first tokens)
-          token-value (.value token)
           tokens (rest tokens)]
-      (if (nil? token-value)
+      (if (nil? token)
         (raise-unmatched-brace stack token)
-        (if (and (-> stack count (= 1)) (= token-value :RB))
+        (if (and (-> stack count (= 1)) (= token :RB))
           {:expr (first stack) :tokens tokens}
-          (let [new-stack (case token-value
+          (let [new-stack (case (.value token)
                             :LB (conj stack [])
                             :RB (conj-last (pop stack) (peek stack))
                             (conj-last stack token))]
