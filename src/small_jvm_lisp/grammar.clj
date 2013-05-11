@@ -8,8 +8,6 @@
                "car" "cdr" "cons" "quote"
                "print" "read"])
 
-(defrecord Token [value line column is-keyword])
-
 (defn matches [coll key]
   (if (coll? coll)
     (-> (partial = key) (some coll) nil? not)

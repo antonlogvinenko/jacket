@@ -43,33 +43,31 @@
        1 2 false
        ))
 
-
-
 (deftest read-boolean-constant-test
-  (are [text result] (->> text tokenize first (= result))
+  (are [text result] (-> text tokenize first (= result))
        "#t" true
        "#f" false))
 
 
 (deftest read-string-constant-test
-  (are [text result] (->> text tokenize first (= result))
+  (are [text result] (-> text tokenize first (= result))
        "\"cake\"" "cake"))
 
 (deftest read-number-constant-test
-  (are [text number] (->> text tokenize first (= number))
+  (are [text number] (-> text tokenize first (= number))
        "3" 3
        "4." 4.0
        "4.1" 4.1
        ))
 
 (deftest read-keyword-test
-  (are [text keyword] (->> text tokenize first (= keyword))
+  (are [text keyword] (-> text tokenize first (= keyword))
        "asd" 'asd
        "lambda" :lambda "def" :def "+" :+ "print" :print
        ))
 
 (deftest read-literal-test
-  (are [text word] (->> text tokenize first (= word))
+  (are [text word] (-> text tokenize first (= word))
        "cake is a lie" 'cake
        ))
 
@@ -89,7 +87,7 @@
        ))
 
 (deftest tokenize-test
-  (are [text tokens] (= tokens (tokenize text))
+  (are [text tokens] (-> text tokenize (= tokens))
        "a b c" ['a 'b 'c]
        "a ( b" ['a :LB 'b]
        "a ) c" ['a :RB 'c]

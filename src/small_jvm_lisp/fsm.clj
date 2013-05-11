@@ -42,27 +42,41 @@
     (first modifications)
     ((apply comp (reverse modifications)) accum reader ch)))
 
-(defn raise-lexical-error [reader ch state tokens lexem]
-  (let [line-num (rt/get-line-number reader)
-        column-num (rt/get-column-number reader)]
-    (raise-error (str "Lexical error: "
-                      "line " line-num ", "
-                      "column " column-num ", "
-                      "character '" ch "', "
-                      "building lexem \"" lexem "\", "
-                      "tokens " tokens ", "))))
+(defn raise-lexical-error [position ch state tokens lexem]
+  (raise-error (str "Lexical error: "
+                    "line " (first position) ", "
+                    "column " (second position) ", "
+                    "character '" ch "', "
+                    "building lexem \"" lexem "\", "
+                    "tokens " tokens ", ")))
+
+(defn get-position [reader]
+  [(rt/get-line-number reader)
+   (-> reader rt/get-column-number dec)])
+
+(defprotocol TokenProtocol
+  (equals [this])
+  (is? [this pred])
+  (get-value [this]))
+
+(deftype Token [value line column]
+  TokenProtocol
+  (equals [this v] (= value v))
+  (get-value [this] value)
+  (is? [this pred] true))
 
 (defn tokenize-with-grammar [grammar reader]
-  (loop [state :done accum nil reader reader tokens []]
+  (loop [state :done accum nil reader reader tokens [] pos [0 0]]
     (let [tokens (if (and (= state :done) (-> accum nil? not))
-                   (conj tokens accum) tokens)
+                   (conj tokens (Token. accum (first pos) (second pos))) tokens)
           accum (if (= state :done) (StringBuffer.) accum)
           ch (rt/read-char reader)]
       (if (and (= state :done) (nil? ch))
         tokens
-        (let [transition (-> grammar state (find-transition ch))]
+        (let [pos (if (= state :done) (get-position reader) pos)
+              transition (-> grammar state (find-transition ch))]
           (if (nil? transition)
-            (raise-lexical-error reader ch state tokens accum)
+            (raise-lexical-error pos ch state tokens accum)
             (let [next-state (first transition)
                   next-accum (modify accum reader ch (rest transition))]
-              (recur next-state next-accum reader tokens))))))))
+              (recur next-state next-accum reader tokens pos))))))))

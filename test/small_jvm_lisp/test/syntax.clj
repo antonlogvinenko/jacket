@@ -2,7 +2,15 @@
   (:use [clojure.test]
         [small-jvm-lisp.syntax]
         [small-jvm-lisp.grammar]
-        ))
+        )
+  (:import [small_jvm_lisp.fsm Token]
+           ))
+
+(defn to-tokens [ts]
+  (vec
+   (map
+    #(if (vector? %) (to-tokens %) (Token. % 1 1))
+    ts)))
 
 (deftest conj-last-test
   (are [stack elem new-stack] (= new-stack (conj-last stack elem))
@@ -17,7 +25,7 @@
        ))
 
 (deftest read-sexpr-test
-  (are [tokens program] (= program (read-sexpr tokens))
+  (are [tokens program] (-> tokens to-tokens read-sexpr (= program))
        [:LB :a :RB]
        {:expr [:a] :tokens '()}
 
@@ -30,7 +38,7 @@
        ))
 
 (deftest read-expr-test
-  (are [tokens program] (= program (read-expr tokens))
+  (are [tokens program] (-> tokens to-tokens read-expr (= program))
        [:LB :a :RB]
        {:expr [:a] :tokens []}
 
