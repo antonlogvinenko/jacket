@@ -56,10 +56,12 @@
 
 (defprotocol TokenProtocol
   (equals [this])
+  (toString [this])
   (is? [this pred]))
 
 (deftype Token [value line column]
   TokenProtocol
+  (toString [this] (str "t/" value "/"))
   (equals [this v]
     (if (-> v type (= Token))
       (= (.value v) value)
