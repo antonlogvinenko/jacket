@@ -1,6 +1,8 @@
 (ns small-jvm-lisp.semantics
   (:use [small-jvm-lisp.grammar]
         [small-jvm-lisp.errors]
+        [small-jvm-lisp.syntax]
+        [small-jvm-lisp.fsm]
         ))
 
 ;;check tail-recursively
@@ -12,12 +14,12 @@
 
 (defn check-define [symtable sexpr]
   (let [length (count sexpr)
-        name (second sexpr)]
+        name-token (second sexpr)]
     (cond
       (not= length 3)
       {:errors [(str "Wrong arguments amount to def (" length ")")]}
       
-      (-> name symbol? not)
+      (-> name-token (is? symbol?) not)
       {:errors [(str "Not a symbol (" name ")")]}
 
       :else
@@ -40,9 +42,9 @@
   (let [f (first sexpr)
         legal-fs (concat (map keywordize KEYWORDS) symtable)]
     (cond
-        (not-any? (partial = f) legal-fs) {:errors ["error1"]}
-        (= :def f) (check-define symtable sexpr)
-        (= :lambda f) (check-lambda symtable sexpr)
+        (not-any? #(= % f) legal-fs) {:errors ["error1"]}
+        (= f :def) (check-define symtable sexpr)
+        (= f :lambda) (check-lambda symtable sexpr)
         :else {})))
 
 (defn analyze-sexpr-tree [analysis sexpr]

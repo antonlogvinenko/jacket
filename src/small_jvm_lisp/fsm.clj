@@ -50,7 +50,6 @@
                      "(character at line " (rt/get-line-number reader) ", "
                      "column " (dec (rt/get-column-number reader)) ")")))
 
-
 (defn get-position [reader]
   [(rt/get-line-number reader)
    (-> reader rt/get-column-number dec)])
@@ -63,6 +62,11 @@
   TokenProtocol
   (equals [this v] (= value v))
   (is? [this pred] true))
+
+(defn to-tokens [ts]
+  (if (vector? ts)
+    (->> ts (map to-tokens) vec)
+    (Token. ts 1 1)))
 
 (defn tokenize-with-grammar [grammar reader]
   (loop [state :done accum nil reader reader tokens [] pos [0 0]]

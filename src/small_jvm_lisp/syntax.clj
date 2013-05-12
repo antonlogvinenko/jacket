@@ -24,18 +24,18 @@
   (raise-at-token token "Unknown token"))
 
 (defn read-sexpr [tokens]
-  (loop [tokens tokens stack []]
+  (loop [prev nil tokens tokens stack []]
     (let [token (first tokens)
           tokens (rest tokens)]
       (if (nil? token)
-        (raise-unmatched-brace stack token)
+        (raise-unmatched-brace stack prev)
         (if (and (-> stack count (= 1)) (= token :RB))
           {:expr (first stack) :tokens tokens}
           (let [new-stack (case (.value token)
                             :LB (conj stack [])
                             :RB (conj-last (pop stack) (peek stack))
                             (conj-last stack token))]
-            (recur tokens new-stack)))))))
+            (recur token tokens new-stack)))))))
   
 (defn read-expr [tokens]
   (let [token (first tokens)
