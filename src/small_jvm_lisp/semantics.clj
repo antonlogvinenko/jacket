@@ -12,6 +12,10 @@
 (defn is-sexpr? [expr]
   (vector? expr))
 
+(defn search-symbol [global local sym]
+  (let [legal-syms (concat (map keywordize KEYWORDS) (flatten local) global)]
+    (not-any? #(= sym %) legal-syms)))
+
 (defn check-define [symtable sexpr]
   (let [length (count sexpr)
         name-token (second sexpr)]
@@ -37,15 +41,14 @@
       :else {:symtable (second sexpr)}
       )))
 
-(defn analyze-sexpr [global-table symtable sexpr]
-  (let [f (first sexpr)
-        legal-fs (concat (map keywordize KEYWORDS) (flatten symtable))]
+(defn analyze-sexpr [sym-g sym-l sexpr]
+  (let [f (first sexpr)]
     (cond
-      (not-any? #(= f %) legal-fs)
-      [global-table {:errors ["Illegal first token for s-expression"]}]
-      (= f :def) [(conj global-table (second sexpr)) (check-define symtable sexpr)]
-      (= f :lambda) [global-table (check-lambda symtable sexpr)]
-      :else [global-table {}])))
+      (search-symbol sym-g sym-l f)
+      [sym-g {:errors ["Illegal first token for s-expression"]}]
+      (= f :def) [(conj sym-g (second sexpr)) (check-define sym-l sexpr)]
+      (= f :lambda) [sym-g (check-lambda sym-l sexpr)]
+      :else [sym-g {}])))
 
 (defn analyze-sexpr-tree [analysis sexpr]
   (loop [global-table []
