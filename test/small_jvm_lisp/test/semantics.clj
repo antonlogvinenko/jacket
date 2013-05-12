@@ -83,9 +83,41 @@
        )
   )
 
-(deftest analyze-sexpr-tree-test)
-(deftest semantics-test)
-       
-       
-       
-       
+(deftest analyze-sexpr-tree-test
+  (are [sexpr-tree errors symtable]
+       (= {:errors errors :symtable (to-tokens symtable)}
+          (->> sexpr-tree to-tokens (analyze-sexpr-tree {})))
+
+       [:def 'a [:lambda ['a '42] 42]]
+       ["Wrong arguments at lambda"]
+       ['a]
+       )
+  
+  (are [sexpr-tree errors]
+       (= {:errors errors}
+          (->> sexpr-tree to-tokens (analyze-sexpr-tree {})))
+
+       [:def 'a 42 32]
+       ["Wrong arguments amount to def (4)"]
+       )       
+
+  (are [sexpr-tree symtable]
+       (= {:symtable (to-tokens symtable)}
+          (->> sexpr-tree to-tokens (analyze-sexpr-tree {})))
+
+       [:def 'a [:lambda ['a 'b] [:+ 'a 'b]]]
+       ['a]
+
+       )
+  )
+
+(deftest semantics-test
+  (are [program]
+       (= (to-tokens program) (-> program to-tokens semantics))
+
+       [42]
+
+       [[:def 'c [:lambda ['a] [:+ 'a 3]]] 42]
+
+       ))       
+      

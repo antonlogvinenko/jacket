@@ -42,10 +42,11 @@
   (let [f (first sexpr)
         legal-fs (concat (map keywordize KEYWORDS) symtable)]
     (cond
-        (not-any? #(= f %) legal-fs) {:errors ["Illegal first token for s-expression"]}
-        (= f :def) (check-define symtable sexpr)
-        (= f :lambda) (check-lambda symtable sexpr)
-        :else {})))
+      (not-any? #(= f %) legal-fs)
+      {:errors ["Illegal first token for s-expression"]}
+      (= f :def) (check-define symtable sexpr)
+      (= f :lambda) (check-lambda symtable sexpr)
+      :else {})))
 
 (defn analyze-sexpr-tree [analysis sexpr]
   (loop [{symtable :symtable :as analysis} analysis
@@ -56,27 +57,28 @@
             new-analysis (->> current-sexpr
                               (analyze-sexpr symtable)
                               (merge-with concat analysis))
-            is-quoted (-> sexpr-stack first (= :quote))
+            is-quoted (-> current-sexpr first (= :quote))
+            is-lambda (-> current-sexpr first (= :lambda))
             cleaned-sexpr-stack (pop sexpr-stack)
-            new-sexpr-stack (if is-quoted
-                              cleaned-sexpr-stack
-                              (->> current-sexpr
-                                   (filter is-sexpr?)
-                                   reverse
-                                   (concat cleaned-sexpr-stack)
-                                   vec))]
+            other-sexprs (->> current-sexpr
+                              (filter is-sexpr?)
+                              reverse)
+            new-sexpr-stack (-> cleaned-sexpr-stack
+                                (concat
+                                 (if is-lambda (drop-last other-sexprs) other-sexprs))
+                                vec)]
         (recur new-analysis new-sexpr-stack)))))
 
 (defn raise-semantics-error [analysis]
   (->> analysis
-       (str "Semantics analysis failed: ")
+       (str "Semantics analysis failed: " analysis)
        raise))
 
 (defn semantics [program]
-  (if-let [analysis (->> program
-                         (filter is-sexpr?)
-                         (reduce analyze-sexpr-tree {:errors []})
-                         :errors
-                         (comp not empty? :errors))]
-    (raise-semantics-error analysis)
-    program))
+  (let [errors (->> program
+                    (filter is-sexpr?)
+                    (reduce analyze-sexpr-tree {:errors []})
+                    :errors)]
+    (if (empty? errors)
+      program
+      (raise-semantics-error (reduce str (map str errors))))))
