@@ -38,30 +38,31 @@
       :else {:symtable (second sexpr)}
       )))
 
-(defn analyze-sexpr [symtable sexpr]
+(defn analyze-sexpr [global-table symtable sexpr]
   (let [f (first sexpr)
         legal-fs (concat (map keywordize KEYWORDS) (flatten symtable))]
     (cond
       (not-any? #(= f %) legal-fs)
-      {:errors ["Illegal first token for s-expression"]}
-      (= f :def) (check-define symtable sexpr)
-      (= f :lambda) (check-lambda symtable sexpr)
-      :else {})))
+      [global-table {:errors ["Illegal first token for s-expression"]}]
+      (= f :def) [(conj global-table (second sexpr)) (check-define symtable sexpr)]
+      (= f :lambda) [global-table (check-lambda symtable sexpr)]
+      :else [global-table {}])))
 
 (defn analyze-sexpr-tree [analysis sexpr]
-  (loop [{symtable :symtable errors :errors :as analysis} analysis
+  (loop [global-table []
+         {symtable :symtable errors :errors :as analysis} analysis
          sexpr-level-stack [[sexpr]]]
     (let [current-sexpr-level (last sexpr-level-stack)]
       (cond
         (empty? sexpr-level-stack) analysis
 
-        (empty? current-sexpr-level) (recur analysis
+        (empty? current-sexpr-level) (recur global-table
+                                            analysis
                                             (pop sexpr-level-stack))
         
         :else (let [current-sexpr (last current-sexpr-level)
-                    new-analysis (->> current-sexpr
-                                      (analyze-sexpr symtable)
-                                      (merge-with concat analysis))
+                    [global-table local-analysis] (analyze-sexpr global-table symtable current-sexpr)
+                    new-analysis (merge-with concat analysis local-analysis)
                     is-quoted (-> current-sexpr first (= :quote))
                     is-lambda (-> current-sexpr first (= :lambda))
                     cleaned-sexpr-stack (pop current-sexpr-level)
@@ -73,7 +74,7 @@
                                            (if is-lambda
                                              (drop-last other-sexprs)
                                              other-sexprs)))]
-                (recur new-analysis new-sexpr-stack))))))
+                (recur global-table new-analysis new-sexpr-stack))))))
 
 (defn raise-semantics-error [analysis]
   (->> analysis
