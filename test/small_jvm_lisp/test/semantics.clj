@@ -51,6 +51,31 @@
        ["Wrong arguments at lambda"]
        )
   )
+
+(deftest analyze-sexpr-test
+  (are [sexpr symtable]
+       (= {:symtable (to-tokens symtable)}
+          (analyze-sexpr [] (to-tokens sexpr)))
+
+       [:def 'b 42]
+       ['b]
+       )
+
+  (are [sexpr errors]
+       (= {:errors errors}
+          (analyze-sexpr [] (to-tokens sexpr)))
+
+       [:def 42]
+       ["Wrong arguments amount to def (2)"]
+
+       [:def 42 42]
+       ["Not a symbol (42)"]
+
+       [:de 42]
+       ["Illegal first token for s-expression"]
+       
+       )
+  )
        
        
        

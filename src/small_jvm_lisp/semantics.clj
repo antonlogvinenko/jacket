@@ -42,7 +42,7 @@
   (let [f (first sexpr)
         legal-fs (concat (map keywordize KEYWORDS) symtable)]
     (cond
-        (not-any? #(= % f) legal-fs) {:errors ["error1"]}
+        (not-any? #(= f %) legal-fs) {:errors ["Illegal first token for s-expression"]}
         (= f :def) (check-define symtable sexpr)
         (= f :lambda) (check-lambda symtable sexpr)
         :else {})))
