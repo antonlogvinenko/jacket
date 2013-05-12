@@ -6,6 +6,8 @@
   (:import [small_jvm_lisp.fsm Token])
   )
 
+(def sexpr-z {:symtable [] :errors []})
+
 (deftest is-sexpr?-test
   (are [expr pred] (-> expr to-tokens is-sexpr? pred)
        [:def 'a] true?
@@ -54,11 +56,11 @@
   )
 
 (deftest analyze-sexpr-test
-  (are [sexpr symtable global]
-       (= [(to-tokens global) {:symtable (to-tokens symtable)}]
-          (analyze-sexpr [] [] (to-tokens sexpr)))
+  (are [sexpr global]
+       (= (to-tokens global)
+          (first (analyze-sexpr [] [] (to-tokens sexpr))))
 
-       [:def 'b 42] [] ['b]
+       [:def 'b 42] ['b]
        )
 
   (are [sexpr errors global]
@@ -90,8 +92,8 @@
 
 (deftest analyze-sexpr-tree-test
   (are [sexpr-tree errors symtable]
-       (= {:errors errors :symtable (to-tokens symtable)}
-          (->> sexpr-tree to-tokens (analyze-sexpr-tree {})))
+       (= errors
+          (->> sexpr-tree to-tokens (analyze-sexpr-tree sexpr-z) :errors))
 
        [:def 'a [:lambda ['a '42] 42]]
        ["Wrong arguments at lambda"]
@@ -99,19 +101,19 @@
        )
   
   (are [sexpr-tree errors]
-       (= {:errors errors}
-          (->> sexpr-tree to-tokens (analyze-sexpr-tree {})))
+       (= errors
+          (->> sexpr-tree to-tokens (analyze-sexpr-tree sexpr-z) :errors))
 
        [:def 'a 42 32]
        ["Wrong arguments amount to def (4)"]
        )       
 
   (are [sexpr-tree symtable]
-       (= {:symtable (to-tokens symtable)}
-          (->> sexpr-tree to-tokens (analyze-sexpr-tree {})))
+       (= (to-tokens symtable)
+          (->> sexpr-tree to-tokens (analyze-sexpr-tree sexpr-z) :symtable))
 
        [:def 'c [:lambda ['a 'b] [:+ 'a 'b]]]
-       ['a 'b]
+       [[] ['a 'b]]
 
        [:def 'c 42]
        []

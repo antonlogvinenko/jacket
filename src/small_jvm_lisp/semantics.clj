@@ -48,7 +48,7 @@
       [sym-g {:errors ["Illegal first token for s-expression"]}]
       (= f :def) [(conj sym-g (second sexpr)) (check-define sym-l sexpr)]
       (= f :lambda) [sym-g (check-lambda sym-l sexpr)]
-      :else [sym-g {}])))
+      :else [sym-g {:errors [] :symtable []}])))
 
 (defn analyze-sexpr-tree [analysis sexpr]
   (loop [global-table []
@@ -59,12 +59,17 @@
         (empty? sexpr-level-stack) analysis
 
         (empty? current-sexpr-level) (recur global-table
-                                            analysis
+                                            {:errors errors :symtable (pop symtable)}
                                             (pop sexpr-level-stack))
         
         :else (let [current-sexpr (last current-sexpr-level)
-                    [global-table local-analysis] (analyze-sexpr global-table symtable current-sexpr)
-                    new-analysis (merge-with concat analysis local-analysis)
+                    
+                    [global-table {new-errors :errors new-symtable :symtable}]
+                    (analyze-sexpr global-table symtable current-sexpr)
+                    
+                    new-analysis {:errors (vec (concat errors new-errors))
+                                  :symtable (conj symtable new-symtable)}
+                    
                     is-quoted (-> current-sexpr first (= :quote))
                     is-lambda (-> current-sexpr first (= :lambda))
                     cleaned-sexpr-stack (pop current-sexpr-level)
@@ -86,7 +91,7 @@
 (defn semantics [program]
   (let [errors (->> program
                     (filter is-sexpr?)
-                    (reduce analyze-sexpr-tree {:errors []})
+                    (reduce analyze-sexpr-tree {:errors [] :symtable []})
                     :errors)]
     (if (empty? errors)
       program
