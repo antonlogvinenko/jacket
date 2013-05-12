@@ -71,11 +71,20 @@
        [:def 42 42]
        ["Not a symbol (42)"]
 
+       [:lambda ['a]]
+       ["Wrong arguments amount to lambda (2)"]
+
+       [:lambda ['a 42] 42]
+       ["Wrong arguments at lambda"]
+       
        [:de 42]
        ["Illegal first token for s-expression"]
        
        )
   )
+
+(deftest analyze-sexpr-tree-test)
+(deftest semantics-test)
        
        
        
