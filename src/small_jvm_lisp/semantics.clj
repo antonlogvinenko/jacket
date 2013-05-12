@@ -32,8 +32,8 @@
       (not= length 3)
       {:errors [(str "Wrong arguments amount to lambda (" length ")")]}
       
-      (->> sexpr second (every? symbol?))
-      {:errors [(str "Wrongs arguments at lambda: " args)]}
+      (->> sexpr second (every? #(is? % symbol?)) not)
+      {:errors [(str "Wrong arguments at lambda")]}
 
       :else {}
       )))

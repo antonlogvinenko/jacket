@@ -32,9 +32,26 @@
 
        ['a] [:def 42 42]
        ["Not a symbol (42)"]
-       
+       ))
+
+(deftest check-lambda-test
+  (are [sexpr-in]
+       (= {} (check-lambda [] (to-tokens sexpr-in)))
+
+       [:lambda ['a 'b] true]
+       )
+
+  (are [sexpr-in errors]
+       (= {:errors errors} (check-lambda [] (to-tokens sexpr-in)))
+
+       [:lambda ['a] true true]
+       ["Wrong arguments amount to lambda (4)"]
+
+       [:lambda ['a 42] true]
+       ["Wrong arguments at lambda"]
        )
   )
+       
        
        
        
