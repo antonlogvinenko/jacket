@@ -60,8 +60,11 @@
 
 (deftype Token [value line column]
   TokenProtocol
-  (equals [this v] (= value v))
-  (is? [this pred] true))
+  (equals [this v]
+    (if (-> v type (= Token))
+      (= (.value v) value)
+      (= value v)))
+  (is? [this pred] (pred value)))
 
 (defn to-tokens [ts]
   (if (vector? ts)

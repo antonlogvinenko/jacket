@@ -20,10 +20,10 @@
       {:errors [(str "Wrong arguments amount to def (" length ")")]}
       
       (-> name-token (is? symbol?) not)
-      {:errors [(str "Not a symbol (" name ")")]}
+      {:errors [(str "Not a symbol (" (.value name-token) ")")]}
 
       :else
-      {:symtable (conj symtable name)})))
+      {:symtable [name-token]})))
 
 (defn check-lambda [symtable sexpr]
   (let [length (count sexpr)
@@ -75,7 +75,8 @@
 (defn semantics [program]
   (if-let [analysis (->> program
                          (filter is-sexpr?)
-                         (reduce analyze-sexpr-tree {})
-                         :errors)]
+                         (reduce analyze-sexpr-tree {:errors []})
+                         :errors
+                         (comp not empty? :errors))]
     (raise-semantics-error analysis)
     program))
