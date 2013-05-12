@@ -40,7 +40,7 @@
 
 (defn analyze-sexpr [symtable sexpr]
   (let [f (first sexpr)
-        legal-fs (concat (map keywordize KEYWORDS) symtable)]
+        legal-fs (concat (map keywordize KEYWORDS) (flatten symtable))]
     (cond
       (not-any? #(= f %) legal-fs)
       {:errors ["Illegal first token for s-expression"]}
@@ -49,13 +49,14 @@
       :else {})))
 
 (defn analyze-sexpr-tree [analysis sexpr]
-  (loop [{symtable :symtable :as analysis} analysis
+  (loop [{symtable :symtable errors :errors :as analysis} analysis
          sexpr-level-stack [[sexpr]]]
     (let [current-sexpr-level (last sexpr-level-stack)]
       (cond
         (empty? sexpr-level-stack) analysis
 
-        (empty? current-sexpr-level) (recur analysis (pop sexpr-level-stack))
+        (empty? current-sexpr-level) (recur analysis
+                                            (pop sexpr-level-stack))
         
         :else (let [current-sexpr (last current-sexpr-level)
                     new-analysis (->> current-sexpr
