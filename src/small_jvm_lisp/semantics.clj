@@ -35,7 +35,7 @@
       (->> sexpr second (every? #(is? % symbol?)) not)
       {:errors [(str "Wrong arguments at lambda")]}
 
-      :else {}
+      :else {:symtable (second sexpr)}
       )))
 
 (defn analyze-sexpr [symtable sexpr]

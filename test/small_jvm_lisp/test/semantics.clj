@@ -35,10 +35,11 @@
        ))
 
 (deftest check-lambda-test
-  (are [sexpr-in]
-       (= {} (check-lambda [] (to-tokens sexpr-in)))
+  (are [sexpr-in symtable]
+       (= {:symtable (to-tokens symtable)} (check-lambda [] (to-tokens sexpr-in)))
 
        [:lambda ['a 'b] true]
+       ['a 'b]
        )
 
   (are [sexpr-in errors]
@@ -105,8 +106,8 @@
        (= {:symtable (to-tokens symtable)}
           (->> sexpr-tree to-tokens (analyze-sexpr-tree {})))
 
-       [:def 'a [:lambda ['a 'b] [:+ 'a 'b]]]
-       ['a]
+       [:def 'c [:lambda ['a 'b] [:+ 'a 'b]]]
+       ['c 'a 'b]
 
        )
   )
