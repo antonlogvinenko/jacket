@@ -50,24 +50,29 @@
 
 (defn analyze-sexpr-tree [analysis sexpr]
   (loop [{symtable :symtable :as analysis} analysis
-         sexpr-stack [sexpr]]
-    (if (empty? sexpr-stack)
-      analysis
-      (let [current-sexpr (last sexpr-stack)
-            new-analysis (->> current-sexpr
-                              (analyze-sexpr symtable)
-                              (merge-with concat analysis))
-            is-quoted (-> current-sexpr first (= :quote))
-            is-lambda (-> current-sexpr first (= :lambda))
-            cleaned-sexpr-stack (pop sexpr-stack)
-            other-sexprs (->> current-sexpr
-                              (filter is-sexpr?)
-                              reverse)
-            new-sexpr-stack (-> cleaned-sexpr-stack
-                                (concat
-                                 (if is-lambda (drop-last other-sexprs) other-sexprs))
-                                vec)]
-        (recur new-analysis new-sexpr-stack)))))
+         sexpr-level-stack [[sexpr]]]
+    (let [current-sexpr-level (last sexpr-level-stack)]
+      (cond
+        (empty? sexpr-level-stack) analysis
+
+        (empty? current-sexpr-level) (recur analysis (pop sexpr-level-stack))
+        
+        :else (let [current-sexpr (last current-sexpr-level)
+                    new-analysis (->> current-sexpr
+                                      (analyze-sexpr symtable)
+                                      (merge-with concat analysis))
+                    is-quoted (-> current-sexpr first (= :quote))
+                    is-lambda (-> current-sexpr first (= :lambda))
+                    cleaned-sexpr-stack (pop current-sexpr-level)
+                    other-sexprs (->> current-sexpr
+                                      (filter is-sexpr?)
+                                      reverse)
+                    new-sexpr-stack (conj cleaned-sexpr-stack
+                                          (vec
+                                           (if is-lambda
+                                             (drop-last other-sexprs)
+                                             other-sexprs)))]
+                (recur new-analysis new-sexpr-stack))))))
 
 (defn raise-semantics-error [analysis]
   (->> analysis
