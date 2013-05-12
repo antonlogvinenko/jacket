@@ -58,7 +58,7 @@
        (= [(to-tokens global) {:symtable (to-tokens symtable)}]
           (analyze-sexpr [] [] (to-tokens sexpr)))
 
-       [:def 'b 42] ['b] ['b]
+       [:def 'b 42] [] ['b]
        )
 
   (are [sexpr errors global]
@@ -95,7 +95,7 @@
 
        [:def 'a [:lambda ['a '42] 42]]
        ["Wrong arguments at lambda"]
-       ['a]
+       []
        )
   
   (are [sexpr-tree errors]
@@ -111,10 +111,10 @@
           (->> sexpr-tree to-tokens (analyze-sexpr-tree {})))
 
        [:def 'c [:lambda ['a 'b] [:+ 'a 'b]]]
-       ['c 'a 'b]
+       ['a 'b]
 
        [:def 'c 42]
-       ['c]
+       []
 
        )
   )

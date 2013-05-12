@@ -22,8 +22,7 @@
       (-> name-token (is? symbol?) not)
       {:errors [(str "Not a symbol (" (.value name-token) ")")]}
 
-      :else
-      {:symtable [name-token]})))
+      :else {:symtable []} )))
 
 (defn check-lambda [symtable sexpr]
   (let [length (count sexpr)
