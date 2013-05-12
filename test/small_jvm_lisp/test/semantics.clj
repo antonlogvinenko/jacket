@@ -71,12 +71,53 @@
        [:def 42 42]
        ["Not a symbol (42)"]
 
+       [:lambda ['a]]
+       ["Wrong arguments amount to lambda (2)"]
+
+       [:lambda ['a 42] 42]
+       ["Wrong arguments at lambda"]
+       
        [:de 42]
        ["Illegal first token for s-expression"]
        
        )
   )
-       
-       
-       
-       
+
+(deftest analyze-sexpr-tree-test
+  (are [sexpr-tree errors symtable]
+       (= {:errors errors :symtable (to-tokens symtable)}
+          (->> sexpr-tree to-tokens (analyze-sexpr-tree {})))
+
+       [:def 'a [:lambda ['a '42] 42]]
+       ["Wrong arguments at lambda"]
+       ['a]
+       )
+  
+  (are [sexpr-tree errors]
+       (= {:errors errors}
+          (->> sexpr-tree to-tokens (analyze-sexpr-tree {})))
+
+       [:def 'a 42 32]
+       ["Wrong arguments amount to def (4)"]
+       )       
+
+  (are [sexpr-tree symtable]
+       (= {:symtable (to-tokens symtable)}
+          (->> sexpr-tree to-tokens (analyze-sexpr-tree {})))
+
+       [:def 'a [:lambda ['a 'b] [:+ 'a 'b]]]
+       ['a]
+
+       )
+  )
+
+(deftest semantics-test
+  (are [program]
+       (= (to-tokens program) (-> program to-tokens semantics))
+
+       [42]
+
+       [[:def 'c [:lambda ['a] [:+ 'a 3]]] 42]
+
+       ))       
+      
