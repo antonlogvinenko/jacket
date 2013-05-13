@@ -98,6 +98,10 @@
        [:def 'a [:lambda ['a '42] 42]]
        ["Wrong arguments at lambda"]
        []
+
+       [:def 'a [:quote ['a 'b 'c] 42]]
+       ["Wrong arguments count to quote"]
+       []
        )
   
   (are [sexpr-tree errors]
@@ -117,6 +121,9 @@
 
        [:def 'c 42]
        []
+
+       [:def 'a [:quote ['a 'b]]]
+       [[]]
 
        )
   )

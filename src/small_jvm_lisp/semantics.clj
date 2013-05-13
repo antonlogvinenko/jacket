@@ -41,6 +41,12 @@
       :else {:symtable (second sexpr)}
       )))
 
+(defn check-quote [sym-l sexpr]
+  (let [length (count sexpr)]
+    (if (= length 1)
+      {:symtable []}
+      {:errors ["Wrong arguments count to quote"]})))
+
 (defn analyze-sexpr [sym-g sym-l sexpr]
   (let [f (first sexpr)]
     (cond
@@ -48,6 +54,7 @@
       [sym-g {:errors ["Illegal first token for s-expression"]}]
       (= f :def) [(conj sym-g (second sexpr)) (check-define sym-l sexpr)]
       (= f :lambda) [sym-g (check-lambda sym-l sexpr)]
+      (= f :quote) [sym-g (check-quote sym-l sexpr)]
       :else [sym-g {:errors [] :symtable []}])))
 
 (defn analyze-sexpr-tree [analysis sexpr]
@@ -73,9 +80,10 @@
                     is-quoted (-> current-sexpr first (= :quote))
                     is-lambda (-> current-sexpr first (= :lambda))
                     cleaned-sexpr-stack (pop current-sexpr-level)
-                    other-sexprs (->> current-sexpr
-                                      (filter is-sexpr?)
-                                      reverse)
+                    other-sexprs (if is-quoted nil
+                                     (->> current-sexpr
+                                          (filter is-sexpr?)
+                                          reverse))
                     new-sexpr-stack (conj cleaned-sexpr-stack
                                           (vec
                                            (if is-lambda
