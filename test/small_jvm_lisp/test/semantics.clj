@@ -21,7 +21,7 @@
           [sym-g sym-l errors sexprs])
 
        [:def 'b 42]
-       ['b] nil nil nil
+       ['b] ['b] nil nil
        
        [:def 'b 42 42]
        nil nil ["Wrong arguments amount to def (4)"] nil
@@ -64,7 +64,7 @@
           [sym-g sym-l errors sexprs])
 
        [:def 'b 42]
-       ['b] nil nil nil
+       ['b] ['b] nil nil
 
        [:def 42]
        nil nil ["Wrong arguments amount to def (2)"] nil
@@ -82,7 +82,7 @@
        nil nil ["Illegal first token for s-expression"] nil
 
        [:def 'a 42]
-       ['a] nil nil nil
+       ['a] ['a] nil nil
 
        [:lambda ['a 'b] [:+ 'a 'b]]
        nil ['a 'b] nil [[:+ 'a 'b]]

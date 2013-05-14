@@ -12,11 +12,11 @@
 (defn is-sexpr? [expr]
   (vector? expr))
 
-(defn search-symbol [{local :sym-l global :g-sym} sym]
+(defn search-symbol [[global local _] sym]
   (let [legal-syms (concat (map keywordize KEYWORDS) (flatten local) global)]
     (not-any? #(= sym %) legal-syms)))
 
-(defn check-define [_ sexpr]
+(defn check-define [[_ local _ _] sexpr]
   (let [length (count sexpr)
         name-token (second sexpr)
         body (last sexpr)]
@@ -27,7 +27,7 @@
       (-> name-token (is? symbol?) not)
       [nil nil [(str "Not a symbol (" (.value name-token) ")")] nil]
 
-      :else [[(second sexpr)] nil nil (if (is-sexpr? body) [body] nil)])))
+      :else [[(second sexpr)] [(second sexpr)] nil (if (is-sexpr? body) [body] nil)])))
 
 (defn check-lambda [_ sexpr]
   (let [length (count sexpr)
