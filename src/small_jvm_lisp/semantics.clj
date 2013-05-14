@@ -71,8 +71,7 @@
     (let [current-level (last s)]
       (cond
         (empty? s) [g l e]
-        (empty? current-level) (recur
-                                g (if (empty? l) l (pop l)) e (pop s))
+        (empty? current-level) (recur g (if (empty? l) l (pop l)) e (pop s))
         :else (let [current-s (last current-level)
                     [g2 l2 e2 s2] (analyze-sexpr [g l e s] current-s)]
                 (recur (concat g g2)
