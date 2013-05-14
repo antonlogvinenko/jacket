@@ -12,84 +12,74 @@
 (defn is-sexpr? [expr]
   (vector? expr))
 
-(defn search-symbol [global local sym]
+(defn search-symbol [{local :sym-l global :g-sym} sym]
   (let [legal-syms (concat (map keywordize KEYWORDS) (flatten local) global)]
     (not-any? #(= sym %) legal-syms)))
 
-(defn check-define [symtable sexpr]
+(defn check-define [_ sexpr]
   (let [length (count sexpr)
-        name-token (second sexpr)]
+        name-token (second sexpr)
+        body (last sexpr)]
     (cond
       (not= length 3)
-      {:errors [(str "Wrong arguments amount to def (" length ")")]}
+      [nil nil [(str "Wrong arguments amount to def (" length ")")] nil]
       
       (-> name-token (is? symbol?) not)
-      {:errors [(str "Not a symbol (" (.value name-token) ")")]}
+      [nil nil [(str "Not a symbol (" (.value name-token) ")")] nil]
 
-      :else {:symtable []} )))
+      :else [[(second sexpr)] nil nil (if (is-sexpr? body) [body] nil)])))
 
-(defn check-lambda [symtable sexpr]
+(defn check-lambda [_ sexpr]
   (let [length (count sexpr)
-        args (second sexpr)]
+        args (second sexpr)
+        body (last sexpr)]
     (cond
       (not= length 3)
-      {:errors [(str "Wrong arguments amount to lambda (" length ")")]}
+      [nil nil [(str "Wrong arguments amount to lambda (" length ")")] nil]
       
       (->> sexpr second (every? #(is? % symbol?)) not)
-      {:errors [(str "Wrong arguments at lambda")]}
+      [nil nil [(str "Wrong arguments at lambda")] nil]
 
-      :else {:symtable (second sexpr)}
+      :else [nil (second sexpr) nil (if (is-sexpr? body) [body] nil)]
       )))
 
-(defn check-quote [sym-l sexpr]
+(defn check-quote [_ sexpr]
   (let [length (count sexpr)]
-    (if (= length 1)
-      {:symtable []}
-      {:errors ["Wrong arguments count to quote"]})))
+    (if (= length 2)
+      [nil nil nil nil]
+      [nil nil ["Wrong arguments count to quote"] nil])))
 
-(defn analyze-sexpr [sym-g sym-l sexpr]
-  (let [f (first sexpr)]
+(defn analyze-sexpr [state sexpr]
+;;  (println "sexpr: " sexpr)
+  (let [f (first sexpr)
+        other-sexprs (->> sexpr (filter is-sexpr?) reverse)
+        other-sexprs (cond
+                       (= f :quote) nil
+                       (= f :lambda) (-> other-sexprs drop-last vec)
+                       :else (vec other-sexprs))]
     (cond
-      (search-symbol sym-g sym-l f)
-      [sym-g {:errors ["Illegal first token for s-expression"]}]
-      (= f :def) [(conj sym-g (second sexpr)) (check-define sym-l sexpr)]
-      (= f :lambda) [sym-g (check-lambda sym-l sexpr)]
-      (= f :quote) [sym-g (check-quote sym-l sexpr)]
-      :else [sym-g {:errors [] :symtable []}])))
+      (= f :def) (check-define state sexpr)
+      (= f :lambda) (check-lambda state sexpr)
+      (= f :quote) (check-quote state sexpr)
+      (search-symbol state f)
+      [nil nil ["Illegal first token for s-expression"] nil]
+      :else [nil nil nil nil])))
 
-(defn analyze-sexpr-tree [analysis sexpr]
-  (loop [global-table []
-         {symtable :symtable errors :errors :as analysis} analysis
-         sexpr-level-stack [[sexpr]]]
-    (let [current-sexpr-level (last sexpr-level-stack)]
+(defn analyze-sexpr-tree [[global local errors] sexpr]
+  (loop [g global, l local, e errors, s [[sexpr]]]
+    (let [current-level (last s)]
       (cond
-        (empty? sexpr-level-stack) analysis
-
-        (empty? current-sexpr-level) (recur global-table
-                                            {:errors errors :symtable (pop symtable)}
-                                            (pop sexpr-level-stack))
-        
-        :else (let [current-sexpr (last current-sexpr-level)
-                    
-                    [global-table {new-errors :errors new-symtable :symtable}]
-                    (analyze-sexpr global-table symtable current-sexpr)
-                    
-                    new-analysis {:errors (vec (concat errors new-errors))
-                                  :symtable (conj symtable new-symtable)}
-                    
-                    is-quoted (-> current-sexpr first (= :quote))
-                    is-lambda (-> current-sexpr first (= :lambda))
-                    cleaned-sexpr-stack (pop current-sexpr-level)
-                    other-sexprs (if is-quoted nil
-                                     (->> current-sexpr
-                                          (filter is-sexpr?)
-                                          reverse))
-                    new-sexpr-stack (conj cleaned-sexpr-stack
-                                          (vec
-                                           (if is-lambda
-                                             (drop-last other-sexprs)
-                                             other-sexprs)))]
-                (recur global-table new-analysis new-sexpr-stack))))))
+        (empty? s) [g l e]
+        (empty? current-level) (recur
+                                g (if (empty? l) l (pop l)) e (pop s))
+        :else (let [current-s (last current-level)
+                    [g2 l2 e2 s2] (analyze-sexpr [g l e s] current-s)
+                    new-current-level (pop current-level)
+                    l (if (nil? l2) l (conj l l2))
+                    s (pop s)
+                    s (if (empty? new-current-level) s (conj s (new-current-level)))
+                    s (if (empty? s2) s (conj s s2))]
+                (recur (concat g g2) l (concat e e2) s))))))
 
 (defn raise-semantics-error [analysis]
   (->> analysis
@@ -99,8 +89,8 @@
 (defn semantics [program]
   (let [errors (->> program
                     (filter is-sexpr?)
-                    (reduce analyze-sexpr-tree {:errors [] :symtable []})
-                    :errors)]
+                    (reduce analyze-sexpr-tree [[] [] []])
+                    last)]
     (if (empty? errors)
       program
       (raise-semantics-error (reduce str (map str errors))))))
