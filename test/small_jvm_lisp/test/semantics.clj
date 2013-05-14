@@ -16,112 +16,103 @@
        ))
 
 (deftest check-define-test
-  (are [symtable-in sexpr-in symtable errors]
-       (= {:symtable (to-tokens symtable)}
-          (check-define (to-tokens symtable-in) (to-tokens sexpr-in)))
+  (are [sexpr sym-g sym-l errors sexprs]
+       (= (check-define [] (to-tokens sexpr))
+          [sym-g sym-l errors sexprs])
 
-       ['a] [:def 'b 42]
-       ['b]
-
-       )
-
-  (are [symtable-in sexpr-in errors]
-       (= {:errors errors}
-          (check-define (to-tokens symtable-in) (to-tokens sexpr-in)))
-
-       ['a] [:def 'b 42 42]
-       ["Wrong arguments amount to def (4)"]
-
-       ['a] [:def 42 42]
-       ["Not a symbol (42)"]
+       [:def 'b 42]
+       ['b] nil nil nil
+       
+       [:def 'b 42 42]
+       nil nil ["Wrong arguments amount to def (4)"] nil
+       
+       [:def 42 42]
+       nil nil ["Not a symbol (42)"] nil
        ))
 
 (deftest check-lambda-test
-  (are [sexpr-in symtable]
-       (= {:symtable (to-tokens symtable)} (check-lambda [] (to-tokens sexpr-in)))
+  (are [sexpr sym-g sym-l errors sexprs]
+       (= (check-lambda [] (to-tokens sexpr))
+          [sym-g sym-l errors sexprs])
 
        [:lambda ['a 'b] true]
-       ['a 'b]
-       )
-
-  (are [sexpr-in errors]
-       (= {:errors errors} (check-lambda [] (to-tokens sexpr-in)))
+       nil ['a 'b] nil nil
 
        [:lambda ['a] true true]
-       ["Wrong arguments amount to lambda (4)"]
+       nil nil ["Wrong arguments amount to lambda (4)"] nil
 
        [:lambda ['a 42] true]
-       ["Wrong arguments at lambda"]
-       )
-  )
+       nil nil ["Wrong arguments at lambda"] nil
+       ))
+
+(deftest check-quote-test
+  (are [sexpr sym-g sym-l errors sexprs]
+       (= (check-quote [] (to-tokens sexpr))
+          [sym-g sym-l errors sexprs])
+
+       [:quote ['a 'b] true]
+       nil nil ["Wrong arguments count to quote"] nil
+
+       [:quote ['a 'b]]
+       nil nil nil nil
+
+       ))
 
 (deftest analyze-sexpr-test
-  (are [sexpr global]
-       (= (to-tokens global)
-          (first (analyze-sexpr [] [] (to-tokens sexpr))))
+  (are [sexpr sym-g sym-l errors sexprs]
+       (= (analyze-sexpr [] (to-tokens sexpr))
+          [sym-g sym-l errors sexprs])
 
-       [:def 'b 42] ['b]
-       )
-
-  (are [sexpr errors]
-       (= errors
-          (:errors (second (analyze-sexpr [] [] (to-tokens sexpr)))))
+       [:def 'b 42]
+       ['b] nil nil nil
 
        [:def 42]
-       ["Wrong arguments amount to def (2)"]
+       nil nil ["Wrong arguments amount to def (2)"] nil
 
        [:def 42 42]
-       ["Not a symbol (42)"]
+       nil nil ["Not a symbol (42)"] nil
 
        [:lambda ['a]]
-       ["Wrong arguments amount to lambda (2)"]
+       nil nil ["Wrong arguments amount to lambda (2)"] nil
 
        [:lambda ['a 42] 42]
-       ["Wrong arguments at lambda"]
+       nil nil ["Wrong arguments at lambda"] nil
        
        [:de 42]
-       ["Illegal first token for s-expression"]
+       nil nil ["Illegal first token for s-expression"] nil
+
+       [:def 'a 42]
+       ['a] nil nil nil
+
+       [:lambda ['a 'b] [:+ 'a 'b]]
+       nil ['a 'b] nil [[:+ 'a 'b]]
        
-       )
-  )
+       ))
 
 (deftest analyze-sexpr-tree-test
-  (are [sexpr-tree errors symtable]
-       (= errors
-          (->> sexpr-tree to-tokens (analyze-sexpr-tree sexpr-z) :errors))
-
+  (are [sexpr sym-g sym-l errors]
+       (= (analyze-sexpr-tree [[] [] []] (to-tokens sexpr))
+          [sym-g sym-l errors])
+       
        [:def 'a [:lambda ['a '42] 42]]
-       ["Wrong arguments at lambda"]
-       []
+       ['a] [] ["Wrong arguments at lambda"]
 
        [:def 'a [:quote ['a 'b 'c] 42]]
-       ["Wrong arguments count to quote"]
-       []
-       )
-  
-  (are [sexpr-tree errors]
-       (= errors
-          (->> sexpr-tree to-tokens (analyze-sexpr-tree sexpr-z) :errors))
+       ['a] [] ["Wrong arguments count to quote"]
 
        [:def 'a 42 32]
-       ["Wrong arguments amount to def (4)"]
-       )       
-
-  (are [sexpr-tree symtable]
-       (= (to-tokens symtable)
-          (->> sexpr-tree to-tokens (analyze-sexpr-tree sexpr-z) :symtable))
+       [] [] ["Wrong arguments amount to def (4)"]
 
        [:def 'c [:lambda ['a 'b] [:+ 'a 'b]]]
-       [[] ['a 'b]]
+       ['c] [['a 'b]] []
 
        [:def 'c 42]
-       []
+       ['c] [] []
 
        [:def 'a [:quote ['a 'b]]]
-       [[]]
+       ['a] [] []
 
-       )
-  )
+       ))
 
 (deftest semantics-test
   (are [program]
