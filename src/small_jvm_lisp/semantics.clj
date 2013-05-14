@@ -68,12 +68,12 @@
         
 (defn analyze-sexpr-tree [[global local errors] sexpr]
   (loop [g global, l local, e errors, s [[sexpr]]]
-    (let [current-level (last s)]
+    (let [current-level (last s)
+          current-s (last current-level)]
       (cond
         (empty? s) [g l e]
         (empty? current-level) (recur g (if (empty? l) l (pop l)) e (pop s))
-        :else (let [current-s (last current-level)
-                    [g2 l2 e2 s2] (analyze-sexpr [g l e s] current-s)]
+        :else (let [[g2 l2 e2 s2] (analyze-sexpr [g l e s] current-s)]
                 (recur (concat g g2)
                        (conj-not-empty l l2)
                        (concat e e2)
