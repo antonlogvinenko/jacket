@@ -63,29 +63,24 @@
        [:def 'b 42] ['b]
        )
 
-  (are [sexpr errors global]
-       (= [(to-tokens global) {:errors errors}]
-          (analyze-sexpr [] [] (to-tokens sexpr)))
+  (are [sexpr errors]
+       (= errors
+          (:errors (second (analyze-sexpr [] [] (to-tokens sexpr)))))
 
        [:def 42]
        ["Wrong arguments amount to def (2)"]
-       [42]
 
        [:def 42 42]
        ["Not a symbol (42)"]
-       [42]
 
        [:lambda ['a]]
        ["Wrong arguments amount to lambda (2)"]
-       []
 
        [:lambda ['a 42] 42]
        ["Wrong arguments at lambda"]
-       []
        
        [:de 42]
        ["Illegal first token for s-expression"]
-       []
        
        )
   )

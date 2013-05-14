@@ -48,14 +48,19 @@
       {:errors ["Wrong arguments count to quote"]})))
 
 (defn analyze-sexpr [sym-g sym-l sexpr]
-  (let [f (first sexpr)]
+  (let [f (first sexpr)
+        other-sexprs (->> sexpr (filter is-sexpr?) reverse)
+        other-sexprs (cond
+                       (= f :quote) nil
+                       (= f :lambda) (-> other-sexprs drop-last vec)
+                       :else (vec other-sexprs))]
     (cond
+      (= f :def) [(conj sym-g (second sexpr)) (check-define sym-l sexpr) other-sexprs]
+      (= f :lambda) [sym-g (check-lambda sym-l sexpr) other-sexprs]
+      (= f :quote) [sym-g (check-quote sym-l sexpr) other-sexprs]
       (search-symbol sym-g sym-l f)
-      [sym-g {:errors ["Illegal first token for s-expression"]}]
-      (= f :def) [(conj sym-g (second sexpr)) (check-define sym-l sexpr)]
-      (= f :lambda) [sym-g (check-lambda sym-l sexpr)]
-      (= f :quote) [sym-g (check-quote sym-l sexpr)]
-      :else [sym-g {:errors [] :symtable []}])))
+      [sym-g {:errors ["Illegal first token for s-expression"]} other-sexprs]
+      :else [sym-g {:errors [] :symtable []} other-sexprs])))
 
 (defn analyze-sexpr-tree [analysis sexpr]
   (loop [global-table []
@@ -71,24 +76,17 @@
         
         :else (let [current-sexpr (last current-sexpr-level)
                     
-                    [global-table {new-errors :errors new-symtable :symtable}]
+                    [global-table
+                     {new-errors :errors new-symtable :symtable}
+                     other-sexprs]
                     (analyze-sexpr global-table symtable current-sexpr)
-                    
-                    new-analysis {:errors (vec (concat errors new-errors))
+
+                    new-analysis {:errors (concat errors new-errors)
                                   :symtable (conj symtable new-symtable)}
                     
-                    is-quoted (-> current-sexpr first (= :quote))
-                    is-lambda (-> current-sexpr first (= :lambda))
                     cleaned-sexpr-stack (pop current-sexpr-level)
-                    other-sexprs (if is-quoted nil
-                                     (->> current-sexpr
-                                          (filter is-sexpr?)
-                                          reverse))
-                    new-sexpr-stack (conj cleaned-sexpr-stack
-                                          (vec
-                                           (if is-lambda
-                                             (drop-last other-sexprs)
-                                             other-sexprs)))]
+
+                    new-sexpr-stack (conj cleaned-sexpr-stack other-sexprs)]
                 (recur global-table new-analysis new-sexpr-stack))))))
 
 (defn raise-semantics-error [analysis]
