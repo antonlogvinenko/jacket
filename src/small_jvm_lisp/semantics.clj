@@ -50,13 +50,7 @@
       [nil nil ["Wrong arguments count to quote"] nil])))
 
 (defn analyze-sexpr [state sexpr]
-;;  (println "sexpr: " sexpr)
-  (let [f (first sexpr)
-        other-sexprs (->> sexpr (filter is-sexpr?) reverse)
-        other-sexprs (cond
-                       (= f :quote) nil
-                       (= f :lambda) (-> other-sexprs drop-last vec)
-                       :else (vec other-sexprs))]
+  (let [f (first sexpr)]
     (cond
       (= f :def) (check-define state sexpr)
       (= f :lambda) (check-lambda state sexpr)
