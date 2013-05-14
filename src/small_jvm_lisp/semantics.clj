@@ -65,6 +65,13 @@
       [nil nil ["Illegal first token for s-expression"] nil]
       :else [nil nil nil nil])))
 
+(defn conj-not-empty [coll & xs]
+  (loop [coll coll, [x & xx :as xs] xs]
+    (cond
+      (empty? xs) coll
+      (nil? x) (recur coll xx)
+      :else (recur (conj coll x) xx))))
+        
 (defn analyze-sexpr-tree [[global local errors] sexpr]
   (loop [g global, l local, e errors, s [[sexpr]]]
     (let [current-level (last s)]
@@ -73,13 +80,11 @@
         (empty? current-level) (recur
                                 g (if (empty? l) l (pop l)) e (pop s))
         :else (let [current-s (last current-level)
-                    [g2 l2 e2 s2] (analyze-sexpr [g l e s] current-s)
-                    new-current-level (pop current-level)
-                    l (if (nil? l2) l (conj l l2))
-                    s (pop s)
-                    s (if (empty? new-current-level) s (conj s (new-current-level)))
-                    s (if (empty? s2) s (conj s s2))]
-                (recur (concat g g2) l (concat e e2) s))))))
+                    [g2 l2 e2 s2] (analyze-sexpr [g l e s] current-s)]
+                (recur (concat g g2)
+                       (conj-not-empty l l2)
+                       (concat e e2)
+                       (-> s pop (conj-not-empty (pop current-level) s2))))))))
 
 (defn raise-semantics-error [analysis]
   (->> analysis

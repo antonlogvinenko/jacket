@@ -104,7 +104,7 @@
        [] [] ["Wrong arguments amount to def (4)"]
 
        [:def 'c [:lambda ['a 'b] [:+ 'a 'b]]]
-       ['c] [['a 'b]] []
+       ['c] [] []
 
        [:def 'c 42]
        ['c] [] []
