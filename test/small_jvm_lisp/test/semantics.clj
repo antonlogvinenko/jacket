@@ -63,6 +63,9 @@
        (= (analyze-sexpr [] (to-tokens sexpr))
           [sym-g sym-l errors sexprs])
 
+       []
+       nil nil ["expected a function"] nil
+       
        [:def 'b 42]
        ['b] ['b] nil nil
 

@@ -52,6 +52,7 @@
 (defn analyze-sexpr [state sexpr]
   (let [f (first sexpr)]
     (cond
+      (nil? f) [nil nil ["expected a function"] nil]
       (= f :def) (check-define state sexpr)
       (= f :lambda) (check-lambda state sexpr)
       (= f :quote) (check-quote state sexpr)
