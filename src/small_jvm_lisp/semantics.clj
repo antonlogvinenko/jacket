@@ -48,8 +48,9 @@
 (defn check-dynamic-list [state sexpr]
   (let [f (first sexpr)
         other (rest sexpr)
+        pred (fn [t] (is? t #(or (symbol? %) (keyword? %))))
         undefined-symbols (->> other
-                               (filter #(or (symbol? %) (keyword? %)))
+                               (filter pred)
                                (filter (partial symbol-undefined? state))
                                vec)
         sexprs (filter is-sexpr? other)]
