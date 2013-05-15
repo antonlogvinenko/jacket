@@ -91,6 +91,18 @@
                        (concat e e2)
                        (-> s pop (conj-not-empty (pop current-level) s2))))))))
 
+(defn analyze-lonely-atom [[g l e] expr]
+  (->> expr
+       (str "What is that? ")
+       (conj e)
+       (conj [g l])))
+
+(defn analyze-expr [state expr]
+  (let [analyze (if (is-sexpr? expr)
+                  analyze-sexpr-tree
+                  analyze-lonely-atom)]
+    (analyze state expr)))
+
 (defn raise-semantics-error [analysis]
   (->> analysis
        (str "Semantics analysis failed: " analysis)
@@ -98,8 +110,7 @@
 
 (defn semantics [program]
   (let [errors (->> program
-                    (filter is-sexpr?)
-                    (reduce analyze-sexpr-tree [[] [] []])
+                    (reduce analyze-expr [[] [] []])
                     last)]
     (if (empty? errors)
       program

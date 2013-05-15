@@ -121,9 +121,7 @@
   (are [program]
        (= (to-tokens program) (-> program to-tokens semantics))
 
-       [42]
-
-       [[:def 'c [:lambda ['a] [:+ 'a 3]]] 42]
+       [[:def 'c [:lambda ['a] [:+ 'a 3]]]]
 
        ))       
       
