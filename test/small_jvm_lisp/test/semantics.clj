@@ -115,6 +115,9 @@
        [:define 'a [:quote ['a 'b]]]
        ['a] [] []
 
+       [:define 'c [:lambda ['a] [:+ 'r 'a]]]
+       ['c] [] ["Undefined symbols: [r]"]
+       
        ))
 
 (deftest semantics-test
@@ -122,6 +125,8 @@
        (= (to-tokens program) (-> program to-tokens semantics))
 
        [[:define 'c [:lambda ['a] [:+ 'a 3]]]]
+
+       [[:define 'a 1] [:define 'b [:lambda ['x 'y] [:+ 'x 'y 'a]]]]
 
        ))       
       

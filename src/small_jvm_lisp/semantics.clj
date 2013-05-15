@@ -55,9 +55,12 @@
                                vec)
         sexprs (filter is-sexpr? other)]
     (cond
-      (symbol-undefined? state f) [nil nil ["Illegal first token for s-expression"] sexprs]
-      (seq undefined-symbols) [nil nil [(str "Undefined symbols: " undefined-symbols)] sexprs]
-      :else [nil nil nil sexprs])))
+      (symbol-undefined? state f)
+      [nil nil ["Illegal first token for s-expression"] sexprs]
+      (seq undefined-symbols)
+      [nil nil [(->> undefined-symbols (map #(.value %)) vec (str "Undefined symbols: "))] sexprs]
+      :else
+      [nil nil nil sexprs])))
   
 (defn analyze-sexpr [state sexpr]
   (let [f (first sexpr)]
