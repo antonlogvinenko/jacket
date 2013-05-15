@@ -29,11 +29,11 @@
        [:LB :a :RB]
        {:expr [:a] :tokens '()}
 
-       [:LB :def 'sum :LB :lambda :LB 'a 'b :RB :LB :+ 'a 'b :RB :RB :RB]
-       {:expr [:def 'sum [:lambda ['a 'b] [:+ 'a 'b]]] :tokens '()}
+       [:LB :define 'sum :LB :lambda :LB 'a 'b :RB :LB :+ 'a 'b :RB :RB :RB]
+       {:expr [:define 'sum [:lambda ['a 'b] [:+ 'a 'b]]] :tokens '()}
 
-       [:LB :def 'a 3.14 :RB 42]
-       {:expr [:def 'a 3.14] :tokens [42]}
+       [:LB :define 'a 3.14 :RB 42]
+       {:expr [:define 'a 3.14] :tokens [42]}
        
        ))
 
@@ -48,7 +48,7 @@
 
 (deftest read-program-test
   (are [text program] (-> text tokenize read-program (= program))
-       "(def sum (lambda (a b) (+ a b))) 42"
-       [[:def 'sum [:lambda ['a 'b] [:+ 'a 'b]]] 42]
+       "(define sum (lambda (a b) (+ a b))) 42"
+       [[:define 'sum [:lambda ['a 'b] [:+ 'a 'b]]] 42]
 
        ))

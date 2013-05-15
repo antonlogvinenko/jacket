@@ -3,7 +3,7 @@
   (:require [clojure.tools.reader.reader-types :as rt]))
 
 (def KEYWORDS ["-" "*" "+" "=" "!=" "<" ">" ">=" "<="
-               "def" "lambda"
+               "define" "lambda"
                "and" "or" "not"
                "car" "cdr" "cons" "quote"
                "print" "read"])

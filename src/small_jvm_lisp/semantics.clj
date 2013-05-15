@@ -18,7 +18,7 @@
         body (last sexpr)]
     (cond
       (not= length 3)
-      [nil nil [(str "Wrong arguments amount to def (" length ")")] nil]
+      [nil nil [(str "Wrong arguments amount to define (" length ")")] nil]
       
       (-> name-token (is? symbol?) not)
       [nil nil [(str "Not a symbol (" (.value name-token) ")")] nil]
@@ -62,7 +62,7 @@
   (let [f (first sexpr)]
     (cond
       (nil? f) [nil nil ["expected a function"] nil]
-      (= f :def) (check-define state sexpr)
+      (= f :define) (check-define state sexpr)
       (= f :lambda) (check-lambda state sexpr)
       (= f :quote) (check-quote state sexpr)
       :else (check-dynamic-list state sexpr))))

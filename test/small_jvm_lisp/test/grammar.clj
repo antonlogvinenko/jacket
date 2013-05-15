@@ -32,7 +32,7 @@
 
 (deftest keywordize-test
   (are [str result] (= result (keywordize str))
-       "def" :def
+       "define" :define
        "asd" 'asd))
 
 (deftest matches-test
@@ -63,7 +63,7 @@
 (deftest read-keyword-test
   (are [text keyword] (-> text tokenize first (= keyword))
        "asd" 'asd
-       "lambda" :lambda "def" :def "+" :+ "print" :print
+       "lambda" :lambda "define" :define "+" :+ "print" :print
        ))
 
 (deftest read-literal-test
@@ -92,13 +92,13 @@
        "a ( b" ['a :LB 'b]
        "a ) c" ['a :RB 'c]
 
-       "(def a (lambda (a b) (+ a b)))"
-       [:LB :def 'a :LB :lambda :LB 'a 'b :RB :LB :+ 'a 'b :RB :RB :RB]
+       "(define a (lambda (a b) (+ a b)))"
+       [:LB :define 'a :LB :lambda :LB 'a 'b :RB :LB :+ 'a 'b :RB :RB :RB]
 
        "ab\rcd\tef\ngh ij" ['ab 'cd 'ef 'gh 'ij]
 
-       "(def sum (a b) (+ a b))"
-       [:LB :def 'sum :LB 'a 'b :RB :LB :+ 'a 'b :RB :RB]
+       "(define sum (a b) (+ a b))"
+       [:LB :define 'sum :LB 'a 'b :RB :LB :+ 'a 'b :RB :RB]
 
        "- 1 2"
        [:- 1 2]
@@ -106,6 +106,6 @@
        "-1 -1.2"
        [-1 -1.2]
        
-       "\"\n\"def\"asd\"4.56\"s\")lambda+4.56lambda\r\"\"lambda()quote"
-       ["\n" :def "asd" 4.56 "s" :RB 'lambda+4.56lambda "" :lambda :LB :RB :quote]
+       "\"\n\"define\"asd\"4.56\"s\")lambda+4.56lambda\r\"\"lambda()quote"
+       ["\n" :define "asd" 4.56 "s" :RB 'lambda+4.56lambda "" :lambda :LB :RB :quote]
        ))

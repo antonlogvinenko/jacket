@@ -10,7 +10,7 @@
 
 (deftest is-sexpr?-test
   (are [expr pred] (-> expr to-tokens is-sexpr? pred)
-       [:def 'a] true?
+       [:define 'a] true?
        'a false?
        
        ))
@@ -20,13 +20,13 @@
        (= (check-define [] (to-tokens sexpr))
           [sym-g sym-l errors sexprs])
 
-       [:def 'b 42]
+       [:define 'b 42]
        ['b] ['b] nil nil
        
-       [:def 'b 42 42]
-       nil nil ["Wrong arguments amount to def (4)"] nil
+       [:define 'b 42 42]
+       nil nil ["Wrong arguments amount to define (4)"] nil
        
-       [:def 42 42]
+       [:define 42 42]
        nil nil ["Not a symbol (42)"] nil
        ))
 
@@ -66,13 +66,13 @@
        []
        nil nil ["expected a function"] nil
        
-       [:def 'b 42]
+       [:define 'b 42]
        ['b] ['b] nil nil
 
-       [:def 42]
-       nil nil ["Wrong arguments amount to def (2)"] nil
+       [:define 42]
+       nil nil ["Wrong arguments amount to define (2)"] nil
 
-       [:def 42 42]
+       [:define 42 42]
        nil nil ["Not a symbol (42)"] nil
 
        [:lambda ['a]]
@@ -84,7 +84,7 @@
        [:de 42]
        nil nil ["Illegal first token for s-expression"] []
 
-       [:def 'a 42]
+       [:define 'a 42]
        ['a] ['a] nil nil
 
        [:lambda ['a 'b] [:+ 'a 'b]]
@@ -97,22 +97,22 @@
        (= (analyze-sexpr-tree [[] [] []] (to-tokens sexpr))
           [sym-g sym-l errors])
        
-       [:def 'a [:lambda ['a '42] 42]]
+       [:define 'a [:lambda ['a '42] 42]]
        ['a] [] ["Wrong arguments at lambda"]
 
-       [:def 'a [:quote ['a 'b 'c] 42]]
+       [:define 'a [:quote ['a 'b 'c] 42]]
        ['a] [] ["Wrong arguments count to quote"]
 
-       [:def 'a 42 32]
-       [] [] ["Wrong arguments amount to def (4)"]
+       [:define 'a 42 32]
+       [] [] ["Wrong arguments amount to define (4)"]
 
-       [:def 'c [:lambda ['a 'b] [:+ 'a 'b]]]
+       [:define 'c [:lambda ['a 'b] [:+ 'a 'b]]]
        ['c] [] []
 
-       [:def 'c 42]
+       [:define 'c 42]
        ['c] [] []
 
-       [:def 'a [:quote ['a 'b]]]
+       [:define 'a [:quote ['a 'b]]]
        ['a] [] []
 
        ))
@@ -121,7 +121,7 @@
   (are [program]
        (= (to-tokens program) (-> program to-tokens semantics))
 
-       [[:def 'c [:lambda ['a] [:+ 'a 3]]]]
+       [[:define 'c [:lambda ['a] [:+ 'a 3]]]]
 
        ))       
       
