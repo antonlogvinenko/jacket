@@ -12,7 +12,7 @@
 (defn is-sexpr? [expr]
   (vector? expr))
 
-(defn search-symbol [[global local _] sym]
+(defn symbol-undefined? [[global local _] sym]
   (let [legal-syms (concat (map keywordize KEYWORDS) (flatten local) global)]
     (not-any? #(= sym %) legal-syms)))
 
@@ -49,6 +49,19 @@
       [nil nil nil nil]
       [nil nil ["Wrong arguments count to quote"] nil])))
 
+(defn check-dynamic-list [state sexpr]
+  (let [f (first sexpr)
+        other (rest sexpr)
+        undefined-symbols (->> other
+                               (filter #(or (symbol? %) (keyword? %)))
+                               (filter (partial symbol-undefined? state))
+                               vec)
+        sexprs (filter is-sexpr? other)]
+    (cond
+      (symbol-undefined? state f) [nil nil ["Illegal first token for s-expression"] sexprs]
+      (seq undefined-symbols) [nil nil [(str "Undefined symbols: " undefined-symbols)] sexprs]
+      :else [nil nil nil sexprs])))
+  
 (defn analyze-sexpr [state sexpr]
   (let [f (first sexpr)]
     (cond
@@ -56,9 +69,7 @@
       (= f :def) (check-define state sexpr)
       (= f :lambda) (check-lambda state sexpr)
       (= f :quote) (check-quote state sexpr)
-      (search-symbol state f)
-      [nil nil ["Illegal first token for s-expression"] nil]
-      :else [nil nil nil nil])))
+      :else (check-dynamic-list state sexpr))))
 
 (defn conj-not-empty [coll & xs]
   (loop [coll coll, [x & xx :as xs] xs]

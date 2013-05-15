@@ -82,7 +82,7 @@
        nil nil ["Wrong arguments at lambda"] nil
        
        [:de 42]
-       nil nil ["Illegal first token for s-expression"] nil
+       nil nil ["Illegal first token for s-expression"] []
 
        [:def 'a 42]
        ['a] ['a] nil nil
