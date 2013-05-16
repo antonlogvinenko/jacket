@@ -4,12 +4,6 @@
         [small-jvm-lisp.fsm]
         ))
 
-;;two tail recursions may be used at a time
-;;one for reading a program as a sequence of expressions
-;;another one for reading an s-expression
-
-(def not-list-preds [float? integer? symbol? keyword? string?])
-
 (defn conj-last [stack elem]
   (conj (pop stack)
         (conj (last stack) elem)))
@@ -39,12 +33,10 @@
   
 (defn read-expr [tokens]
   (let [token (first tokens)
-        token-value (.value token)
-        no-list? (->> not-list-preds (map #(% token-value)) (some true?))]
-     (cond
+        token-value (.value token)]
+    (cond
       (= token-value :LB) (read-sexpr tokens)
-      no-list? {:expr token :tokens (rest tokens)}
-      :else (raise-unknown-token token))))
+      :else {:expr token :tokens (rest tokens)})))
 
 (defn read-program [tokens]
   (loop [expressions [] tokens tokens]
