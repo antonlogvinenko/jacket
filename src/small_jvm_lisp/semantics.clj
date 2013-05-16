@@ -39,6 +39,15 @@
       :else [nil (second sexpr) nil (if (is-sexpr? body) [body] nil)]
       )))
 
+(defn check-let [_ sexpr]
+  (let [length (count sexpr)
+        args (second sexpr)]
+    (cond
+      (not= 2 length) "")))
+;;length, pairs? first - symbol? second - defined? add firsts to syms
+;;return body if sexpr
+      
+
 (defn check-quote [_ sexpr]
   (let [length (count sexpr)]
     (if (= length 2)
