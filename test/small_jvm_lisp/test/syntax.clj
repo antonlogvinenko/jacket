@@ -1,7 +1,7 @@
 (ns small-jvm-lisp.test.syntax
   (:use [clojure.test]
         [small-jvm-lisp.syntax]
-        [small-jvm-lisp.grammar]
+        [small-jvm-lisp.lexer]
         )
   (:import [small_jvm_lisp.fsm Token]
            ))
