@@ -1,4 +1,4 @@
-(ns small-jvm-lisp.grammar
+(ns small-jvm-lisp.lexer
   (:use [small-jvm-lisp.fsm])
   (:require [clojure.tools.reader.reader-types :as rt]))
 

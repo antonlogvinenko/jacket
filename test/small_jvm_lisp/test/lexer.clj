@@ -1,8 +1,8 @@
-(ns small-jvm-lisp.test.grammar
+(ns small-jvm-lisp.test.lexer
   (:require [clojure.tools.reader.reader-types :as rt])
   (:use [clojure.test]
         [small-jvm-lisp.fsm]
-        [small-jvm-lisp.grammar]))
+        [small-jvm-lisp.lexer]))
 
 (deftest letter?-test
   (are [char result] (= result (letter? char))

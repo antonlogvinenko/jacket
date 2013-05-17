@@ -1,5 +1,5 @@
 (ns small-jvm-lisp.semantics
-  (:use [small-jvm-lisp.grammar]
+  (:use [small-jvm-lisp.lexer]
         [small-jvm-lisp.errors]
         [small-jvm-lisp.syntax]
         [small-jvm-lisp.fsm]
@@ -39,13 +39,29 @@
       :else [nil (second sexpr) nil (if (is-sexpr? body) [body] nil)]
       )))
 
-(defn check-let [_ sexpr]
-  (let [length (count sexpr)
-        args (second sexpr)]
+(defn check-pair [[g l _] pair]
+  (let [f (first pair)
+        body (second pair)]
     (cond
-      (not= 2 length) "")))
-;;length, pairs? first - symbol? second - defined? add firsts to syms
-;;return body if sexpr
+      (-> pair count (not= 2)) [nil nil ["Error 22"] nil]
+      (-> f (is? symbol?) not) [nil nil ["Error 21"] nil]
+      :else [nil [f] nil [body]])))
+
+(defn check-let [state sexpr]
+  (let [length (count sexpr)
+        args (second sexpr)
+        args-length (count args)
+        body (last sexpr)]
+    (cond
+      (not= 3 length) [nil nil ["Error :)"] nil]
+      (< args-length 1) [nil nil [] body]
+      :else (conj
+             (->> args
+                  (map (partial check-pair state))
+                  (map concat)
+                  vec)
+             body))))
+                 
       
 
 (defn check-quote [_ sexpr]
