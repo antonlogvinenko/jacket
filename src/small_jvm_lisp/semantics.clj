@@ -24,7 +24,6 @@
         name-token (second sexpr)]
     (cond
       (not= length 3)
-
       (-> ok
           (+error (str "Wrong arguments amount to define (" length ")")))
       
@@ -75,23 +74,26 @@
         args-length (count args)
         body (last sexpr)]
     (cond
-      (not= 3 length) [nil nil ["Error :)"] nil]
-      (< args-length 1) [nil nil [] body]
+      (not= 3 length)
+      (-> ok
+          (+error "Error :)"))
+      
+      (< args-length 1)
+      (-> ok
+          (+exprs body))
+      
       :else (let [analysis (->> args
                                 (map (partial check-pair state))
                                 (apply map (comp vec concat))
                                 vec)]
               (conj (pop analysis) (conj (peek analysis) body))))))
 
-;;new concepts:
-;;1. pass anything possibly checkable, even constants
-;;2. how to return only what required? global state? using maps?
-
 (defn check-quote [_ sexpr]
   (let [length (count sexpr)]
     (if (= length 2)
-      [nil nil nil nil]
-      [nil nil ["Wrong arguments count to quote"] nil])))
+      ok
+      (-> ok
+          (+error "Wrong arguments count to quote")))))
 
 (defn check-dynamic-list [state sexpr]
   (let [f (first sexpr)
@@ -104,21 +106,28 @@
         sexprs (filter is-sexpr? other)]
     (cond
       (symbol-undefined? state f)
-      [nil nil ["Illegal first token for s-expression"] sexprs]
+      (-> ok
+          (+error "Illegal first token for s-expression"))
+      
       (seq undefined-symbols)
-      [nil nil [(->> undefined-symbols (map #(.value %)) vec (str "Undefined symbols: "))] sexprs]
+      (-> ok
+          (+error (->> undefined-symbols (map #(.value %)) vec (str "Undefined symbols: ")))
+          (+exprs sexprs))
+      
       :else
-      [nil nil nil sexprs])))
+      (-> ok
+          (+exprs sexprs)))))
   
 (defn analyze-sexpr [state sexpr]
-  (let [f (first sexpr)]
-    (cond
-      (nil? f) [nil nil ["expected a function"] nil]
-      (= f :define) (check-define state sexpr)
-      (= f :lambda) (check-lambda state sexpr)
-      (= f :quote) (check-quote state sexpr)
-      (= f :let) (check-let state sexpr)
-      :else (check-dynamic-list state sexpr))))
+  (let [f (first sexpr)
+        dispatch {:define check-define
+                  :lambda check-lambda
+                  :quote check-quote
+                  :let check-let}]
+    (if (-> sexpr first nil?)
+      (-> ok
+          (+error "expected a function"))
+      ((get dispatch (.value f) check-dynamic-list) state sexpr))))
 
 (defn analyze-atom [state expr]
   ok)
