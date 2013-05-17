@@ -1,4 +1,4 @@
-sjl
+jacket
 ===
 
-Small JVM Lisp
+Jacket, JVM Racket, implementation of scheme on JVM.
