@@ -45,6 +45,31 @@
        nil nil ["Wrong arguments at lambda"] nil
        ))
 
+(deftest check-pair-test
+  (are [sexpr sym-g sym-l errors sexprs]
+       (= (check-pair [] (to-tokens sexpr))
+          [sym-g sym-l errors sexprs])
+
+       ['a 42]
+       [] ['a] [] []
+
+       ['a 42 42]
+       [] [] ["Wrong arguments for let"] []
+
+       [42 'a]
+       [] [] ["Must be token"] []
+       ))
+
+(deftest check-let-test 
+  (are [sexpr sym-g sym-l errors sexprs]
+       (= (check-let [] (to-tokens sexpr))
+          [sym-g sym-l errors sexprs])
+       
+       [:let [['a 41] ['b 1]] [:+ 'a 'b]]
+       [] ['a 'b] [] [[:+ 'a 'b]]
+       ))
+       
+
 (deftest check-quote-test
   (are [sexpr sym-g sym-l errors sexprs]
        (= (check-quote [] (to-tokens sexpr))
