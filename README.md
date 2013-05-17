@@ -1,4 +1,4 @@
 jacket
 ===
 
-Jacket, JVM Racket, implementation of scheme on JVM.
+Jacket, JVM Racket, implementation of Scheme on JVM.
