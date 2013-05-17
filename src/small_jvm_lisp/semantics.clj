@@ -43,9 +43,9 @@
   (let [f (first pair)
         body (second pair)]
     (cond
-      (-> pair count (not= 2)) [nil nil ["Error 22"] nil]
-      (-> f (is? symbol?) not) [nil nil ["Error 21"] nil]
-      :else [nil [f] nil [body]])))
+      (-> pair count (not= 2)) [[] [] ["Wrong arguments for let"] []]
+      (-> f (is? symbol?) not) [[] [] ["Must be token"] []]
+      :else [[] [f] [] []])))
 
 (defn check-let [state sexpr]
   (let [length (count sexpr)
@@ -55,14 +55,15 @@
     (cond
       (not= 3 length) [nil nil ["Error :)"] nil]
       (< args-length 1) [nil nil [] body]
-      :else (conj
-             (->> args
-                  (map (partial check-pair state))
-                  (map concat)
-                  vec)
-             body))))
-                 
-      
+      :else (let [analysis (->> args
+                                (map (partial check-pair state))
+                                (apply map (comp vec concat))
+                                vec)]
+              (conj (pop analysis) (conj (peek analysis) body))))))
+
+;;new concepts:
+;;1. pass anything possibly checkable, even constants
+;;2. how to return only what required? global state? using maps?
 
 (defn check-quote [_ sexpr]
   (let [length (count sexpr)]
@@ -71,6 +72,7 @@
       [nil nil ["Wrong arguments count to quote"] nil])))
 
 (defn check-dynamic-list [state sexpr]
+;;  (println sexpr)
   (let [f (first sexpr)
         other (rest sexpr)
         pred (fn [t] (is? t #(or (symbol? %) (keyword? %))))
@@ -94,6 +96,7 @@
       (= f :define) (check-define state sexpr)
       (= f :lambda) (check-lambda state sexpr)
       (= f :quote) (check-quote state sexpr)
+      (= f :let) (check-let state sexpr)
       :else (check-dynamic-list state sexpr))))
 
 (defn conj-not-empty [coll & xs]
