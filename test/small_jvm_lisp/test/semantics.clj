@@ -146,6 +146,36 @@
        
        ))
 
+(deftest check-atom-test
+  (are [state sexpr sym-g sym-l errors sexprs]
+       (= (check-atom state (to-tokens sexpr))
+          [sym-g sym-l errors sexprs])
+       
+       [[] [] []] :de
+       [] [] ["Undefined symbol :de"] []
+
+       [[] [] []] 'abc
+       [] [] ["Undefined symbol abc"] []
+
+       [[] ['abcde] []] 'abcde
+       [] [] [] []
+       
+       ))
+  
+       
+
+(deftest conj-not-empty-test
+  (are [coll xs conjed]
+       (= (apply (partial conj-not-empty coll) xs)
+          conjed)
+
+       [1 2 3] [4 5 6]
+       [1 2 3 4 5 6]
+
+       [1 2 3] [4 nil 5]
+       [1 2 3 4 5]
+       ))
+
 (deftest analyze-sexpr-tree-test
   (are [sexpr sym-g sym-l errors]
        (= (analyze-sexpr-tree [[] [] []] (to-tokens sexpr))

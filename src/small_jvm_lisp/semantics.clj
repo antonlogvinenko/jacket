@@ -143,7 +143,8 @@
       ((get dispatch (.value f) check-dynamic-list) state sexpr))))
 
 (defn check-atom [state expr]
-  (if (and (is? expr symbol?) (symbol-undefined? state expr))
+  (if (and (or (is? expr symbol?) (is? expr keyword?))
+           (symbol-undefined? state expr))
     (-> ok (+error (str "Undefined symbol " expr)))
     ok))
 
