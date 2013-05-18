@@ -10,10 +10,10 @@ Pet project pursuing clear goals:
 - in that oreder.
 
 Current state:
-*. Lexer with regular grammar described by the means of finite state machine. Battatrries (fsm) included. Ready.
-*. Parser. Ready.
-*. Semantic analysis. In progress, almost ready.
-*. Code generation. Yet to come.
-*. Optimizations. Probably.
+* Lexer with regular grammar described by the means of finite state machine. Battatrries (fsm) included. Ready.
+* Parser. Ready.
+* Semantic analysis. In progress, almost ready.
+* Code generation. Yet to come.
+* Optimizations. Probably.
 
 Not really serious about optimizations and production ready release. For now. :)
