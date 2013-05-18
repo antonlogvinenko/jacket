@@ -166,12 +166,12 @@
           current-s (last current-level)]
       (cond
         (empty? s) [g l e]
-        (empty? current-level) (recur g (if (empty? l) l (pop l)) e (pop s))
+        (empty? current-level) (recur g (if (empty? l) l (drop-last l)) e (drop-last s))
         :else (let [[g2 l2 e2 s2] (check-expr [g l e s] current-s)]
                 (recur (concat g g2)
                        (conj-not-empty l l2)
                        (concat e e2)
-                       (-> s pop (conj-not-empty (drop-last 1 current-level) s2))))))))
+                       (-> s pop (conj-not-empty (drop-last current-level) s2))))))))
 
 (defn analyze-lonely-atom [[g l e] expr]
   (->> expr
