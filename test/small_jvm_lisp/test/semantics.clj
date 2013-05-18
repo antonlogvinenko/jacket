@@ -21,13 +21,13 @@
           [sym-g sym-l errors sexprs])
 
        [:define 'b 42]
-       ['b] ['b] nil [42]
+       ['b] ['b] [] [42]
        
        [:define 'b 42 42]
-       nil nil ["Wrong arguments amount to define (4)"] nil
+       [] [] ["Wrong arguments amount to define (4)"] []
        
        [:define 42 42]
-       nil nil ["Not a symbol (42)"] [42]
+       [] [] ["Not a symbol (42)"] [42]
        ))
 
 (deftest check-lambda-test
@@ -36,13 +36,13 @@
           [sym-g sym-l errors sexprs])
 
        [:lambda ['a 'b] true]
-       nil [['a 'b]] nil [true]
+       [] ['a 'b] [] [true]
 
        [:lambda ['a] true true]
-       nil nil ["Wrong arguments amount to lambda (4)"] nil
+       [] [] ["Wrong arguments amount to lambda (4)"] []
 
        [:lambda ['a 42] true]
-       nil nil ["Wrong arguments at lambda"] [true]
+       [] [] ["Wrong arguments at lambda"] [true]
        ))
 
 (deftest check-pair-test
@@ -51,13 +51,13 @@
           [sym-g sym-l errors sexprs])
 
        ['a 42]
-       nil ['a] nil [42]
+       [] ['a] [] [42]
 
        ['a 42 42]
-       nil nil ["Wrong arguments for let"] [42]
+       [] [] ["Wrong arguments for let"] [42]
 
        [42 'a]
-       nil nil ["Must be token"] ['a]
+       [] [] ["Must be token"] ['a]
        ))
 
 (deftest check-let-test 
@@ -76,10 +76,10 @@
           [sym-g sym-l errors sexprs])
 
        [:quote ['a 'b] true]
-       nil nil ["Wrong arguments count to quote"] nil
+       [] [] ["Wrong arguments count to quote"] []
 
        [:quote ['a 'b]]
-       nil nil nil nil
+       [] [] [] []
 
        ))
 
@@ -89,31 +89,31 @@
           [sym-g sym-l errors sexprs])
 
        []
-       nil nil ["expected a function"] nil
+       [] [] ["expected a function"] []
        
        [:define 'b 42]
-       ['b] ['b] nil [42]
+       ['b] ['b] [] [42]
 
        [:define 42]
-       nil nil ["Wrong arguments amount to define (2)"] nil
+       [] [] ["Wrong arguments amount to define (2)"] []
 
        [:define 42 42]
-       nil nil ["Not a symbol (42)"] [42]
+       [] [] ["Not a symbol (42)"] [42]
 
        [:lambda ['a]]
-       nil nil ["Wrong arguments amount to lambda (2)"] nil
+       [] [] ["Wrong arguments amount to lambda (2)"] []
 
        [:lambda ['a 42] 42]
-       nil nil ["Wrong arguments at lambda"] [42]
+       [] [] ["Wrong arguments at lambda"] [42]
        
        [:de 42]
-       nil nil ["Illegal first token for s-expression"] [[42]]
+       [] [] ["Illegal first token for s-expression"] []
 
        [:define 'a 42]
-       ['a] ['a] nil [42]
+       ['a] ['a] [] [42]
 
        [:lambda ['a 'b] [:+ 'a 'b]]
-       nil [['a 'b]] nil [[:+ 'a 'b]]
+       [] ['a 'b] [] [[:+ 'a 'b]]
        
        ))
 

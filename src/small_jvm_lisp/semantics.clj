@@ -8,8 +8,10 @@
 (defn is-sexpr? [expr]
   (vector? expr))
 
-(def ok [nil nil nil nil])
-(defn super-update [s i v] (update-in s [i] #(conj % v)))
+(def ok [[] [] [] []])
+(defn super-update [s i v]
+  (update-in s [i]
+             #(if (seq? v) (apply conj % v) (conj % v))))
 (defn +global [s g] (super-update s 0 g))
 (defn +local [s l] (super-update s 1 l))
 (defn +error [s er] (super-update s 2 er))
@@ -53,7 +55,7 @@
           (+exprs body))
 
       :else (-> ok
-                (+local args)
+                (+local (seq args))
                 (+exprs body)))))
 
 (defn check-pair [[g l _] pair]
@@ -107,12 +109,14 @@
 (defn check-dynamic-list [state sexpr]
   (let [f (first sexpr)
         other (rest sexpr)
+        sexprs (filter is-sexpr? sexpr)
         pred (fn [t] (is? t #(or (symbol? %) (keyword? %))))
         undefined-symbols (->> other
+                               (filter (comp not coll?))
                                (filter pred)
                                (filter (partial symbol-undefined? state))
                                vec)
-        new-state (+exprs ok other)]
+        new-state (if (empty? sexprs) ok (+exprs ok sexprs))]
     (cond
       (symbol-undefined? state f)
       (-> new-state
@@ -135,10 +139,10 @@
           (+error "expected a function"))
       ((get dispatch (.value f) check-dynamic-list) state sexpr))))
 
-(defn analyze-atom [state expr] ok)
-;;  (if (and (is? expr symbol?) (symbol-undefined? state expr))
-  ;;  (-> ok (+error (str "Undefined symbol " expr)))
-    ;;ok))
+(defn analyze-atom [state expr]
+  (if (and (is? expr symbol?) (symbol-undefined? state expr))
+    (-> ok (+error (str "Undefined symbol " expr)))
+    ok))
 
 (defn analyze-expr [state expr]
   (let [analyze (if (is-sexpr? expr)
@@ -164,7 +168,7 @@
                 (recur (concat g g2)
                        (conj-not-empty l l2)
                        (concat e e2)
-                       (-> s pop (conj-not-empty (pop current-level) s2))))))))
+                       (-> s pop (conj-not-empty (drop-last 1 current-level) s2))))))))
 
 (defn analyze-lonely-atom [[g l e] expr]
   (->> expr
