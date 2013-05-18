@@ -135,8 +135,10 @@
           (+error "expected a function"))
       ((get dispatch (.value f) check-dynamic-list) state sexpr))))
 
-(defn analyze-atom [state expr]
-  ok)
+(defn analyze-atom [state expr] ok)
+;;  (if (and (is? expr symbol?) (symbol-undefined? state expr))
+  ;;  (-> ok (+error (str "Undefined symbol " expr)))
+    ;;ok))
 
 (defn analyze-expr [state expr]
   (let [analyze (if (is-sexpr? expr)
