@@ -21,7 +21,7 @@
           [sym-g sym-l errors sexprs])
 
        [:define 'b 42]
-       ['b] ['b] nil nil
+       ['b] ['b] nil [42]
        
        [:define 'b 42 42]
        nil nil ["Wrong arguments amount to define (4)"] nil
@@ -36,7 +36,7 @@
           [sym-g sym-l errors sexprs])
 
        [:lambda ['a 'b] true]
-       nil ['a 'b] nil nil
+       nil [['a 'b]] nil [true]
 
        [:lambda ['a] true true]
        nil nil ["Wrong arguments amount to lambda (4)"] nil
@@ -51,13 +51,13 @@
           [sym-g sym-l errors sexprs])
 
        ['a 42]
-       [] ['a] [] []
+       nil ['a] nil nil
 
        ['a 42 42]
-       [] [] ["Wrong arguments for let"] []
+       nil nil ["Wrong arguments for let"] nil
 
        [42 'a]
-       [] [] ["Must be token"] []
+       nil nil ["Must be token"] nil
        ))
 
 (deftest check-let-test 
@@ -92,7 +92,7 @@
        nil nil ["expected a function"] nil
        
        [:define 'b 42]
-       ['b] ['b] nil nil
+       ['b] ['b] nil [42]
 
        [:define 42]
        nil nil ["Wrong arguments amount to define (2)"] nil
@@ -107,13 +107,13 @@
        nil nil ["Wrong arguments at lambda"] nil
        
        [:de 42]
-       nil nil ["Illegal first token for s-expression"] []
+       nil nil ["Illegal first token for s-expression"] [[42]]
 
        [:define 'a 42]
-       ['a] ['a] nil nil
+       ['a] ['a] nil [42]
 
        [:lambda ['a 'b] [:+ 'a 'b]]
-       nil ['a 'b] nil [[:+ 'a 'b]]
+       nil [['a 'b]] nil [[:+ 'a 'b]]
        
        ))
 
