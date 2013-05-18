@@ -51,6 +51,16 @@
        [] [] ["Wrong arguments at lambda"] [true]
        ))
 
+(deftest merge-states-test
+  (are [states sym-g sym-l errors sexprs]
+       (= (merge-states (to-tokens states) [[][][][]])
+          [sym-g sym-l errors sexprs])
+       
+       [['a 42] ['b 1] 32 [1 2]]
+       [] ['a 'b] ["Must be a list" "Must be token"] [42 1 2]
+       
+  ))
+
 (deftest check-pair-test
   (are [sexpr sym-g sym-l errors sexprs]
        (= (check-pair [] (to-tokens sexpr))
