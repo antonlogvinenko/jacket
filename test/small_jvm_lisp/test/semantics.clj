@@ -112,6 +112,30 @@
 
        ))
 
+(deftest check-dynamic-list-test
+  (are [sexpr sym-g sym-l errors
+        sym-g-out sym-l-out errors-out sexprs-out]
+       (= (check-dynamic-list [sym-g sym-l errors] (to-tokens sexpr))
+          [sym-g-out sym-l-out errors-out sexprs-out])
+
+       ['a 3]
+       [] [] []
+       [] [] ["Illegal first token for s-expression"] []
+
+       ['a [:+ 'a 3]]
+       [] ['a] []
+       [] [] [] [[:+ 'a 3]]
+
+       ['b [:+ 41 1]]
+       ['b] [] []
+       [] [] [] [[:+ 41 1]]
+
+       ['g [:+ 1 1]]
+       [] [] []
+       [] [] ["Illegal first token for s-expression"] [[:+ 1 1]]
+       
+       ))
+
 (deftest check-sexpr-test
   (are [sexpr sym-g sym-l errors sexprs]
        (= (check-sexpr [] (to-tokens sexpr))
@@ -161,7 +185,28 @@
        [] [] [] []
        
        ))
-  
+
+(deftest check-expr-test
+  (are [state sexpr sym-g sym-l errors sexprs]
+       (= (check-expr state (to-tokens sexpr))
+          [sym-g sym-l errors sexprs])
+
+       [] 42
+       [] [] [] []
+
+       [] 'a
+       [] [] ["Undefined symbol a"] []
+
+       [['a] [] []] 'a
+       [] [] [] []
+
+       [] [:def 'a 43]
+       [] [] ["Illegal first token for s-expression"] []
+
+       [] [:define 'a 43]
+       ['a] ['a] [] [43]
+
+       ))
        
 
 (deftest conj-not-empty-test
