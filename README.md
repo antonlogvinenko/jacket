@@ -7,7 +7,7 @@ Pet project pursuing clear goals:
 * Practicing theory of compilation and interpretation
 * Building yeat another lisp implementation
 * Doing something fun, big and ambitious
-- in that oreder.
+* - in that oreder
 
 Current state:
 * Lexer with regular grammar described by the means of finite state machine. Battatrries (fsm) included. Ready.
