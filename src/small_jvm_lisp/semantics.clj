@@ -59,23 +59,26 @@
                 (+exprs body)))))
 
 (defn check-pair [[g l _] pair]
-  (let [f (first pair)
-        body (second pair)]
-    (cond
-      (-> pair count (not= 2))
-      (-> ok
-          (+error "Wrong arguments for let")
-          (+exprs body))
-      
-      (-> f (is? symbol?) not)
-      (-> ok
-          (+error "Must be token")
-          (+exprs body))
-      
-      :else (-> ok
-                (+local f)
-                (+exprs body)))))
-
+  (if (-> pair vector? not)
+    (-> ok (+error "Must be a list"))
+    (let [f (first pair)
+          body (second pair)]
+      (cond
+        
+        (-> pair count (not= 2))
+        (-> ok
+            (+error "Wrong arguments for let")
+            (+exprs body))
+        
+        (-> f (is? symbol?) not)
+        (-> ok
+            (+error "Must be token")
+            (+exprs body))
+        
+        :else (-> ok
+                  (+local f)
+                  (+exprs body))))))
+  
 (defn merge-states [states state]
   (->> states
        (map (partial check-pair state))
