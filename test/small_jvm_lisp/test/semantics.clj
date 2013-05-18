@@ -27,7 +27,7 @@
        nil nil ["Wrong arguments amount to define (4)"] nil
        
        [:define 42 42]
-       nil nil ["Not a symbol (42)"] nil
+       nil nil ["Not a symbol (42)"] [42]
        ))
 
 (deftest check-lambda-test
@@ -42,7 +42,7 @@
        nil nil ["Wrong arguments amount to lambda (4)"] nil
 
        [:lambda ['a 42] true]
-       nil nil ["Wrong arguments at lambda"] nil
+       nil nil ["Wrong arguments at lambda"] [true]
        ))
 
 (deftest check-pair-test
@@ -98,13 +98,13 @@
        nil nil ["Wrong arguments amount to define (2)"] nil
 
        [:define 42 42]
-       nil nil ["Not a symbol (42)"] nil
+       nil nil ["Not a symbol (42)"] [42]
 
        [:lambda ['a]]
        nil nil ["Wrong arguments amount to lambda (2)"] nil
 
        [:lambda ['a 42] 42]
-       nil nil ["Wrong arguments at lambda"] nil
+       nil nil ["Wrong arguments at lambda"] [42]
        
        [:de 42]
        nil nil ["Illegal first token for s-expression"] [[42]]
