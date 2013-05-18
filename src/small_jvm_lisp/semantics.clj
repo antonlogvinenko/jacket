@@ -177,7 +177,7 @@
 
 (defn semantics [program]
   (let [errors (->> program
-                    (reduce analyze-file-expr [[] [] []])
+                    (reduce analyze-file-expr [])
                     last)]
     (if (empty? errors)
       program
