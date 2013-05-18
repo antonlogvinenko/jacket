@@ -128,7 +128,7 @@
       
       :else new-state)))
   
-(defn analyze-sexpr [state sexpr]
+(defn check-sexpr [state sexpr]
   (let [f (first sexpr)
         dispatch {:define check-define
                   :lambda check-lambda
@@ -139,16 +139,16 @@
           (+error "expected a function"))
       ((get dispatch (.value f) check-dynamic-list) state sexpr))))
 
-(defn analyze-atom [state expr]
+(defn check-atom [state expr]
   (if (and (is? expr symbol?) (symbol-undefined? state expr))
     (-> ok (+error (str "Undefined symbol " expr)))
     ok))
 
-(defn analyze-expr [state expr]
-  (let [analyze (if (is-sexpr? expr)
-                  analyze-sexpr
-                  analyze-atom)]
-    (analyze state expr)))                    
+(defn check-expr [state expr]
+  (let [check (if (is-sexpr? expr)
+                  check-sexpr
+                  check-atom)]
+    (check state expr)))                    
   
 (defn conj-not-empty [coll & xs]
   (loop [coll coll, [x & xx :as xs] xs]
@@ -164,7 +164,7 @@
       (cond
         (empty? s) [g l e]
         (empty? current-level) (recur g (if (empty? l) l (pop l)) e (pop s))
-        :else (let [[g2 l2 e2 s2] (analyze-expr [g l e s] current-s)]
+        :else (let [[g2 l2 e2 s2] (check-expr [g l e s] current-s)]
                 (recur (concat g g2)
                        (conj-not-empty l l2)
                        (concat e e2)

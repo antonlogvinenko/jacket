@@ -28,6 +28,9 @@
        
        [:define 42 42]
        [] [] ["Not a symbol (42)"] [42]
+
+       [:define 'a [:bla 100500]]
+       ['a] ['a] [] [[:bla 100500]]
        ))
 
 (deftest check-lambda-test
@@ -37,6 +40,9 @@
 
        [:lambda ['a 'b] true]
        [] ['a 'b] [] [true]
+
+       [:lambda ['a 'b] [:+ 'a 'c]]
+       [] ['a 'b] [] [[:+ 'a 'c]]
 
        [:lambda ['a] true true]
        [] [] ["Wrong arguments amount to lambda (4)"] []
@@ -58,6 +64,9 @@
 
        [42 'a]
        [] [] ["Must be token"] ['a]
+
+       ['a [:+ 1 2]]
+       [] ['a] [] [[:+ 1 2]]
        ))
 
 (deftest check-let-test 
@@ -67,6 +76,7 @@
        
        [:let [['a 41] ['b 1]] [:+ 'a 'b]]
        [] ['a 'b] [] [41 1 [:+ 'a 'b]]
+       
        ))
        
 
@@ -83,9 +93,9 @@
 
        ))
 
-(deftest analyze-sexpr-test
+(deftest check-sexpr-test
   (are [sexpr sym-g sym-l errors sexprs]
-       (= (analyze-sexpr [] (to-tokens sexpr))
+       (= (check-sexpr [] (to-tokens sexpr))
           [sym-g sym-l errors sexprs])
 
        []
