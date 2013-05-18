@@ -181,4 +181,4 @@
                     last)]
     (if (empty? errors)
       program
-      (raise-semantics-error (reduce str (map str errors))))))
+      (-> errors (map str) (reduce str) raise-semantics-error))))
