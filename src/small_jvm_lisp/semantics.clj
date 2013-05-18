@@ -21,21 +21,21 @@
 
 (defn check-define [[_ local _ _] sexpr]
   (let [length (count sexpr)
-        name-token (second sexpr)
+        name (second sexpr)
         body (last sexpr)]
     (cond
       (not= length 3)
       (-> ok
           (+error (str "Wrong arguments amount to define (" length ")")))
       
-      (-> name-token (is? symbol?) not)
+      (-> name (is? symbol?) not)
       (-> ok
-          (+error (str "Not a symbol (" (.value name-token) ")"))
+          (+error (str "Not a symbol (" (.value name) ")"))
           (+exprs body))
 
       :else (-> ok
-                (+local (second sexpr))
-                (+global (second sexpr))
+                (+local name)
+                (+global name)
                 (+exprs body)))))
 
 (defn check-lambda [_ sexpr]
@@ -53,7 +53,7 @@
           (+exprs body))
 
       :else (-> ok
-                (+local (second sexpr))
+                (+local args)
                 (+exprs body)))))
 
 (defn check-pair [[g l _] pair]
