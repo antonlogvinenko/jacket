@@ -8,3 +8,5 @@ Pet project pursuing clear goals:
 3. Building yeat another lisp implementation
 4. Doing something fun, big and ambitious
 - in that oreder.
+
+Not really serious about optimizations and production ready release. For now. :)
