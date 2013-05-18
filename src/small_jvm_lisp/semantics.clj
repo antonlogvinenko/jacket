@@ -68,6 +68,12 @@
       :else (-> ok
                 (+local f)))))
 
+(defn merge-states [states state]
+  (->> states
+       (map (partial check-pair state))
+       (apply map (comp vec concat))
+       vec))
+
 (defn check-let [state sexpr]
   (let [length (count sexpr)
         args (second sexpr)
@@ -82,10 +88,7 @@
       (-> ok
           (+exprs body))
       
-      :else (let [analysis (->> args
-                                (map (partial check-pair state))
-                                (apply map (comp vec concat))
-                                vec)]
+      :else (let [analysis (merge-states args state)]
               (conj (pop analysis) (conj (peek analysis) body))))))
 
 (defn check-quote [_ sexpr]
@@ -103,20 +106,17 @@
                                (filter pred)
                                (filter (partial symbol-undefined? state))
                                vec)
-        sexprs (filter is-sexpr? other)]
+        new-state (+exprs ok other)]
     (cond
       (symbol-undefined? state f)
-      (-> ok
+      (-> new-state
           (+error "Illegal first token for s-expression"))
       
       (seq undefined-symbols)
-      (-> ok
-          (+error (->> undefined-symbols (map #(.value %)) vec (str "Undefined symbols: ")))
-          (+exprs sexprs))
+      (-> new-state
+          (+error (->> undefined-symbols (map #(.value %)) vec (str "Undefined symbols: "))))
       
-      :else
-      (-> ok
-          (+exprs sexprs)))))
+      :else new-state)))
   
 (defn analyze-sexpr [state sexpr]
   (let [f (first sexpr)
