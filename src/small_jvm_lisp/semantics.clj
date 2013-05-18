@@ -59,14 +59,17 @@
     (cond
       (-> pair count (not= 2))
       (-> ok
-          (+error "Wrong arguments for let"))
+          (+error "Wrong arguments for let")
+          (+exprs body))
       
       (-> f (is? symbol?) not)
       (-> ok
-          (+error "Must be token"))
+          (+error "Must be token")
+          (+exprs body))
       
       :else (-> ok
-                (+local f)))))
+                (+local f)
+                (+exprs body)))))
 
 (defn merge-states [states state]
   (->> states

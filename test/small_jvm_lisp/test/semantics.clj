@@ -51,13 +51,13 @@
           [sym-g sym-l errors sexprs])
 
        ['a 42]
-       nil ['a] nil nil
+       nil ['a] nil [42]
 
        ['a 42 42]
-       nil nil ["Wrong arguments for let"] nil
+       nil nil ["Wrong arguments for let"] [42]
 
        [42 'a]
-       nil nil ["Must be token"] nil
+       nil nil ["Must be token"] ['a]
        ))
 
 (deftest check-let-test 
@@ -66,7 +66,7 @@
           [sym-g sym-l errors sexprs])
        
        [:let [['a 41] ['b 1]] [:+ 'a 'b]]
-       [] ['a 'b] [] [[:+ 'a 'b]]
+       [] ['a 'b] [] [41 1 [:+ 'a 'b]]
        ))
        
 
