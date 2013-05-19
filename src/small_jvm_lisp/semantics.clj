@@ -21,7 +21,7 @@
   (let [legal-syms (concat (map keywordize KEYWORDS) (flatten local) global)]
     (not-any? #(= sym %) legal-syms)))
 
-(defn check-define [[_ local _ _] sexpr]
+(defn check-define [sexpr]
   (let [length (count sexpr)
         name (second sexpr)
         body (last sexpr)]
@@ -40,7 +40,7 @@
                 (+global name)
                 (+exprs body)))))
 
-(defn check-lambda [_ sexpr]
+(defn check-lambda [sexpr]
   (let [length (count sexpr)
         args (second sexpr)
         body (last sexpr)]
@@ -58,7 +58,7 @@
                 (+local (seq args))
                 (+exprs body)))))
 
-(defn check-pair [[g l _] pair]
+(defn check-pair [pair]
   (if (-> pair vector? not)
     (-> ok (+error "Must be a list"))
     (let [f (first pair)
@@ -79,13 +79,13 @@
                   (+local f)
                   (+exprs body))))))
 
-(defn merge-states [states state]
+(defn merge-states [states]
   (->> states
-       (map (partial check-pair state))
+       (map check-pair)
        (apply map (comp vec concat))
        vec))
 
-(defn check-let [state sexpr]
+(defn check-let [sexpr]
   (let [length (count sexpr)
         args (second sexpr)
         args-length (count args)
@@ -99,10 +99,10 @@
       (-> ok
           (+exprs body))
       
-      :else (let [analysis (merge-states args state)]
+      :else (let [analysis (merge-states args)]
               (conj (pop analysis) (into (peek analysis) body))))))
 
-(defn check-quote [_ sexpr]
+(defn check-quote [sexpr]
   (let [length (count sexpr)]
     (if (= length 2)
       ok
@@ -140,8 +140,10 @@
     (if (-> sexpr first nil?)
       (-> ok
           (+error "expected a function"))
-      ((get dispatch (.value f) check-dynamic-list) state sexpr))))
-
+      (if-let [impl (get dispatch (.value f))]
+        (impl sexpr)
+        (check-dynamic-list state sexpr)))))
+      
 (defn check-atom [state expr]
   (if (and (or (is? expr symbol?) (is? expr keyword?))
            (symbol-undefined? state expr))

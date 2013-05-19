@@ -17,7 +17,7 @@
 
 (deftest check-define-test
   (are [sexpr sym-g sym-l errors sexprs]
-       (= (check-define [] (to-tokens sexpr))
+       (= (check-define (to-tokens sexpr))
           [sym-g sym-l errors sexprs])
 
        [:define 'b 42]
@@ -35,7 +35,7 @@
 
 (deftest check-lambda-test
   (are [sexpr sym-g sym-l errors sexprs]
-       (= (check-lambda [] (to-tokens sexpr))
+       (= (check-lambda (to-tokens sexpr))
           [sym-g sym-l errors sexprs])
 
        [:lambda ['a 'b] true]
@@ -53,7 +53,7 @@
 
 (deftest merge-states-test
   (are [states sym-g sym-l errors sexprs]
-       (= (merge-states (to-tokens states) [[][][][]])
+       (= (merge-states (to-tokens states))
           [sym-g sym-l errors sexprs])
        
        [['a 42] ['b 1] 32 [1 2]]
@@ -63,7 +63,7 @@
 
 (deftest check-pair-test
   (are [sexpr sym-g sym-l errors sexprs]
-       (= (check-pair [] (to-tokens sexpr))
+       (= (check-pair (to-tokens sexpr))
           [sym-g sym-l errors sexprs])
 
        ['a 42]
@@ -84,7 +84,7 @@
 
 (deftest check-let-test 
   (are [sexpr sym-g sym-l errors sexprs]
-       (= (check-let [] (to-tokens sexpr))
+       (= (check-let (to-tokens sexpr))
           [sym-g sym-l errors sexprs])
        
        [:let [['a 41] ['b 1]] [:+ 'a 'b]]
@@ -101,7 +101,7 @@
 
 (deftest check-quote-test
   (are [sexpr sym-g sym-l errors sexprs]
-       (= (check-quote [] (to-tokens sexpr))
+       (= (check-quote (to-tokens sexpr))
           [sym-g sym-l errors sexprs])
 
        [:quote ['a 'b] true]
