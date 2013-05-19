@@ -174,11 +174,11 @@
                        (concat e e2)
                        (-> s pop (conj-not-empty (drop-last current-level) s2))))))))
 
-(defn analyze-lonely-atom [[g l e] expr]
+(defn analyze-lonely-atom [_ expr]
   (->> expr
-       (str "What is that? ")
-       (conj e)
-       (conj [g l])))
+       (str "What is that ")
+       (+error ok)
+       (drop-last 1)))
 
 (defn analyze-file-expr [state expr]
   (let [analyze (if (is-sexpr? expr)

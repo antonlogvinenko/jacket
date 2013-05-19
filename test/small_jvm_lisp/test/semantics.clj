@@ -249,6 +249,24 @@
        
        ))
 
+
+(deftest analyze-file-expr-test
+  (are [sexpr sym-g sym-l errors]
+       (= (analyze-file-expr [] (to-tokens sexpr))
+          [sym-g sym-l errors])
+
+       [:define 'a 42]
+       ['a] [] []
+
+       [:define 'a 'b]
+       ['a] [] ["Undefined symbol b"]
+        
+       42
+       [] [] ["What is that 42"]
+       
+       ))
+          
+
 (deftest semantics-test
   (are [program]
        (= (to-tokens program) (-> program to-tokens semantics))
@@ -258,4 +276,3 @@
        [[:define 'a 1] [:define 'b [:lambda ['x 'y] [:+ 'x 'y 'a]]]]
 
        ))       
-      
