@@ -95,7 +95,7 @@
 
        [:let [42 ['a 4]] [:+ 1 1]]
        [] ['a] ["Must be a list"] [4 [:+ 1 1]]
-       
+
        ))
        
 
@@ -233,6 +233,16 @@
 
        [:define 'c [:lambda ['a] [:+ 'r 'a]]]
        ['c] [] ["Undefined symbols: [r]"]
+
+       [:lambda ['a] [:let [['b 1] ['c 2]]
+                      [:lambda ['d] [:+ 'a 'b 'c 'd]]
+                      [:+ 'a 'b 'c]]]
+       [] [] []
+
+       [:lambda ['a] [:let [['b 1] ['c 2]]
+                      [:lambda ['d] [:+ 'a 'b 'c 'd 'e]]
+                      [:+ 'a 'b 'c 'd 'e]]]
+       [] [] ["Undefined symbols: [d e]" "Undefined symbols: [e]"]
        
        ))
 
@@ -263,3 +273,4 @@
        [[:define 'a 1] [:define 'b [:lambda ['x 'y] [:+ 'x 'y 'a]]]]
 
        ))       
+
