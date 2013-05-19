@@ -78,7 +78,7 @@
         :else (-> ok
                   (+local f)
                   (+exprs body))))))
-  
+
 (defn merge-states [states state]
   (->> states
        (map (partial check-pair state))
@@ -89,9 +89,9 @@
   (let [length (count sexpr)
         args (second sexpr)
         args-length (count args)
-        body (last sexpr)]
+        body (drop 2 sexpr)]
     (cond
-      (not= 3 length)
+      (-> body count zero?)
       (-> ok
           (+error "Error :)"))
       
@@ -100,7 +100,7 @@
           (+exprs body))
       
       :else (let [analysis (merge-states args state)]
-              (conj (pop analysis) (conj (peek analysis) body))))))
+              (conj (pop analysis) (into (peek analysis) body))))))
 
 (defn check-quote [_ sexpr]
   (let [length (count sexpr)]
@@ -162,19 +162,19 @@
       :else (recur (conj coll x) xx))))
         
 (defn analyze-sexpr-tree [[global local errors] sexpr]
-  (loop [g global, l local, e errors, s [[sexpr]]]
+  (loop [g global, l [[]], e errors, s [[sexpr]]]
     (let [current-level (last s)
           current-s (last current-level)]
       (cond
         (empty? s) [g [] e]
-        (empty? current-level) (recur g (if (empty? l) l (drop-last l)) e (drop-last s))
+        (empty? current-level) (recur g (pop l) e (pop s))
         :else (let [[g2 l2 e2 s2] (check-expr [g l e s] current-s)]
                 (recur (concat g g2)
-                       (conj-not-empty l l2)
+                       (conj l l2)
                        (concat e e2)
                        (-> s
                            pop
-                           (conj-not-empty (drop-last current-level))
+                           (conj (pop current-level))
                            (conj s2))))))))
 
 (defn analyze-lonely-atom [_ expr]
