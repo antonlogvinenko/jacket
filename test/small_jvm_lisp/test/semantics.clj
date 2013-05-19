@@ -207,19 +207,6 @@
        ['a] ['a] [] [43]
 
        ))
-       
-
-(deftest conj-not-empty-test
-  (are [coll xs conjed]
-       (= (apply (partial conj-not-empty coll) xs)
-          conjed)
-
-       [1 2 3] [4 5 6]
-       [1 2 3 4 5 6]
-
-       [1 2 3] [4 [] 5]
-       [1 2 3 4 5]
-       ))
 
 (deftest analyze-sexpr-tree-test
   (are [sexpr sym-g sym-l errors]

@@ -154,13 +154,6 @@
                   check-atom)]
     (check state expr)))                    
   
-(defn conj-not-empty [coll & xs]
-  (loop [coll coll, [x & xx :as xs] xs]
-    (cond
-      (empty? xs) coll
-      (and (coll? x) (empty? x)) (recur coll xx)
-      :else (recur (conj coll x) xx))))
-        
 (defn analyze-sexpr-tree [[global local errors] sexpr]
   (loop [g global, l [[]], e errors, s [[sexpr]]]
     (let [current-level (last s)
