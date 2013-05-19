@@ -158,7 +158,7 @@
   (loop [coll coll, [x & xx :as xs] xs]
     (cond
       (empty? xs) coll
-      (nil? x) (recur coll xx)
+      (and (coll? x) (empty? x)) (recur coll xx)
       :else (recur (conj coll x) xx))))
         
 (defn analyze-sexpr-tree [[global local errors] sexpr]
@@ -166,13 +166,16 @@
     (let [current-level (last s)
           current-s (last current-level)]
       (cond
-        (empty? s) [g l e]
+        (empty? s) [g [] e]
         (empty? current-level) (recur g (if (empty? l) l (drop-last l)) e (drop-last s))
         :else (let [[g2 l2 e2 s2] (check-expr [g l e s] current-s)]
                 (recur (concat g g2)
                        (conj-not-empty l l2)
                        (concat e e2)
-                       (-> s pop (conj-not-empty (drop-last current-level) s2))))))))
+                       (-> s
+                           pop
+                           (conj-not-empty (drop-last current-level))
+                           (conj s2))))))))
 
 (defn analyze-lonely-atom [_ expr]
   (->> expr
