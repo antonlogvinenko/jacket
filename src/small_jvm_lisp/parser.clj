@@ -14,10 +14,7 @@
                        last
                        (str "Unmatched brace, s-expression: "))))
 
-(defn raise-unknown-token [token]
-  (raise-at-token token "Unknown token"))
-
-(defn read-sexpr [tokens]
+(defn parse-sexpr [tokens]
   (loop [prev nil tokens tokens stack []]
     (let [token (first tokens)
           tokens (rest tokens)]
@@ -31,16 +28,16 @@
                             (conj-last stack token))]
             (recur token tokens new-stack)))))))
   
-(defn read-expr [tokens]
+(defn parse-expr [tokens]
   (let [token (first tokens)
         token-value (.value token)]
     (cond
-      (= token-value :LB) (read-sexpr tokens)
+      (= token-value :LB) (parse-sexpr tokens)
       :else {:expr token :tokens (rest tokens)})))
 
-(defn read-program [tokens]
+(defn parse [tokens]
   (loop [expressions [] tokens tokens]
     (if (empty? tokens)
       expressions
-      (let [{expr :expr tokens :tokens} (read-expr tokens)]
+      (let [{expr :expr tokens :tokens} (parse-expr tokens)]
         (recur (conj expressions expr) tokens)))))
