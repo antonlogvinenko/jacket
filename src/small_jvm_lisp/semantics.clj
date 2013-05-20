@@ -1,7 +1,7 @@
 (ns small-jvm-lisp.semantics
   (:use [small-jvm-lisp.lexer]
         [small-jvm-lisp.errors]
-        [small-jvm-lisp.syntax]
+        [small-jvm-lisp.parser]
         [small-jvm-lisp.fsm]
         ))
 

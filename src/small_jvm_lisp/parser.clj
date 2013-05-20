@@ -1,4 +1,4 @@
-(ns small-jvm-lisp.syntax
+(ns small-jvm-lisp.parser
   (:use [small-jvm-lisp.lexer]
         [small-jvm-lisp.errors]
         [small-jvm-lisp.fsm]

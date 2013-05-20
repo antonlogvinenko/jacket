@@ -1,6 +1,6 @@
-(ns small-jvm-lisp.test.syntax
+(ns small-jvm-lisp.test.parser
   (:use [clojure.test]
-        [small-jvm-lisp.syntax]
+        [small-jvm-lisp.parser]
         [small-jvm-lisp.lexer]
         )
   (:import [small_jvm_lisp.fsm Token]
