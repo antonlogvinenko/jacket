@@ -186,9 +186,9 @@
                   analyze-lonely-atom)]
     (analyze state expr)))
 
-(defn raise-semantics-error [analysis]
-  (->> analysis
-       (str "Semantics analysis failed: " analysis)
+(defn raise-semantics-errors [errors]
+  (->> errors
+       (str "Semantics analysis failed: " \newline)
        raise))
 
 (defn semantics [program]
@@ -197,4 +197,4 @@
                     last)]
     (if (empty? errors)
       program
-      (-> errors (map str) (reduce str) raise-semantics-error))))
+      (->> errors (map str) (reduce str) raise-semantics-errors))))
