@@ -9,10 +9,11 @@
         (conj (last stack) elem)))
 
 (defn raise-unmatched-brace [stack token]
-  (raise-at-token token
-                  (->> stack
-                       last
-                       (str "Unmatched brace, s-expression: "))))
+  (let [opening (->> stack first first)]
+    (raise-at-token token
+                    (str "Closing bracket expected for s-expression "
+                         "started at token " (.value opening) " "
+                         "on line " (.line opening) ", column " (.column opening)))))
 
 (defn parse-sexpr [tokens]
   (loop [prev nil tokens tokens stack []]
@@ -36,8 +37,8 @@
       :else {:expr token :tokens (rest tokens)})))
 
 (defn parse [tokens]
-  (loop [expressions [] tokens tokens]
+  (loop [tokens tokens expressions []]
     (if (empty? tokens)
       expressions
       (let [{expr :expr tokens :tokens} (parse-expr tokens)]
-        (recur (conj expressions expr) tokens)))))
+        (->> expr (conj expressions) (recur tokens))))))
