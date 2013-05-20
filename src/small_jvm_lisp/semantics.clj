@@ -11,7 +11,9 @@
 (def ok [[] [] [] []])
 (defn super-update [s i v]
   (update-in s [i]
-             #(if (seq? v) (apply conj % v) (conj % v))))
+             #(if (seq? v)
+                (apply conj % v)
+                (conj % v))))
 (defn +global [s g] (super-update s 0 g))
 (defn +local [s l] (super-update s 1 l))
 (defn +error [s er] (super-update s 2 er))
