@@ -45,10 +45,11 @@
 (defn raise-lexical-error [reader position ch state lexem]
   (raise-at-pos position
                 (str "Lexical error: "
-                     "encountered character '" ch "' "
-                     "while building lexem \"" lexem "\""
-                     "(character at line " (rt/get-line-number reader) ", "
-                     "column " (dec (rt/get-column-number reader)) ")")))
+                     "character '" ch "' "
+                     "on line " (rt/get-line-number reader) ", "
+                     "column " (-> reader rt/get-column-number dec) " "
+                     "is not allowed "
+                     "(while building lexem '" lexem "')")))
 
 (defn get-position [reader]
   [(rt/get-line-number reader)
