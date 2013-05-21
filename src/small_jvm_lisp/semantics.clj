@@ -30,11 +30,11 @@
     (cond
       (not= length 3)
       (-> ok
-          (+error (str "Wrong arguments amount to define (" length ")")))
+          (+error (str "Wrong arguments count to 'define' (" length ")")))
       
       (-> name (is? symbol?) not)
       (-> ok
-          (+error (str "Not a symbol (" (.value name) ")"))
+          (+error (str "First 'define' argument must be symbol, not '" (.value name) "'"))
           (+exprs body))
 
       :else (-> ok
@@ -49,11 +49,11 @@
     (cond
       (not= length 3)
       (-> ok
-          (+error (str "Wrong arguments amount to lambda (" length ")")))
+          (+error (str "Wrong 'lambda' arguments count: " length)))
       
       (->> sexpr second (every? #(is? % symbol?)) not)
       (-> ok
-          (+error (str "Wrong arguments at lambda"))
+          (+error (str "Wrong lambda function arguments, must be symbols"))
           (+exprs body))
 
       :else (-> ok
@@ -62,19 +62,19 @@
 
 (defn check-pair [pair]
   (if (-> pair vector? not)
-    (-> ok (+error "Must be a list"))
+    (-> ok (+error "Pair must be a list of 2 elements"))
     (let [f (first pair)
           body (second pair)]
       (cond
         
         (-> pair count (not= 2))
         (-> ok
-            (+error "Wrong arguments for let")
+            (+error "Pair must be a list of 2 elements")
             (+exprs body))
         
         (-> f (is? symbol?) not)
         (-> ok
-            (+error "Must be token")
+            (+error "Pair first element must be symbol")
             (+exprs body))
         
         :else (-> ok
@@ -95,7 +95,7 @@
     (cond
       (-> body count zero?)
       (-> ok
-          (+error "Error :)"))
+          (+error "Let must have a body of one or more expressions"))
       
       (< args-length 1)
       (-> ok
@@ -109,7 +109,7 @@
     (if (= length 2)
       ok
       (-> ok
-          (+error "Wrong arguments count to quote")))))
+          (+error "Quote may have a single argument")))))
 
 (defn check-dynamic-list [state sexpr]
   (let [f (first sexpr)
@@ -125,11 +125,15 @@
     (cond
       (symbol-undefined? state f)
       (-> new-state
-          (+error "Illegal first token for s-expression"))
+          (+error (str "Illegal first token for s-expression: " f)))
       
       (seq undefined-symbols)
       (-> new-state
-          (+error (->> undefined-symbols (map #(.value %)) vec (str "Undefined symbols: "))))
+          (+error (->>
+                   undefined-symbols
+                   (map #(.value %))
+                   vec
+                   (str "Undefined symbols in s-expression: "))))
       
       :else new-state)))
   
@@ -139,9 +143,9 @@
                   :lambda check-lambda
                   :quote check-quote
                   :let check-let}]
-    (if (-> sexpr first nil?)
+    (if (nil? f)
       (-> ok
-          (+error "expected a function"))
+          (+error "First token in s-expression must be function"))
       (if-let [impl (get dispatch (.value f))]
         (impl sexpr)
         (check-dynamic-list state sexpr)))))
@@ -149,7 +153,7 @@
 (defn check-atom [state expr]
   (if (and (or (is? expr symbol?) (is? expr keyword?))
            (symbol-undefined? state expr))
-    (-> ok (+error (str "Undefined symbol " expr)))
+    (-> ok (+error (str "Undefined symbol: " expr)))
     ok))
 
 (defn check-expr [state expr]
@@ -176,7 +180,7 @@
 
 (defn analyze-lonely-atom [_ expr]
   (->> expr
-       (str "What is that ")
+       (str "Only s-expressions allowed in program top-level, found: ")
        (+error ok)
        (drop-last 1)))
 
@@ -188,7 +192,9 @@
 
 (defn raise-semantics-errors [errors]
   (->> errors
-       (str "Semantics analysis failed: " \newline)
+       (interpose (str \newline))
+       (apply str)
+       (str "Semantics analysis failed, " (count errors) " error(s):" \newline)
        raise))
 
 (defn semantics [program]
@@ -197,4 +203,4 @@
                     last)]
     (if (empty? errors)
       program
-      (->> errors (map str) (reduce str) raise-semantics-errors))))
+      (raise-semantics-errors errors))))

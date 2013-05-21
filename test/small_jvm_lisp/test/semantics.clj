@@ -24,10 +24,10 @@
        ['b] ['b] [] [42]
        
        [:define 'b 42 42]
-       [] [] ["Wrong arguments amount to define (4)"] []
+       [] [] ["Wrong arguments count to 'define' (4)"] []
        
        [:define 42 42]
-       [] [] ["Not a symbol (42)"] [42]
+       [] [] ["First 'define' argument must be symbol, not '42'"] [42]
 
        [:define 'a [:bla 100500]]
        ['a] ['a] [] [[:bla 100500]]
@@ -45,10 +45,10 @@
        [] ['a 'b] [] [[:+ 'a 'c]]
 
        [:lambda ['a] true true]
-       [] [] ["Wrong arguments amount to lambda (4)"] []
+       [] [] ["Wrong 'lambda' arguments count: 4"] []
 
        [:lambda ['a 42] true]
-       [] [] ["Wrong arguments at lambda"] [true]
+       [] [] ["Wrong lambda function arguments, must be symbols"] [true]
        ))
 
 (deftest merge-states-test
@@ -57,7 +57,7 @@
           [sym-g sym-l errors sexprs])
        
        [['a 42] ['b 1] 32 [1 2]]
-       [] ['a 'b] ["Must be a list" "Must be token"] [42 1 2]
+       [] ['a 'b] ["Pair must be a list of 2 elements" "Pair first element must be symbol"] [42 1 2]
        
   ))
 
@@ -70,16 +70,16 @@
        [] ['a] [] [42]
 
        ['a 42 42]
-       [] [] ["Wrong arguments for let"] [42]
+       [] [] ["Pair must be a list of 2 elements"] [42]
 
        [42 'a]
-       [] [] ["Must be token"] ['a]
+       [] [] ["Pair first element must be symbol"] ['a]
 
        ['a [:+ 1 2]]
-       [] ['a] [] [[:+ 1 2]]
+       [] ['a] [] [[:+ 1 2]] 
 
        42
-       [] [] ["Must be a list"] []
+       [] [] ["Pair must be a list of 2 elements"] []
        ))
 
 (deftest check-let-test 
@@ -91,10 +91,10 @@
        [] ['a 'b] [] [41 1 [:+ 'a 'b]]
 
        [:let [[52 1]] [:+ 1 1]]
-       [] [] ["Must be token"] [1 [:+ 1 1]]
+       [] [] ["Pair first element must be symbol"] [1 [:+ 1 1]]
 
        [:let [42 ['a 4]] [:+ 1 1]]
-       [] ['a] ["Must be a list"] [4 [:+ 1 1]]
+       [] ['a] ["Pair must be a list of 2 elements"] [4 [:+ 1 1]]
 
        ))
        
@@ -105,7 +105,7 @@
           [sym-g sym-l errors sexprs])
 
        [:quote ['a 'b] true]
-       [] [] ["Wrong arguments count to quote"] []
+       [] [] ["Quote may have a single argument"] []
 
        [:quote ['a 'b]]
        [] [] [] []
@@ -120,7 +120,7 @@
 
        ['a 3]
        [] [] []
-       [] [] ["Illegal first token for s-expression"] []
+       [] [] ["Illegal first token for s-expression: a"] []
 
        ['a [:+ 'a 3]]
        [] ['a] []
@@ -132,7 +132,7 @@
 
        ['g [:+ 1 1]]
        [] [] []
-       [] [] ["Illegal first token for s-expression"] [[:+ 1 1]]
+       [] [] ["Illegal first token for s-expression: g"] [[:+ 1 1]]
        
        ))
 
@@ -142,25 +142,25 @@
           [sym-g sym-l errors sexprs])
 
        []
-       [] [] ["expected a function"] []
+       [] [] ["First token in s-expression must be function"] []
        
        [:define 'b 42]
        ['b] ['b] [] [42]
 
        [:define 42]
-       [] [] ["Wrong arguments amount to define (2)"] []
+       [] [] ["Wrong arguments count to 'define' (2)"] []
 
        [:define 42 42]
-       [] [] ["Not a symbol (42)"] [42]
+       [] [] ["First 'define' argument must be symbol, not '42'"] [42]
 
        [:lambda ['a]]
-       [] [] ["Wrong arguments amount to lambda (2)"] []
+       [] [] ["Wrong 'lambda' arguments count: 2"] []
 
        [:lambda ['a 42] 42]
-       [] [] ["Wrong arguments at lambda"] [42]
+       [] [] ["Wrong lambda function arguments, must be symbols"] [42]
        
        [:de 42]
-       [] [] ["Illegal first token for s-expression"] []
+       [] [] ["Illegal first token for s-expression: :de"] []
 
        [:define 'a 42]
        ['a] ['a] [] [42]
@@ -176,10 +176,10 @@
           [sym-g sym-l errors sexprs])
        
        [[] [] []] :de
-       [] [] ["Undefined symbol :de"] []
+       [] [] ["Undefined symbol: :de"] []
 
        [[] [] []] 'abc
-       [] [] ["Undefined symbol abc"] []
+       [] [] ["Undefined symbol: abc"] []
 
        [[] ['abcde] []] 'abcde
        [] [] [] []
@@ -195,13 +195,13 @@
        [] [] [] []
 
        [] 'a
-       [] [] ["Undefined symbol a"] []
+       [] [] ["Undefined symbol: a"] []
 
        [['a] [] []] 'a
        [] [] [] []
 
        [] [:def 'a 43]
-       [] [] ["Illegal first token for s-expression"] []
+       [] [] ["Illegal first token for s-expression: :def"] []
 
        [] [:define 'a 43]
        ['a] ['a] [] [43]
@@ -214,13 +214,13 @@
           [sym-g sym-l errors])
        
        [:define 'a [:lambda ['a '42] 42]]
-       ['a] [] ["Wrong arguments at lambda"]
+       ['a] [] ["Wrong lambda function arguments, must be symbols"]
 
        [:define 'a [:quote ['a 'b 'c] 42]]
-       ['a] [] ["Wrong arguments count to quote"]
+       ['a] [] ["Quote may have a single argument"]
 
        [:define 'a 42 32]
-       [] [] ["Wrong arguments amount to define (4)"]
+       [] [] ["Wrong arguments count to 'define' (4)"]
 
        [:define 'c [:lambda ['a 'b] [:+ 'a 'b]]]
        ['c] [] []
@@ -232,7 +232,7 @@
        ['a] [] []
 
        [:define 'c [:lambda ['a] [:+ 'r 'a]]]
-       ['c] [] ["Undefined symbols: [r]"]
+       ['c] [] ["Undefined symbols in s-expression: [r]"]
 
        [:lambda ['a] [:let [['b 1] ['c 2]]
                       [:lambda ['d] [:+ 'a 'b 'c 'd]]
@@ -242,7 +242,7 @@
        [:lambda ['a] [:let [['b 1] ['c 2]]
                       [:lambda ['d] [:+ 'a 'b 'c 'd 'e]]
                       [:+ 'a 'b 'c 'd 'e]]]
-       [] [] ["Undefined symbols: [d e]" "Undefined symbols: [e]"]
+       [] [] ["Undefined symbols in s-expression: [d e]" "Undefined symbols in s-expression: [e]"]
        
        ))
 
@@ -256,10 +256,10 @@
        ['a] [] []
 
        [:define 'a 'b]
-       ['a] [] ["Undefined symbol b"]
+       ['a] [] ["Undefined symbol: b"]
         
        42
-       [] [] ["What is that 42"]
+       [] [] ["Only s-expressions allowed in program top-level, found: 42"]
        
        ))
           
