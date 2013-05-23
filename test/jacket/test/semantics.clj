@@ -1,9 +1,9 @@
-(ns small-jvm-lisp.test.semantics
+(ns jacket.test.semantics
   (:use [clojure.test]
-        [small-jvm-lisp.semantics]
-        [small-jvm-lisp.fsm]
+        [jacket.semantics]
+        [jacket.fsm]
         )
-  (:import [small_jvm_lisp.fsm Token])
+  (:import [jacket.fsm Token])
   )
 
 (def sexpr-z {:symtable [] :errors []})

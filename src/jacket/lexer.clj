@@ -1,5 +1,5 @@
-(ns small-jvm-lisp.lexer
-  (:use [small-jvm-lisp.fsm])
+(ns jacket.lexer
+  (:use [jacket.fsm])
   (:require [clojure.tools.reader.reader-types :as rt]))
 
 (def KEYWORDS ["-" "*" "+" "=" "!=" "<" ">" ">=" "<="

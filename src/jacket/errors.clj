@@ -1,4 +1,4 @@
-(ns small-jvm-lisp.errors)
+(ns jacket.errors)
 
 (defn raise [message]
   (->> message

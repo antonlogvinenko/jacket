@@ -1,9 +1,9 @@
-(ns small-jvm-lisp.test.parser
+(ns jacket.test.parser
   (:use [clojure.test]
-        [small-jvm-lisp.parser]
-        [small-jvm-lisp.lexer]
+        [jacket.parser]
+        [jacket.lexer]
         )
-  (:import [small_jvm_lisp.fsm Token]
+  (:import [jacket.fsm Token]
            ))
 
 (defn to-tokens [ts]

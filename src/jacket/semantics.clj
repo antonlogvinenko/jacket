@@ -1,8 +1,8 @@
-(ns small-jvm-lisp.semantics
-  (:use [small-jvm-lisp.lexer]
-        [small-jvm-lisp.errors]
-        [small-jvm-lisp.parser]
-        [small-jvm-lisp.fsm]
+(ns jacket.semantics
+  (:use [jacket.lexer]
+        [jacket.errors]
+        [jacket.parser]
+        [jacket.fsm]
         ))
 
 (defn is-sexpr? [expr]
