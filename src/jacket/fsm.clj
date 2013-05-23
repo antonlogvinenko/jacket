@@ -1,5 +1,5 @@
-(ns small-jvm-lisp.fsm
-  (:use [small-jvm-lisp.errors])
+(ns jacket.fsm
+  (:use [jacket.errors])
   (:require [clojure.tools.reader.reader-types :as rt]))
 
 (defn skip-all [sb reader f]

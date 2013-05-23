@@ -1,7 +1,7 @@
-(ns small-jvm-lisp.parser
-  (:use [small-jvm-lisp.lexer]
-        [small-jvm-lisp.errors]
-        [small-jvm-lisp.fsm]
+(ns jacket.parser
+  (:use [jacket.lexer]
+        [jacket.errors]
+        [jacket.fsm]
         ))
 
 (defn conj-last [stack elem]
