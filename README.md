@@ -13,8 +13,8 @@ Have an idea to try to implement currying in s-expressions.
 
 Clojure:
 >(def f (partial conj [3]))
-(f 1)
-[3 1]
+>(f 1)
+>[3 1]
 
 Jacket:
 (def f (conj [3]))
@@ -28,6 +28,6 @@ Current state:
 * Parser. Complete.
 * Semantic analysis. Complete.
 * Code generation. In progress, "jacket-2" branch.
-* Optimizations. In progress.
+* Optimizations. Probably.
 
 Not really serious about optimizations and production ready release. For now. :)
