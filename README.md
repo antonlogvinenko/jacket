@@ -10,10 +10,11 @@ Pet project pursuing clear goals:
 * - in that order
 
 Have an idea to try to implement currying in s-expressions.
+
 Clojure:
-(def f (partial conj [3]))
+>(def f (partial conj [3]))
 (f 1)
-> [3 1]
+[3 1]
 
 Jacket:
 (def f (conj [3]))
