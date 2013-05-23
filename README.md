@@ -14,10 +14,12 @@ Clojure:
 (def f (partial conj [3]))
 (f 1)
 > [3 1]
+
 Jacket:
 (def f (conj [3]))
 (f 1)
 > [3 1]
+
 "partial" in Jacket will have to have a "greedy" notion attached, for making n-arity functions partial application.
 
 Current state:
