@@ -12,8 +12,8 @@ Pet project pursuing clear goals:
 Current state:
 * Lexer with regular grammar described by the means of finite state machine. Batteries (fsm) included. Ready.
 * Parser. Ready.
-* Semantic analysis. In progress, ready in a week
-* Code generation. Yet to come.
+* Semantic analysis. Ready.
+* Code generation. In progress, "jacket-2" branch.
 * Optimizations. Probably.
 
 Not really serious about optimizations and production ready release. For now. :)
