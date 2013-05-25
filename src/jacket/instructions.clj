@@ -1,5 +1,14 @@
 (ns jacket.instructions)
 
+
+;;This is the coolest definition in this file.
+(defmacro def-n [& args]
+  `(do ~@(->> args
+              (partition 2)
+              (map (partial cons 'def)))))
+
+
+
 ;;pop object<reference>
 ;;push value
 (defn getfield [indexbyte1 indexbyte2] ["getfield" indexbyte1 indexbyte2])
@@ -9,10 +18,6 @@
 ;;pop value
 (defn putstatic [indexbyte1 indexbyte2] ["putstatic" indexbyte1 indexbyte2])
 
-(defmacro def-n [& args]
-  `(do ~@(->> args
-              (partition 2)
-              (map (partial cons 'def)))))
 
 
 ;;pop arg1[, arg2[, ...]]
@@ -34,8 +39,7 @@
 
 
 ;;pop object<reference>
-(def monitorenter "monitorenter")
-(def monitorexit "monitorexit")
+(def-n monitorenter "monitorenter", monitorexit "monitorexit")
 
 
 
@@ -109,76 +113,39 @@
 ;;pop arrayref<reference>, index<int>
 ;;push value<op-type>
 (def-n
-  aaload "aaload"
-  baload "baload"
-  caload "caload"
-  daload "daload"
-  faload "faload"
-  iaload "iaload"
-  laload "laload"
-  saload "saload")
+  aaload "aaload" baload "baload" caload "caload" daload "daload"
+  faload "faload" iaload "iaload" laload "laload" saload "saload")
 ;;pop arrayref<reference>, index<int>, value<op-type>
 ;;put value<op-type>, value type must be compatible
 (def-n
-  aastore "aastore"
-  bastore "bastore"
-  castore "castore"
-  dastore "dastore"
-  fastore "fastore"
-  iastore "iastore"
-  lastore "lastore"
-  sastore "sastore")
+  aastore "aastore" bastore "bastore" castore "castore" dastore "dastore"
+  fastore "fastore" iastore "iastore" lastore "lastore" sastore "sastore")
 
 
 
-;;pop object<reference|returnAddress>
 (defn astore [index] ["astore" index])
+(defn dstore [index] ["dstore" index])
+(defn fstore [index] ["fstore" index])
+(defn istore [index] ["istore" index])
+(defn lstore [index] ["lstore" index])
 (def-n
-  astore_0 "astore_0" astore_1 "astore_1" astore_2 "astore_2" astore_3 "astore_3")
+  dstore_0 "dstore_0" dstore_1 "dstore_1" dstore_2 "dstore_2" dstore_3 "dstore_3"
+  astore_0 "astore_0" astore_1 "astore_1" astore_2 "astore_2" astore_3 "astore_3"
+  fstore_0 "fstore_0" fstore_1 "fstore_1" fstore_2 "fstore_2" fstore_3 "fstore_3"
+  istore_0 "istore_0" istore_1 "istore_1" istore_2 "istore_2" istore_3 "istore_3"
+  lstore_0 "lstore_0" lstore_1 "lstore_1" lstore_2 "lstore_2" lstore_3 "lstore_3")
 
-;;push reference from local variable
+(defn dload [index] ["dload" index])
+(defn fload [index] ["fload" index])
+(defn iload [index] ["iload" index])
+(defn lload [index] ["lload" index])
 (defn aload [index] ["aload" index])
 (def-n
-  aload_0 "aload_0" aload_1 "aload_1" aload_2 "aload_2" aload_3 "adlod_3")
-;;pop value
-
-(defn dstore [index] ["dstore" index])
-(def-n
-  dstore_0 "dstore_0" dstore_1 "dstore_1" dstore_2 "dstore_2" dstore_3 "dstore_3")
-
-(defn fstore [index] ["fstore" index])
-(def-n
-  fstore_0 "fstore_0" fstore_1 "fstore_1" fstore_2 "fstore_2" fstore_3 "fstore_3")
-
-(defn istore [index] ["istore" index])
-(def-n
-  istore_0 "istore_0" istore_1 "istore_1" istore_2 "istore_2" istore_3 "istore_3")
-(defn lstore [index] ["lstore" index])
-(def lstore_0 "lstore_0")
-(def lstore_1 "lstore_1")
-(def lstore_2 "lstore_2")
-(def lstore_3 "lstore_3")
-;;push from local variable
-(defn dload [index] ["dload" index])
-(def dload_0 "dload_0")
-(def dload_1 "dload_1")
-(def dload_2 "dload_2")
-(def dload_3 "dload_3")
-(defn fload [index] ["fload" index])
-(def fload_0 "fload_0")
-(def fload_1 "fload_1")
-(def fload_2 "fload_2")
-(def fload_3 "fload_3")
-(defn iload [index] ["iload" index])
-(def iload_0 "iload_0")
-(def iload_1 "iload_1")
-(def iload_2 "iload_2")
-(def iload_3 "iload_3")
-(defn lload [index] ["lload" index])
-(def lload_0 "lload_0")
-(def lload_1 "lload_1")
-(def lload_2 "lload_2")
-(def lload_3 "lload_3")
+  aload_0 "aload_0" aload_1 "aload_1" aload_2 "aload_2" aload_3 "adlod_3"
+  dload_0 "dload_0" dload_1 "dload_1" dload_2 "dload_2" dload_3 "dload_3"
+  fload_0 "fload_0" fload_1 "fload_1" fload_2 "fload_2" fload_3 "fload_3"
+  iload_0 "iload_0" iload_1 "iload_1" iload_2 "iload_2" iload_3 "iload_3"
+  lload_0 "lload_0" lload_1 "lload_1" lload_2 "lload_2" lload_3 "lload_3")
 
 
 
@@ -197,48 +164,21 @@
 
 
 
-(def d2f "d2f")
-(def d2i "d2i")
-(def d2l "d2l")
-(def f2d "f2d")
-(def f2i "f2i")
-(def f2l "f2l")
-(def i2b "i2b")
-(def i2c "i2c")
-(def i2d "i2d")
-(def i2f "i2f")
-(def i2l "i2l")
-(def i2s "i2s")
-(def l2d "l2d")
-(def l2f "l2f")
-(def l2i "l2i")
+(def-n
+  d2f "d2f" d2i "d2i" d2l "d2l"
+  f2d "f2d" f2i "f2i" f2l "f2l"
+  i2b "i2b" i2c "i2c" i2d "i2d" i2f "i2f" i2l "i2l" i2s "i2s"
+  l2d "l2d" l2f "l2f" l2i "l2i")
 
 
 
-(def dadd "dadd")
-(def fadd "fadd")
-(def iadd "iadd")
-(def ladd "ladd")
-(def ddiv "ddiv")
-(def fdib "fdiv")
-(def idiv "idiv")
-(def ldiv "ldiv")
-(def dmul "dmul")
-(def fmul "fmul")
-(def imul "imul")
-(def lmul "lmul")
-(def dneg "dneg")
-(def fneg "fneg")
-(def drem "drem")
-(def ineg "ineg")
-(def lneg "lneg")
-(def frem "frem")
-(def irem "irem")
-(def lrem "lrem")
-(def dsub "dsub")
-(def fsub "fsub")
-(def isub "isub")
-(def lsub "lsub")
+(def-n
+  dadd "dadd" fadd "fadd" iadd "iadd" ladd "ladd"
+  ddiv "ddiv" fdib "fdiv" idiv "idiv" ldiv "ldiv"
+  dmul "dmul" fmul "fmul" imul "imul" lmul "lmul"
+  dneg "dneg" fneg "fneg" ineg "ineg" lneg "lneg"
+  frem "frem" irem "irem" lrem "lrem" drem "drem"
+  dsub "dsub" fsub "fsub" isub "isub" lsub "lsub")
 
 
 
@@ -250,42 +190,30 @@
 
 
 
-(def ishl "ishl")
-(def ishr "ishr")
-(def iushr "iushr")
-(def ixor "ixor")
-(def lshl "lshl")
-(def lshr "lshr")
-(def lushr "lushr")
-(def lxor "lxor")
+(def-n ishl "ishl" lshl "lshl"
+  ishr "ishr" lshr "lshr"
+  iushr "iushr" lushr "lushr"
+  lxor "lxor" ixor "ixor")
 
 
 
-(def iand "iand")
-(def ior "ior")
-(def land "land")
-(def lor "lor")
+(def-n iand "iand" land "land" ior "ior" lor "lor")
 
 
 
-(def dcmpg "dcmpg")
-(def dcmpl "dcmpl")
-(def fcmpg "fcmpg")
-(def fcmpl "fcmpl")
-(def lcmpl "lcmpl")
-(def lcmpr "lcmpr")
+(def-n
+  dcmpg "dcmpg" fcmpg "fcmpg"
+  dcmpl "dcmpl" fcmpl "fcmpl"
+  lcmp "lcmp")
 
 
 
 ;;push value
-(def dconst_0 "dconst_0")
-(def dconst_1 "dconst_1")
-(def fconst_0 "fconst_0")
-(def fconst_1 "fconst_1")
-(def iconst_0 "iconst_0")
-(def iconst_1 "iconst_1")
-(def lconst_0 "lconst_0")
-(def lconst_1 "lconst_1")
+(def-n
+  dconst_0 "dconst_0" dconst_1 "dconst_1"
+  fconst_0 "fconst_0" fconst_1 "fconst_1"
+  iconst_0 "iconst_0" iconst_1 "iconst_1"
+  lconst_0 "lconst_0" lconst_1 "lconst_1")
 
 
 
@@ -297,26 +225,19 @@
 
 
 ;;duplicate top stack element
-(def dup "dup")
-(def dup_x1 "dup_x1")
-(def dup_x2 "dup_x2")
-(def dup2 "dup2")
-(def dup2_x1 "dup2_x1")
-(def dup2_x2 "dup2_x2")
-(def pop "pop")
-(def pop2 "pop2")
+(def-n
+  dup "dup" dup_x1 "dup_x1" dup_x2 "dup_x2"
+  dup2 "dup2" dup2_x1 "dup2_x1" dup2_x2 "dup2_x2"
+  pop "pop" pop2 "pop2"
+  swap "swap")
 (defn sipush [byte1 byte2] ["sipush" byte1 byte2])
-(def swap "swap")
 
 
   
 ;;pop and return
-(def areturn "areturn")
-(def ireturn "ireturn")
-(def dreturn "dreturn")
-(def freturn "freturn")
-(def lreturn "lreturn")
-(def return "return")
+(def-n
+  return "return" areturn "areturn"
+  ireturn "ireturn" dreturn "dreturn" freturn "freturn" lreturn "lreturn")
 ;;return to returnAddress at local variable 'index'
 (defn ret [index] ["ret" index])
 
