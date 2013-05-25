@@ -119,7 +119,8 @@
   saload "saload")
 ;;pop arrayref<reference>, index<int>, value<op-type>
 ;;put value<op-type>, value type must be compatible
-(def-n aastore "aastore"
+(def-n
+  aastore "aastore"
   bastore "bastore"
   castore "castore"
   dastore "dastore"
@@ -132,16 +133,10 @@
 
 ;;pop object<reference|returnAddress>
 (defn astore [index] ["astore" index])
-(def astore_0 "astore_0")
-(def astore_1 "astore_1")
-(def astore_2 "astore_2")
-(def astore_3 "astore_3")
+(def-n astore_0 "astore_0" astore_1 "astore_1" astore_2 "astore_2" astore_3 "astore_3")
 ;;push reference from local variable
 (defn aload [index] ["aload" index])
-(def aload_0 "aload_0")
-(def aload_1 "aload_1")
-(def aload_2 "aload_2")
-(def aload_3 "adlod_3")
+(def-n aload_0 "aload_0" aload_1 "aload_1" aload_2 "aload_2" aload_3 "adlod_3")
 ;;pop value
 (defn dstore [index] ["dstore" index])
 (def dstore_0 "dstore_0")
