@@ -7,6 +7,10 @@
               (partition 2)
               (map (partial cons 'def)))))
 
+(defmacro defn-n [& args]
+  `(do ~@(->> args
+              (partition 3)
+              (map (partial cons 'defn)))))
 
 
 ;;pop object<reference>
@@ -47,27 +51,31 @@
 (defn goto_2 [branchbyte1 branchbyte2 branchbyte3 branchbyte4]
   ["goto_2" branchbyte1 branchbyte2 branchbyte3 branchbyte4])
 ;;pop object<type>, object<type>
-(defn if_acmpeq [branchbyte1 branchbyte2] ["if_acmpeq" branchbyte1 branchbyte2])
-(defn if_acmpne [branchbyte1 branchbyte2] ["if_acmpne" branchbyte1 branchbyte2])
-(defn if_icmpeq [branchbyte1 branchbyte2] ["if_icmpeq" branchbyte1 branchbyte2])
-(defn if_icmpne [branchbyte1 branchbyte2] ["if_icmpne" branchbyte1 branchbyte2])
-(defn if_icmplt [branchbyte1 branchbyte2] ["if_icmplt" branchbyte1 branchbyte2])
-(defn if_icmple [branchbyte1 branchbyte2] ["if_icmple" branchbyte1 branchbyte2])
-(defn if_icmpgt [branchbyte1 branchbyte2] ["if_icmpgt" branchbyte1 branchbyte2])
-(defn if_icmpge [branchbyte1 branchbyte2] ["if_icmpge" branchbyte1 branchbyte2])
+(defn-n
+  if_acmpeq [branchbyte1 branchbyte2] ["if_acmpeq" branchbyte1 branchbyte2]
+  if_acmpne [branchbyte1 branchbyte2] ["if_acmpne" branchbyte1 branchbyte2]
+  if_icmpeq [branchbyte1 branchbyte2] ["if_icmpeq" branchbyte1 branchbyte2]
+  if_icmpne [branchbyte1 branchbyte2] ["if_icmpne" branchbyte1 branchbyte2]
+  if_icmplt [branchbyte1 branchbyte2] ["if_icmplt" branchbyte1 branchbyte2]
+  if_icmple [branchbyte1 branchbyte2] ["if_icmple" branchbyte1 branchbyte2]
+  if_icmpgt [branchbyte1 branchbyte2] ["if_icmpgt" branchbyte1 branchbyte2]
+  if_icmpge [branchbyte1 branchbyte2] ["if_icmpge" branchbyte1 branchbyte2])
 ;;pop value
-(defn ifeq [branchbyte1 branchbyte2] ["ifeq" branchbyte1 branchbyte2])
-(defn ifne [branchbyte1 branchbyte2] ["ifne" branchbyte1 branchbyte2])
-(defn iflt [branchbyte1 branchbyte2] ["iflt" branchbyte1 branchbyte2])
-(defn ifgt [branchbyte1 branchbyte2] ["ifgt" branchbyte1 branchbyte2])
-(defn ifle [branchbyte1 branchbyte2] ["ifle" branchbyte1 branchbyte2])
-(defn ifge [branchbyte1 branchbyte2] ["ifge" branchbyte1 branchbyte2])
+(defn-n
+  ifeq [branchbyte1 branchbyte2] ["ifeq" branchbyte1 branchbyte2]
+  ifne [branchbyte1 branchbyte2] ["ifne" branchbyte1 branchbyte2]
+  iflt [branchbyte1 branchbyte2] ["iflt" branchbyte1 branchbyte2]
+  ifgt [branchbyte1 branchbyte2] ["ifgt" branchbyte1 branchbyte2]
+  ifle [branchbyte1 branchbyte2] ["ifle" branchbyte1 branchbyte2]
+  ifge [branchbyte1 branchbyte2] ["ifge" branchbyte1 branchbyte2])
 ;;pop value<reference>
-(defn ifnonnull [branchbyte1 branchbyte2] ["ifnonnull" branchbyte1 branchbyte2])
-(defn ifnull [branchbyte1 branchbyte2] ["ifnull" branchbyte1 branchbyte2])
+(defn-n
+  ifnonnull [branchbyte1 branchbyte2] ["ifnonnull" branchbyte1 branchbyte2]
+  ifnull [branchbyte1 branchbyte2] ["ifnull" branchbyte1 branchbyte2])
 ;;push returnAddress
-(defn jsr [branchbyte1 branchbyte2] ["jsr" branchbyte1 branchbyte2])
-(defn jsr [branchbyte1 branchbyte2 branchbyte3 branchbyte4]
+(defn-n
+  jsr [branchbyte1 branchbyte2] ["jsr" branchbyte1 branchbyte2]
+  jsr [branchbyte1 branchbyte2 branchbyte3 branchbyte4]
   ["jsr" branchbyte1 branchbyte2 branchbyte3 branchbyte4])
 ;;pop key
 ;;todo - learn and implement when required
@@ -123,11 +131,12 @@
 
 
 
-(defn astore [index] ["astore" index])
-(defn dstore [index] ["dstore" index])
-(defn fstore [index] ["fstore" index])
-(defn istore [index] ["istore" index])
-(defn lstore [index] ["lstore" index])
+(defn-n
+  astore [index] ["astore" index]
+  dstore [index] ["dstore" index]
+  fstore [index] ["fstore" index]
+  istore [index] ["istore" index]
+  lstore [index] ["lstore" index])
 (def-n
   dstore_0 "dstore_0" dstore_1 "dstore_1" dstore_2 "dstore_2" dstore_3 "dstore_3"
   astore_0 "astore_0" astore_1 "astore_1" astore_2 "astore_2" astore_3 "astore_3"
@@ -135,11 +144,12 @@
   istore_0 "istore_0" istore_1 "istore_1" istore_2 "istore_2" istore_3 "istore_3"
   lstore_0 "lstore_0" lstore_1 "lstore_1" lstore_2 "lstore_2" lstore_3 "lstore_3")
 
-(defn dload [index] ["dload" index])
-(defn fload [index] ["fload" index])
-(defn iload [index] ["iload" index])
-(defn lload [index] ["lload" index])
-(defn aload [index] ["aload" index])
+(defn-n
+  dload [index] ["dload" index]
+  fload [index] ["fload" index]
+  iload [index] ["iload" index]
+  lload [index] ["lload" index]
+  aload [index] ["aload" index])
 (def-n
   aload_0 "aload_0" aload_1 "aload_1" aload_2 "aload_2" aload_3 "adlod_3"
   dload_0 "dload_0" dload_1 "dload_1" dload_2 "dload_2" dload_3 "dload_3"
@@ -183,9 +193,9 @@
 
 
 (defn iinc [index const] ["iinc" index const])
-(defn wide-sl [opcode indexbyte1 indexbyte2]
-  ["wide" opcode indexbyte1 indexbyte2])
-(defn wide-iinc [indexbyte1 indexbyte2 constbyte1 constbyte2]
+(defn-n
+  wide-sl [opcode indexbyte1 indexbyte2] ["wide" opcode indexbyte1 indexbyte2]
+  wide-iinc [indexbyte1 indexbyte2 constbyte1 constbyte2]
   ["wide" "iinc" indexbyte1 indexbyte2 constbyte1 constbyte2])
 
 
@@ -218,9 +228,10 @@
 
 
 ;;push from run-time constant pool
-(defn ldc [index] ["ldc" index])
-(defn ldc_2 [indexbyte1 indexbyte2] ["ldc_w" indexbyte1 indexbyte2])
-(defn ldc2_w [indexbyte1 indexbyte2] ["ldc2_2" indexbyte1 indexbyte2])
+(def-n
+  ldc [index] ["ldc" index]
+  ldc_2 [indexbyte1 indexbyte2] ["ldc_w" indexbyte1 indexbyte2]
+  ldc2_w [indexbyte1 indexbyte2] ["ldc2_2" indexbyte1 indexbyte2])
 
 
 
