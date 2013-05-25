@@ -108,24 +108,25 @@
 
 ;;pop arrayref<reference>, index<int>
 ;;push value<op-type>
-(def aaload "aaload")
-(def baload "baload")
-(def caload "caload")
-(def daload "daload")
-(def faload "faload")
-(def iaload "iaload")
-(def laload "laload")
-(def saload "saload")
+(def-n
+  aaload "aaload"
+  baload "baload"
+  caload "caload"
+  daload "daload"
+  faload "faload"
+  iaload "iaload"
+  laload "laload"
+  saload "saload")
 ;;pop arrayref<reference>, index<int>, value<op-type>
 ;;put value<op-type>, value type must be compatible
-(def aastore "aastore")
-(def bastore "bastore")
-(def castore "castore")
-(def dastore "dastore")
-(def fastore "fastore")
-(def iastore "iastore")
-(def lastore "lastore")
-(def sastore "sastore")
+(def-n aastore "aastore"
+  bastore "bastore"
+  castore "castore"
+  dastore "dastore"
+  fastore "fastore"
+  iastore "iastore"
+  lastore "lastore"
+  sastore "sastore")
 
 
 
