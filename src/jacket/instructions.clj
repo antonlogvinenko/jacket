@@ -9,6 +9,10 @@
 ;;pop value
 (defn putstatic [indexbyte1 indexbyte2] ["putstatic" indexbyte1 indexbyte2])
 
+(defmacro def-n [& args]
+  `(do ~@(->> args
+              (partition 2)
+              (map (partial cons 'def)))))
 
 
 ;;pop arg1[, arg2[, ...]]
