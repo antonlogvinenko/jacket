@@ -133,26 +133,26 @@
 
 ;;pop object<reference|returnAddress>
 (defn astore [index] ["astore" index])
-(def-n astore_0 "astore_0" astore_1 "astore_1" astore_2 "astore_2" astore_3 "astore_3")
+(def-n
+  astore_0 "astore_0" astore_1 "astore_1" astore_2 "astore_2" astore_3 "astore_3")
+
 ;;push reference from local variable
 (defn aload [index] ["aload" index])
-(def-n aload_0 "aload_0" aload_1 "aload_1" aload_2 "aload_2" aload_3 "adlod_3")
+(def-n
+  aload_0 "aload_0" aload_1 "aload_1" aload_2 "aload_2" aload_3 "adlod_3")
 ;;pop value
+
 (defn dstore [index] ["dstore" index])
-(def dstore_0 "dstore_0")
-(def dstore_1 "dstore_1")
-(def dstore_2 "dstore_2")
-(def dstore_3 "dstore_3")
+(def-n
+  dstore_0 "dstore_0" dstore_1 "dstore_1" dstore_2 "dstore_2" dstore_3 "dstore_3")
+
 (defn fstore [index] ["fstore" index])
-(def fstore_0 "fstore_0")
-(def fstore_1 "fstore_1")
-(def fstore_2 "fstore_2")
-(def fstore_3 "fstore_3")
+(def-n
+  fstore_0 "fstore_0" fstore_1 "fstore_1" fstore_2 "fstore_2" fstore_3 "fstore_3")
+
 (defn istore [index] ["istore" index])
-(def istore_0 "istore_0")
-(def istore_1 "istore_1")
-(def istore_2 "istore_2")
-(def istore_3 "istore_3")
+(def-n
+  istore_0 "istore_0" istore_1 "istore_1" istore_2 "istore_2" istore_3 "istore_3")
 (defn lstore [index] ["lstore" index])
 (def lstore_0 "lstore_0")
 (def lstore_1 "lstore_1")
