@@ -40,6 +40,8 @@
   ["inbokevirtual" idxbyte1 idxbyte2])
 (defn invokespecial [idxbyte1 idxbyte2]
   ["invokespecial" idxbyte1 idxbyte2])
+(defn invokenonvirtual [idxbyte1 idxbyte2]
+  ["invokespecial" idxbyte1 idxbyte2])
 
 
 

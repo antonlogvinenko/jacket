@@ -11,22 +11,6 @@
 (defn create-name [name-parts]
   (->> name-parts (interpose "/") (apply str)))
 
-(defn gen-file [type access name super-parts & methods]
-  {:type (FILE-TYPES type)
-   :access (ACCESS access)
-   :name name
-   :super (create-name super-parts)
-   :methods methods})
-
-(defn gen-method [access static name arguments return instructions]
-  {:access access
-   :static static
-   :name name
-   :arguments arguments
-   :return return
-   :instruction instructions})
-
-
 (defn gen-type [type]
   (cond
     (vector? type) (str \[ (apply gen-type type))
@@ -63,7 +47,7 @@
        \space
        (-> code :access ACCESS)
        \space
-       (:name code)))
+       (-> :name code str)))
 
 (defn super-text [code]
   (str ".super " (:super code)))
@@ -80,7 +64,7 @@
        \newline
        (-> method :instructions instructions-text)
        \newline
-       ".end"))
+       ".end method"))
 
 (defn methods-text [code]
   (->> code
@@ -96,3 +80,24 @@
 
 (defn print-file [program-file file-name]
   (->> program-file program-text (spit file-name)))
+
+
+(def prog
+  {:access :public :type :class :name 'Cake
+   :super (gen-path 'java 'lang 'Object)
+   :methods
+   [
+    {:access :public :name "<init>"
+     :arguments [] :return :void
+     :instructions [aload_0
+                    "invokenonvirtual java/lang/Object/<init>()V"
+                    return]}
+    
+    {:access :public :static true :name "main"
+     :arguments [[(gen-path 'java 'lang 'String)]] :return :void
+     :instructions [
+                    return
+                    ]
+     }
+    
+    ]})

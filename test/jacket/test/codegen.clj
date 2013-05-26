@@ -73,7 +73,7 @@
         :arguments [(gen-path 'java 'lang 'String)]
         :return :void
         :instructions [dadd (iinc 1 2) (ret 42)]
-        } ".method private static main(Ljava/lang/String;)V\n\tdadd\n\tiinc 1 2\n\tret 42\n.end"
+        } ".method private static main(Ljava/lang/String;)V\n\tdadd\n\tiinc 1 2\n\tret 42\n.end method"
 
           ))
 
@@ -89,13 +89,13 @@
           :arguments [[:int] [(gen-path 'java 'lang 'String)]] :return :void
           :instructions [fadd (astore 10) aconst_null]}]}
 
-       [".method public static main([Ljava/lang/String;)V\n\tdadd\n\tiinc 1 2\n\tret 42\n.end"
-        ".method private bla([I[Ljava/lang/String;)V\n\tfadd\n\tastore 10\n\taconst_null\n.end"]
+       [".method public static main([Ljava/lang/String;)V\n\tdadd\n\tiinc 1 2\n\tret 42\n.end method"
+        ".method private bla([I[Ljava/lang/String;)V\n\tfadd\n\tastore 10\n\taconst_null\n.end method"]
        ))
 
 (def program-under-test
          {:access :public :type :class :name "Cake"
-        :super "java.lang.Object"
+        :super (gen-path 'java 'lang 'Object)
         :methods
         [{:access :public :static true :name "main"
           :arguments [[(gen-path 'java 'lang 'String)]] :return :void
@@ -109,7 +109,7 @@
        (= text (program-text code))
 
        program-under-test
-       ".class public Cake\n.super java.lang.Object\n.method public static main([Ljava/lang/String;)V\n\tdadd\n\tiinc 1 2\n\taconst_null\n\tret 42\n.end\n.method private bla([I)Ljava/lang/String;\n\taconst_null\n\tpop\n.end"
+       ".class public Cake\n.super java/lang/Object\n.method public static main([Ljava/lang/String;)V\n\tdadd\n\tiinc 1 2\n\taconst_null\n\tret 42\n.end method\n.method private bla([I)Ljava/lang/String;\n\taconst_null\n\tpop\n.end method"
        ))
          
         
