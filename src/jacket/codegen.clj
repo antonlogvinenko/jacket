@@ -50,7 +50,16 @@
        (-> :name code str)))
 
 (defn super-text [code]
-  (str ".super " (:super code)))
+  (str ".super "
+       (get code :super (gen-path 'java 'lang 'Object))))
+
+(defn implements-text [code]
+  (->> code
+       :implements
+       (map (partial str ".implements "))
+       (interpose \newline)
+       (apply str)))
+  
 
 (defn method-text [method]
   (str ".method"
@@ -73,7 +82,8 @@
 
 (defn program-text [code]
   (->> (into [(file-type-text code)
-              (super-text code)]
+              (super-text code)
+              (implements-text code)]
              (methods-text code))
        (interpose \newline)
        (apply str)))
@@ -82,22 +92,24 @@
   (->> program-file program-text (spit file-name)))
 
 
-(def prog
-  {:access :public :type :class :name 'Cake
+(def default-init
+  {:access :public :name "<init>"
+   :arguments [] :return :void
+   :instructions [aload_0
+                  "invokenonvirtual java/lang/Object/<init>()V"
+                  return]})
+
+(def hello-world
+  {:access :public :type :class :name 'HelloWorld
    :super (gen-path 'java 'lang 'Object)
    :methods
-   [
-    {:access :public :name "<init>"
-     :arguments [] :return :void
-     :instructions [aload_0
-                    "invokenonvirtual java/lang/Object/<init>()V"
-                    return]}
-    
+   [default-init
     {:access :public :static true :name "main"
      :arguments [[(gen-path 'java 'lang 'String)]] :return :void
      :instructions [
+                    (limitstack 2)
                     return
-                    ]
-     }
-    
-    ]})
+                    ]}]})
+
+(defn gen-hello-world []
+  (->> hello-world program-text (spit "HelloWorld.jt")))

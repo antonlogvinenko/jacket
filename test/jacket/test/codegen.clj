@@ -59,6 +59,17 @@
   (are [code text]
        (= text (super-text code))
 
+       {:super (gen-path 'java 'lang 'String)}
+       ".super java/lang/String"
+       
+       {}
+       ".super java/lang/Object"
+       ))
+
+(deftest super-text-test
+  (are [code text]
+       (= text (super-text code))
+
        {:super "Class"} ".super Class"
 
        ))
@@ -95,21 +106,23 @@
 
 (def program-under-test
          {:access :public :type :class :name "Cake"
-        :super (gen-path 'java 'lang 'Object)
-        :methods
-        [{:access :public :static true :name "main"
-          :arguments [[(gen-path 'java 'lang 'String)]] :return :void
-          :instructions [dadd (iinc 1 2) aconst_null (ret 42)]}
-         {:access :private :static false :name "bla"
-          :arguments [[:int]] :return (gen-path 'java 'lang 'String)
-          :instructions [aconst_null pop1]}]})
+          :super (gen-path 'java 'lang 'Object)
+          :implements [(gen-path 'java 'io 'Serializable)
+                       (gen-path 'java 'lang 'Cloneable)]
+          :methods
+          [{:access :public :static true :name "main"
+            :arguments [[(gen-path 'java 'lang 'String)]] :return :void
+            :instructions [dadd (iinc 1 2) aconst_null (ret 42)]}
+           {:access :private :static false :name "bla"
+            :arguments [[:int]] :return (gen-path 'java 'lang 'String)
+            :instructions [aconst_null pop1]}]})
 
 (deftest program-text-test
   (are [code text]
        (= text (program-text code))
 
        program-under-test
-       ".class public Cake\n.super java/lang/Object\n.method public static main([Ljava/lang/String;)V\n\tdadd\n\tiinc 1 2\n\taconst_null\n\tret 42\n.end method\n.method private bla([I)Ljava/lang/String;\n\taconst_null\n\tpop\n.end method"
+       ".class public Cake\n.super java/lang/Object\n.implements java/io/Serializable\n.implements java/lang/Cloneable\n.method public static main([Ljava/lang/String;)V\n\tdadd\n\tiinc 1 2\n\taconst_null\n\tret 42\n.end method\n.method private bla([I)Ljava/lang/String;\n\taconst_null\n\tpop\n.end method"
        ))
          
         

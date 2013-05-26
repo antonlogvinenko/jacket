@@ -1,6 +1,5 @@
 (ns jacket.instructions)
 
-
 ;;This is the coolest definition in this file.
 (defmacro def-n [& args]
   `(do ~@(->> args
@@ -11,6 +10,10 @@
   `(do ~@(->> args
               (partition 3)
               (map (partial cons 'defn)))))
+
+
+(defn-n
+  limitstack [n] [".limit stack" n])
 
 
 
@@ -259,3 +262,4 @@
 
 (defn add-comment [comment] (str \; comment))
 (def nop "nop")
+
