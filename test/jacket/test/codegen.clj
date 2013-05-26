@@ -51,7 +51,7 @@
         :static true
         :name "main"
         :arguments [(gen-path 'java 'lang 'String)]
-        :return "V"
+        :return :void
         :instructions [dadd (iinc 1 2) (ret 42)]
         } ".method private static main(Ljava/lang/String;)V\n\tdadd\n\tiinc 1 2\n\tret 42\n.end"
 
@@ -63,10 +63,10 @@
 
        {:methods
         [{:access :public :static true :name "main"
-          :arguments [[(gen-path 'java 'lang 'String)]] :return "V"
+          :arguments [[(gen-path 'java 'lang 'String)]] :return :void
           :instructions [dadd (iinc 1 2) (ret 42)]}
          {:access :private :static false :name "bla"
-          :arguments [[:int] [(gen-path 'java 'lang 'String)]] :return "V"
+          :arguments [[:int] [(gen-path 'java 'lang 'String)]] :return :void
           :instructions [fadd (astore 10) aconst_null]}]}
 
        [".method public static main([Ljava/lang/String;)V\n\tdadd\n\tiinc 1 2\n\tret 42\n.end"
@@ -78,10 +78,10 @@
         :super "java.lang.Object"
         :methods
         [{:access :public :static true :name "main"
-          :arguments [[(gen-path 'java 'lang 'String)]] :return "V"
+          :arguments [[(gen-path 'java 'lang 'String)]] :return :void
           :instructions [dadd (iinc 1 2) aconst_null (ret 42)]}
          {:access :private :static false :name "bla"
-          :arguments [[:int]] :return "Ljava.lang.String;"
+          :arguments [[:int]] :return (gen-path 'java 'lang 'String)
           :instructions [aconst_null pop1]}]})
 
 (deftest program-text-test
@@ -89,7 +89,7 @@
        (= text (program-text code))
 
        program-under-test
-       ".class public Cake\n.super java.lang.Object\n.method public static main([Ljava/lang/String;)V\n\tdadd\n\tiinc 1 2\n\taconst_null\n\tret 42\n.end\n.method private bla([I)Ljava.lang.String;\n\taconst_null\n\tpop\n.end"
+       ".class public Cake\n.super java.lang.Object\n.method public static main([Ljava/lang/String;)V\n\tdadd\n\tiinc 1 2\n\taconst_null\n\tret 42\n.end\n.method private bla([I)Ljava/lang/String;\n\taconst_null\n\tpop\n.end"
        ))
          
         

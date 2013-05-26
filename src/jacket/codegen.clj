@@ -1,7 +1,7 @@
 (ns jacket.codegen
   (:use [jacket.instructions]))
 
-(def TYPES
+(def FILE-TYPES
   {:class ".class" :interface ".interface"})
 (def ACCESS
   {:public "public" :private "private" :protected "protected" :package "package"})
@@ -12,7 +12,7 @@
   (->> name-parts (interpose "/") (apply str)))
 
 (defn gen-file [type access name super-parts & methods]
-  {:type (TYPES type)
+  {:type (FILE-TYPES type)
    :access (ACCESS access)
    :name name
    :super (create-name super-parts)
@@ -59,7 +59,7 @@
        (apply str)))
 
 (defn file-type-text [code]
-  (str (-> code :type TYPES)
+  (str (-> code :type FILE-TYPES)
        \space
        (-> code :access ACCESS)
        \space
@@ -76,7 +76,7 @@
        (if (-> method :static true?) (str "static" \space) "")
        (method :name)
        \( (-> :arguments method gen-arguments) \)
-       (method :return)
+       (-> :return method gen-type)
        \newline
        (-> method :instructions instructions-text)
        \newline
