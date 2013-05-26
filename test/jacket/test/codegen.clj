@@ -3,11 +3,31 @@
         [jacket.codegen]
         [jacket.instructions]))
 
-(deftest get-path-test
+(deftest gen-path-test
   (are [parts path]
        (= path (apply gen-path parts))
 
        ['java 'lang 'String] "java/lang/String"
+       
+       ))
+
+(deftest gen-type-test
+  (are [definition type]
+       (= type (gen-type definition))
+
+       :void "V"
+       :long "L"
+       [:long] "[L"
+       [(gen-path 'java 'lang 'String)] "[Ljava/lang/String;"
+       
+       ))
+
+(deftest gen-arguments-test
+  (are [arguments text]
+       (= (gen-arguments arguments) text)
+
+       [:int [:int] [(gen-path 'java 'io 'File)]]
+       "I[I[Ljava/io/File;"
        
        ))
 
