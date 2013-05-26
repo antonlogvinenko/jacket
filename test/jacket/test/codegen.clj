@@ -66,6 +66,17 @@
        ".super java/lang/Object"
        ))
 
+(deftest implements-text-test
+  (are [code text]
+       (= text (implements-text code))
+
+       {:implements [(gen-path 'java 'io 'Serializable)
+                     (gen-path 'java 'lang 'Cloneable)]}
+       ".implements java/io/Serializable\n.implements java/lang/Cloneable"
+       
+       ))
+  
+
 (deftest super-text-test
   (are [code text]
        (= text (super-text code))
