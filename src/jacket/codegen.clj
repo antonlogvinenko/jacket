@@ -1,8 +1,13 @@
 (ns jacket.codegen
   (:use [jacket.instructions]))
 
-(def TYPES {:class ".class" :interface ".interface"})
-(def ACCESS {:public "public" :private "private" :protected "protected" :package "package"})
+(def TYPES
+  {:class ".class" :interface ".interface"})
+(def ACCESS
+  {:public "public" :private "private" :protected "protected" :package "package"})
+(def TYPE
+  {:int "I" :boolean "B" :char "C" :float "F" :double "D" :long "L" :void "V"})
+
 (defn create-name [name-parts]
   (->> name-parts (interpose "/") (apply str)))
 
@@ -21,12 +26,8 @@
    :return return
    :instruction instructions})
 
-;;todo
-(defn gen-arguments [arguments] "[Ljava/lang/String;")
-;;F / I / L<class>; / [ / V
-;;todo
-
-(def TYPE {:int "I" :boolean "B" :char "C" :float "F" :double "D" :long "L" :void "V"})
+(defn gen-arguments [arguments]
+  (->> arguments (map gen-type) (apply str)))
 
 (defn gen-type [type]
   (cond
@@ -72,7 +73,7 @@
        \space
        (if (-> method :static true?) (str "static" \space) "")
        (method :name)
-       \( (method :arguments) \)
+       \( (-> :arguments method gen-arguments) \)
        (method :return)
        \newline
        (-> method :instructions instructions-text)
