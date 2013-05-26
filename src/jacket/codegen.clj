@@ -26,14 +26,16 @@
    :return return
    :instruction instructions})
 
-(defn gen-arguments [arguments]
-  (->> arguments (map gen-type) (apply str)))
 
 (defn gen-type [type]
   (cond
     (vector? type) (str \[ (apply gen-type type))
     (string? type) (str \L type \;)
     :else (TYPE type)))
+
+(defn gen-arguments [arguments]
+  (->> arguments (map gen-type) (apply str)))
+
 
 (defn gen-path [& parts]
   (->> parts (map str) (interpose \/) (apply str)))
