@@ -1,40 +1,50 @@
 (ns jacket.instructions)
 
-
 ;;This is the coolest definition in this file.
 (defmacro def-n [& args]
   `(do ~@(->> args
               (partition 2)
               (map (partial cons 'def)))))
 
+(defmacro defn-n [& args]
+  `(do ~@(->> args
+              (partition 3)
+              (map (partial cons 'defn)))))
+
+
+(defn-n
+  limitstack [n] [".limit stack" n])
+
 
 
 ;;pop object<reference>
 ;;push value
-(defn getfield [indexbyte1 indexbyte2] ["getfield" indexbyte1 indexbyte2])
-(defn getstatic [indexbyte1 indexbyte2] ["getstatic" indexbyte1 indexbyte2])
+(defn getfield [idxbyte1 idxbyte2] ["getfield" idxbyte1 idxbyte2])
+(defn getstatic [idxbyte1 idxbyte2] ["getstatic" idxbyte1 idxbyte2])
 ;;pop object<reference>, value
-(defn putfield [indexbyte1 indexbyte2] ["putfield" indexbyte1 indexbyte2])
+(defn putfield [idxbyte1 idxbyte2] ["putfield" idxbyte1 idxbyte2])
 ;;pop value
-(defn putstatic [indexbyte1 indexbyte2] ["putstatic" indexbyte1 indexbyte2])
+(defn putstatic [idxbyte1 idxbyte2] ["putstatic" idxbyte1 idxbyte2])
 
 
 
 ;;pop arg1[, arg2[, ...]]
-(defn inbokedynamic [indexbyte1 indexbyte2]
-  ["invokedynamic" indexbyte1 indexbyte2 0 0])
+(defn inbokedynamic [idxbyte1 idxbyte2]
+  ["invokedynamic" idxbyte1 idxbyte2 0 0])
 ;;pop object<reference>, arg1[, arg2[, ...]]
-(defn invokeinterface [indexbyte1 indexbyte2 count]
-  ["invokeinterface" indexbyte1 indexbyte2 count])
+(defn invokeinterface [idxbyte1 idxbyte2 count]
+  ["invokeinterface" idxbyte1 idxbyte2 count])
 ;;pop object<reference>, arg1[, arg2[, ...]]
 ;;pop arg1[, arg2[, ...]]
-(defn invokestatic [indexbyte1 indexbyte2]
-  ["invokestatic" indexbyte1 indexbyte2])
+(defn invokestatic [idxbyte1 idxbyte2]
+  ["invokestatic" idxbyte1 idxbyte2])
 ;;pop object<reference>, arg1[, arg2[, ...]]
-(defn invokevirtual [indexbyte1 indexbyte2]
-  ["inbokevirtual" indexbyte1 indexbyte2])
-(defn invokespecial [indexbyte1 indexbyte2]
-  ["invokespecial" indexbyte1 indexbyte2])
+(defn invokevirtual [idxbyte1 idxbyte2]
+  ["inbokevirtual" idxbyte1 idxbyte2])
+(defn invokespecial [idxbyte1 idxbyte2]
+  ["invokespecial" idxbyte1 idxbyte2])
+(defn invokenonvirtual [idxbyte1 idxbyte2]
+  ["invokespecial" idxbyte1 idxbyte2])
 
 
 
@@ -43,32 +53,36 @@
 
 
 
-(defn goto [branchbyte1 branchbyte2] ["goto" branchbyte1 branchbyte2])
-(defn goto_2 [branchbyte1 branchbyte2 branchbyte3 branchbyte4]
-  ["goto_2" branchbyte1 branchbyte2 branchbyte3 branchbyte4])
+(defn goto [brbyte1 brbyte2] ["goto" brbyte1 brbyte2])
+(defn goto_2 [brbyte1 brbyte2 brbyte3 brbyte4]
+  ["goto_2" brbyte1 brbyte2 brbyte3 brbyte4])
 ;;pop object<type>, object<type>
-(defn if_acmpeq [branchbyte1 branchbyte2] ["if_acmpeq" branchbyte1 branchbyte2])
-(defn if_acmpne [branchbyte1 branchbyte2] ["if_acmpne" branchbyte1 branchbyte2])
-(defn if_icmpeq [branchbyte1 branchbyte2] ["if_icmpeq" branchbyte1 branchbyte2])
-(defn if_icmpne [branchbyte1 branchbyte2] ["if_icmpne" branchbyte1 branchbyte2])
-(defn if_icmplt [branchbyte1 branchbyte2] ["if_icmplt" branchbyte1 branchbyte2])
-(defn if_icmple [branchbyte1 branchbyte2] ["if_icmple" branchbyte1 branchbyte2])
-(defn if_icmpgt [branchbyte1 branchbyte2] ["if_icmpgt" branchbyte1 branchbyte2])
-(defn if_icmpge [branchbyte1 branchbyte2] ["if_icmpge" branchbyte1 branchbyte2])
+(defn-n
+  if_acmpeq [brbyte1 brbyte2] ["if_acmpeq" brbyte1 brbyte2]
+  if_acmpne [brbyte1 brbyte2] ["if_acmpne" brbyte1 brbyte2]
+  if_icmpeq [brbyte1 brbyte2] ["if_icmpeq" brbyte1 brbyte2]
+  if_icmpne [brbyte1 brbyte2] ["if_icmpne" brbyte1 brbyte2]
+  if_icmplt [brbyte1 brbyte2] ["if_icmplt" brbyte1 brbyte2]
+  if_icmple [brbyte1 brbyte2] ["if_icmple" brbyte1 brbyte2]
+  if_icmpgt [brbyte1 brbyte2] ["if_icmpgt" brbyte1 brbyte2]
+  if_icmpge [brbyte1 brbyte2] ["if_icmpge" brbyte1 brbyte2])
 ;;pop value
-(defn ifeq [branchbyte1 branchbyte2] ["ifeq" branchbyte1 branchbyte2])
-(defn ifne [branchbyte1 branchbyte2] ["ifne" branchbyte1 branchbyte2])
-(defn iflt [branchbyte1 branchbyte2] ["iflt" branchbyte1 branchbyte2])
-(defn ifgt [branchbyte1 branchbyte2] ["ifgt" branchbyte1 branchbyte2])
-(defn ifle [branchbyte1 branchbyte2] ["ifle" branchbyte1 branchbyte2])
-(defn ifge [branchbyte1 branchbyte2] ["ifge" branchbyte1 branchbyte2])
+(defn-n
+  ifeq [brbyte1 brbyte2] ["ifeq" brbyte1 brbyte2]
+  ifne [brbyte1 brbyte2] ["ifne" brbyte1 brbyte2]
+  iflt [brbyte1 brbyte2] ["iflt" brbyte1 brbyte2]
+  ifgt [brbyte1 brbyte2] ["ifgt" brbyte1 brbyte2]
+  ifle [brbyte1 brbyte2] ["ifle" brbyte1 brbyte2]
+  ifge [brbyte1 brbyte2] ["ifge" brbyte1 brbyte2])
 ;;pop value<reference>
-(defn ifnonnull [branchbyte1 branchbyte2] ["ifnonnull" branchbyte1 branchbyte2])
-(defn ifnull [branchbyte1 branchbyte2] ["ifnull" branchbyte1 branchbyte2])
+(defn-n
+  ifnonnull [brbyte1 brbyte2] ["ifnonnull" brbyte1 brbyte2]
+  ifnull [brbyte1 brbyte2] ["ifnull" brbyte1 brbyte2])
 ;;push returnAddress
-(defn jsr [branchbyte1 branchbyte2] ["jsr" branchbyte1 branchbyte2])
-(defn jsr [branchbyte1 branchbyte2 branchbyte3 branchbyte4]
-  ["jsr" branchbyte1 branchbyte2 branchbyte3 branchbyte4])
+(defn-n
+  jsr [brbyte1 brbyte2] ["jsr" brbyte1 brbyte2]
+  jsr [brbyte1 brbyte2 brbyte3 brbyte4]
+  ["jsr" brbyte1 brbyte2 brbyte3 brbyte4])
 ;;pop key
 ;;todo - learn and implement when required
 (defn lookupswitch
@@ -91,31 +105,31 @@
 
 ;;pop count<int>
 ;;push array<reference>
-;;index in constant pool refers to a class/interface/array type
-(defn anewarray [indexbyte1 indexbyte2] ["anewarray" indexbyte1 indexbyte2])
+;;idx in constant pool refers to a class/interface/array type
+(defn anewarray [idxbyte1 idxbyte2] ["anewarray" idxbyte1 idxbyte2])
 ;;pop count<int>
 ;;push array<reference>
 ;;bool-4, char-5, float-6, double-7, byte-8, short-9, int-10, long-11
 (defn newarray [atype] ["newarray" atype])
 ;;push object<reference>
-;;index in constant pool refers to a class/interface type
-(defn new [indexbyte1 indexbyte2] ["new" indexbyte1 indexbyte2])
+;;idx in constant pool refers to a class/interface type
+(defn new [idxbyte1 idxbyte2] ["new" idxbyte1 idxbyte2])
 ;;pop count1, count2, ...
 ;;push array<reference>
-(defn multinewarray [indexbyte1 indexbyte2 dimensions]
-  ["multinewarray" indexbyte1 indexbyte2 dimensions])
+(defn multinewarray [idxbyte1 idxbyte2 dimensions]
+  ["multinewarray" idxbyte1 idxbyte2 dimensions])
 ;;pop array<ref>
 ;;push length<int>
 (def arraylength "arraylength")
 
 
 
-;;pop arrayref<reference>, index<int>
+;;pop arrayref<reference>, idx<int>
 ;;push value<op-type>
 (def-n
   aaload "aaload" baload "baload" caload "caload" daload "daload"
   faload "faload" iaload "iaload" laload "laload" saload "saload")
-;;pop arrayref<reference>, index<int>, value<op-type>
+;;pop arrayref<reference>, idx<int>, value<op-type>
 ;;put value<op-type>, value type must be compatible
 (def-n
   aastore "aastore" bastore "bastore" castore "castore" dastore "dastore"
@@ -123,11 +137,12 @@
 
 
 
-(defn astore [index] ["astore" index])
-(defn dstore [index] ["dstore" index])
-(defn fstore [index] ["fstore" index])
-(defn istore [index] ["istore" index])
-(defn lstore [index] ["lstore" index])
+(defn-n
+  astore [idx] ["astore" idx]
+  dstore [idx] ["dstore" idx]
+  fstore [idx] ["fstore" idx]
+  istore [idx] ["istore" idx]
+  lstore [idx] ["lstore" idx])
 (def-n
   dstore_0 "dstore_0" dstore_1 "dstore_1" dstore_2 "dstore_2" dstore_3 "dstore_3"
   astore_0 "astore_0" astore_1 "astore_1" astore_2 "astore_2" astore_3 "astore_3"
@@ -135,11 +150,12 @@
   istore_0 "istore_0" istore_1 "istore_1" istore_2 "istore_2" istore_3 "istore_3"
   lstore_0 "lstore_0" lstore_1 "lstore_1" lstore_2 "lstore_2" lstore_3 "lstore_3")
 
-(defn dload [index] ["dload" index])
-(defn fload [index] ["fload" index])
-(defn iload [index] ["iload" index])
-(defn lload [index] ["lload" index])
-(defn aload [index] ["aload" index])
+(defn-n
+  dload [idx] ["dload" idx]
+  fload [idx] ["fload" idx]
+  iload [idx] ["iload" idx]
+  lload [idx] ["lload" idx]
+  aload [idx] ["aload" idx])
 (def-n
   aload_0 "aload_0" aload_1 "aload_1" aload_2 "aload_2" aload_3 "adlod_3"
   dload_0 "dload_0" dload_1 "dload_1" dload_2 "dload_2" dload_3 "dload_3"
@@ -156,11 +172,11 @@
 
 ;;pop object<reference>
 ;;push object<reference>
-(defn checkcast [indexbyte1 indexbyte2]
-  ["checkcast" indexbyte1 indexbyte2])
+(defn checkcast [idxbyte1 idxbyte2]
+  ["checkcast" idxbyte1 idxbyte2])
 ;;pop object<reference>
 ;;push value
-(defn instanceof [indexbyte1 indexbyte2] ["instanceof" indexbyte1 indexbyte2])
+(defn instanceof [idxbyte1 idxbyte2] ["instanceof" idxbyte1 idxbyte2])
 
 
 
@@ -182,11 +198,11 @@
 
 
 
-(defn iinc [index const] ["iinc" index const])
-(defn wide-sl [opcode indexbyte1 indexbyte2]
-  ["wide" opcode indexbyte1 indexbyte2])
-(defn wide-iinc [indexbyte1 indexbyte2 constbyte1 constbyte2]
-  ["wide" "iinc" indexbyte1 indexbyte2 constbyte1 constbyte2])
+(defn iinc [idx const] ["iinc" idx const])
+(defn-n
+  wide-sl [opcode idxbyte1 idxbyte2] ["wide" opcode idxbyte1 idxbyte2]
+  wide-iinc [idxbyte1 idxbyte2 constbyte1 constbyte2]
+  ["wide" "iinc" idxbyte1 idxbyte2 constbyte1 constbyte2])
 
 
 
@@ -218,9 +234,10 @@
 
 
 ;;push from run-time constant pool
-(defn ldc [index] ["ldc" index])
-(defn ldc_2 [indexbyte1 indexbyte2] ["ldc_w" indexbyte1 indexbyte2])
-(defn ldc2_w [indexbyte1 indexbyte2] ["ldc2_2" indexbyte1 indexbyte2])
+(defn-n
+  ldc [idx] ["ldc" idx]
+  ldc_2 [idxbyte1 idxbyte2] ["ldc_w" idxbyte1 idxbyte2]
+  ldc2_w [idxbyte1 idxbyte2] ["ldc2_2" idxbyte1 idxbyte2])
 
 
 
@@ -228,7 +245,7 @@
 (def-n
   dup "dup" dup_x1 "dup_x1" dup_x2 "dup_x2"
   dup2 "dup2" dup2_x1 "dup2_x1" dup2_x2 "dup2_x2"
-  pop "pop" pop2 "pop2"
+  pop1 "pop" pop2 "pop2"
   swap "swap")
 (defn sipush [byte1 byte2] ["sipush" byte1 byte2])
 
@@ -238,10 +255,11 @@
 (def-n
   return "return" areturn "areturn"
   ireturn "ireturn" dreturn "dreturn" freturn "freturn" lreturn "lreturn")
-;;return to returnAddress at local variable 'index'
-(defn ret [index] ["ret" index])
+;;return to returnAddress at local variable 'idx'
+(defn ret [idx] ["ret" idx])
 
 
 
 (defn add-comment [comment] (str \; comment))
 (def nop "nop")
+
