@@ -3,6 +3,14 @@
         [jacket.codegen]
         [jacket.instructions]))
 
+(deftest get-path-test
+  (are [parts path]
+       (= path (apply gen-path parts))
+
+       ['java 'lang 'String] "java/lang/String"
+       
+       ))
+
 (deftest instruction-text-test
   (are [instruction text]
        (= text (instruction-text instruction))

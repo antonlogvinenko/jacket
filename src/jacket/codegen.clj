@@ -25,7 +25,17 @@
 (defn gen-arguments [arguments] "[Ljava/lang/String;")
 ;;F / I / L<class>; / [ / V
 ;;todo
-(defn gen-type [type] "V")
+
+(def TYPE {:int "I" :boolean "B" :char "C" :float "F" :double "D" :long "L" :void "V"})
+
+(defn gen-type [type]
+  (cond
+    (vector? type) (str \[ (apply gen-type type))
+    (string? type) (str \L type \;)
+    :else (TYPE type)))
+
+(defn gen-path [& parts]
+  (->> parts (map str) (interpose \/) (apply str)))
 
 
 ;;todo several implements
