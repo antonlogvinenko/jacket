@@ -240,7 +240,7 @@
 (def-n
   dup "dup" dup_x1 "dup_x1" dup_x2 "dup_x2"
   dup2 "dup2" dup2_x1 "dup2_x1" dup2_x2 "dup2_x2"
-  pop "pop" pop2 "pop2"
+  pop1 "pop" pop2 "pop2"
   swap "swap")
 (defn sipush [byte1 byte2] ["sipush" byte1 byte2])
 

@@ -1,4 +1,5 @@
-(ns jacket.codegen)
+(ns jacket.codegen
+  (:use [jacket.instructions]))
 
 (def TYPES {:class ".class" :interface ".interface"})
 (def ACCESS {:public "public" :private "private" :protected "protected" :package "package"})
@@ -31,37 +32,35 @@
 ;;todo optional super
 
 (defn instruction-text [instruction]
-  (str \tab
-       (cond
-         (string? instruction) instruction
-         (vector? instruction) (->> instruction (interpose \space) (apply str))
-         :else (-> "Unknown instruction format in codegenerator"
-                   RuntimeException.
-                   throw))))
+  (cond
+    (string? instruction) instruction
+    (vector? instruction) (->> instruction (interpose \space) (apply str))
+    :else (-> "Unknown instruction format in codegenerator"
+              RuntimeException.
+              throw)))
 
 (defn instructions-text [instructions]
   (->> instructions
-       (map instruction-text)
+       (map (comp (partial str \tab) instruction-text))
        (interpose \newline)
        (apply str)))
 
 (defn file-type-text [code]
-  (str (:type code)
+  (str (-> code :type TYPES)
        \space
-       (:access code)
+       (-> code :access ACCESS)
        \space
        (:name code)))
 
 (defn super-text [code]
-  (str ".super" (:super code)))
+  (str ".super " (:super code)))
 
 (defn method-text [method]
   (str ".method"
        \space
-       (method :access)
+       (-> method :access ACCESS)
        \space
-       (if (-> method :static nil?) "" "static")
-       \space
+       (if (-> method :static true?) (str "static" \space) "")
        (method :name)
        \( (method :arguments) \)
        (method :return)
