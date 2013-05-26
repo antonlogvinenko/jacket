@@ -59,7 +59,6 @@
        (map (partial str ".implements "))
        (interpose \newline)
        (apply str)))
-  
 
 (defn method-text [method]
   (str ".method"
@@ -108,6 +107,9 @@
      :arguments [[(gen-path 'java 'lang 'String)]] :return :void
      :instructions [
                     (limitstack 2)
+                    "getstatic java/lang/System/out Ljava/io/PrintStream;"
+                    (ldc "\"Hello world!!!\"")
+                    "invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V"
                     return
                     ]}]})
 
