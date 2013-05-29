@@ -119,8 +119,7 @@
         undefined-symbols (->> other
                                (filter (comp not coll?))
                                (filter pred)
-                               (filter (partial symbol-undefined? state))
-                               vec)
+                               (filter (partial symbol-undefined? state)))
         new-state (if (empty? sexprs) ok (+exprs ok sexprs))]
     (cond
       (symbol-undefined? state f)
