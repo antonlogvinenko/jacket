@@ -170,9 +170,9 @@
         (empty? s) [g [] e]
         (empty? current-level) (recur g (pop l) e (pop s))
         :else (let [[g2 l2 e2 s2] (check-expr [g l e s] current-s)]
-                (recur (concat g g2)
+                (recur (into g g2)
                        (conj l l2)
-                       (concat e e2)
+                       (into e e2)
                        (-> s
                            pop
                            (conj (pop current-level))

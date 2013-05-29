@@ -249,7 +249,7 @@
 
 (deftest analyze-file-expr-test
   (are [sexpr sym-g sym-l errors]
-       (= (analyze-file-expr [] (to-tokens sexpr))
+       (= (analyze-file-expr [[] [] []] (to-tokens sexpr))
           [sym-g sym-l errors])
 
        [:define 'a 42]
