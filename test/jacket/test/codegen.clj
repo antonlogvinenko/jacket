@@ -1,3 +1,4 @@
+
 (ns jacket.test.codegen
   (:use [clojure.test]
         [jacket.codegen]
@@ -24,27 +25,69 @@
 
 (deftest gen-arguments-test
   (are [arguments text]
-       (= (gen-arguments arguments) text)
+    (= (gen-arguments arguments) text)
+    
+    [:int [:int] [(gen-path 'java 'io 'File)]]
+    "I[I[Ljava/io/File;"
+    
+    ))
 
-       [:int [:int] [(gen-path 'java 'io 'File)]]
-       "I[I[Ljava/io/File;"
-       
-       ))
+(deftest format-constant-test
+  (are [constant formatted]
+    (= formatted (format-constant constant))
+
+    "Cake or no cake" "\"Cake or no cake\""
+    42 42
+    0.42 0.42
+    true true
+    ))
+
+(deftest gen-method-header-test
+  (are [header-spec header]
+    (= header (apply gen-method-header header-spec))
+
+    ['println [(gen-path 'java 'lang 'String)] :void]
+    "println(Ljava/lang/String;)V"
+
+    ['println [(gen-path 'java 'lang 'String)] (gen-path 'java 'lang 'Integer)]
+    "println(Ljava/lang/String;)Ljava/lang/Integer;"))
+
+(deftest invoke-some-method-test
+  (are [class-path method arguments return invocation-string]
+    (= invocation-string (invoke-some-method class-path method arguments return))
+
+    ['java 'io 'PrintStream]
+    'println
+    [(gen-path 'java 'lang 'String)]
+    :void
+    "java/io/PrintStream/println(Ljava/lang/String;)V"
+
+    ))
+
+(deftest get-some-field-test
+  (are [field-spec descriptor get-instruction]
+    (= get-instruction (get-some-field field-spec descriptor))
+
+    ['java 'lang 'System 'out]
+    ['java 'io 'PrintStream]
+    "java/lang/System/out Ljava/io/PrintStream;"
+
+    ))
 
 (deftest instruction-text-test
   (are [instruction text]
-       (= text (instruction-text instruction))
-
-       (iinc 1 2) "iinc 1 2"
-       dadd "dadd"
-       ))
+    (= text (instruction-text instruction))
+    
+    (iinc 1 2) "iinc 1 2"
+    dadd "dadd"
+    ))
 
 (deftest instructions-text-test
   (are [instructions text]
-       (= text (instructions-text instructions))
+    (= text (instructions-text instructions))
 
-       [dadd (iinc 1 2)] "\tdadd\n\tiinc 1 2"
-       ))
+    [dadd (iinc 1 2)] "\tdadd\n\tiinc 1 2"
+    ))
 
 (deftest file-type-text-test
   (are [code text]

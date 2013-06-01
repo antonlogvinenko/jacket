@@ -5,28 +5,9 @@
   {:class ".class" :interface ".interface"})
 (def ACCESS
   {:public "public" :private "private" :protected "protected" :package "package"})
-(def TYPE
-  {:int "I" :boolean "B" :char "C" :float "F" :double "D" :long "L" :void "V"})
 
 (defn create-name [name-parts]
   (->> name-parts (interpose "/") (apply str)))
-
-(defn gen-type [type]
-  (cond
-    (vector? type) (str \[ (apply gen-type type))
-    (string? type) (str \L type \;)
-    :else (TYPE type)))
-
-(defn gen-arguments [arguments]
-  (->> arguments (map gen-type) (apply str)))
-
-
-(defn gen-path [& parts]
-  (->> parts (map str) (interpose \/) (apply str)))
-
-
-;;todo several implements
-;;todo optional super
 
 (defn instruction-text [instruction]
   (cond
@@ -95,7 +76,7 @@
   {:access :public :name "<init>"
    :arguments [] :return :void
    :instructions [aload_0
-                  "invokenonvirtual java/lang/Object/<init>()V"
+                  (invokenonvirtual ['java 'lang 'Object] '<init> [] :void)
                   return]})
 
 (def hello-world
@@ -107,9 +88,13 @@
      :arguments [[(gen-path 'java 'lang 'String)]] :return :void
      :instructions [
                     (limitstack 2)
-                    "getstatic java/lang/System/out Ljava/io/PrintStream;"
-                    (ldc "\"Hello world!!!\"")
-                    "invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V"
+                    (getstatic ['java 'lang 'System 'out]
+                               ['java 'io 'PrintStream])
+                    (ldc "Hello world!!!")
+                    (invokevirtual ['java 'io 'PrintStream]
+                                   'println
+                                   [(gen-path 'java 'lang 'String)]
+                                   :void)
                     return
                     ]}]})
 

@@ -1,6 +1,44 @@
 (ns jacket.instructions)
 
-;;This is the coolest definition in this file.
+
+(def TYPE
+  {:int "I" :boolean "B" :char "C" :float "F" :double "D" :long "L" :void "V"})
+
+(defn gen-type [type]
+  (cond
+   (vector? type) (str \[ (apply gen-type type))
+   (string? type) (str \L type \;)
+   :else (TYPE type)))
+
+(defn gen-path [& parts]
+  (->> parts (map str) (interpose \/) (apply str)))
+
+(defn gen-arguments [arguments]
+  (->> arguments (map gen-type) (apply str)))
+
+(defn format-constant [constant]
+  (if (string? constant)
+    (str "\"" constant "\"")
+    constant))
+
+(defn gen-method-header [method arguments return]
+  (str method
+       \( (gen-arguments arguments) \)
+       (gen-type return)))
+
+(defn invoke-some-method [class-path method arguments return]
+  (str (apply gen-path class-path)
+       \/
+       (gen-method-header method arguments return)))
+
+(defn get-some-field [field-path field-type]
+  (str (apply gen-path field-path)
+       \space
+       (->> field-type (apply gen-path) gen-type)))
+
+
+                                        ;MACROS FOR INSTRUCTIONS DEFINITIONS
+                                        ;http://jasmin.sourceforge.net/instructions.html
 (defmacro def-n [& args]
   `(do ~@(->> args
               (partition 2)
@@ -12,137 +50,18 @@
               (map (partial cons 'defn)))))
 
 
+                                        ;RETURN
+(def return "return")
+(defn ret [var-num] ["ret" var-num])
+
+
+                                        ;LOCAL VAIRABLES
 (defn-n
-  limitstack [n] [".limit stack" n])
-
-
-
-;;pop object<reference>
-;;push value
-(defn getfield [idxbyte1 idxbyte2] ["getfield" idxbyte1 idxbyte2])
-(defn getstatic [idxbyte1 idxbyte2] ["getstatic" idxbyte1 idxbyte2])
-;;pop object<reference>, value
-(defn putfield [idxbyte1 idxbyte2] ["putfield" idxbyte1 idxbyte2])
-;;pop value
-(defn putstatic [idxbyte1 idxbyte2] ["putstatic" idxbyte1 idxbyte2])
-
-
-
-;;pop arg1[, arg2[, ...]]
-(defn inbokedynamic [idxbyte1 idxbyte2]
-  ["invokedynamic" idxbyte1 idxbyte2 0 0])
-;;pop object<reference>, arg1[, arg2[, ...]]
-(defn invokeinterface [idxbyte1 idxbyte2 count]
-  ["invokeinterface" idxbyte1 idxbyte2 count])
-;;pop object<reference>, arg1[, arg2[, ...]]
-;;pop arg1[, arg2[, ...]]
-(defn invokestatic [idxbyte1 idxbyte2]
-  ["invokestatic" idxbyte1 idxbyte2])
-;;pop object<reference>, arg1[, arg2[, ...]]
-(defn invokevirtual [idxbyte1 idxbyte2]
-  ["inbokevirtual" idxbyte1 idxbyte2])
-(defn invokespecial [idxbyte1 idxbyte2]
-  ["invokespecial" idxbyte1 idxbyte2])
-(defn invokenonvirtual [idxbyte1 idxbyte2]
-  ["invokespecial" idxbyte1 idxbyte2])
-
-
-
-;;pop object<reference>
-(def-n monitorenter "monitorenter", monitorexit "monitorexit")
-
-
-
-(defn goto [brbyte1 brbyte2] ["goto" brbyte1 brbyte2])
-(defn goto_2 [brbyte1 brbyte2 brbyte3 brbyte4]
-  ["goto_2" brbyte1 brbyte2 brbyte3 brbyte4])
-;;pop object<type>, object<type>
-(defn-n
-  if_acmpeq [brbyte1 brbyte2] ["if_acmpeq" brbyte1 brbyte2]
-  if_acmpne [brbyte1 brbyte2] ["if_acmpne" brbyte1 brbyte2]
-  if_icmpeq [brbyte1 brbyte2] ["if_icmpeq" brbyte1 brbyte2]
-  if_icmpne [brbyte1 brbyte2] ["if_icmpne" brbyte1 brbyte2]
-  if_icmplt [brbyte1 brbyte2] ["if_icmplt" brbyte1 brbyte2]
-  if_icmple [brbyte1 brbyte2] ["if_icmple" brbyte1 brbyte2]
-  if_icmpgt [brbyte1 brbyte2] ["if_icmpgt" brbyte1 brbyte2]
-  if_icmpge [brbyte1 brbyte2] ["if_icmpge" brbyte1 brbyte2])
-;;pop value
-(defn-n
-  ifeq [brbyte1 brbyte2] ["ifeq" brbyte1 brbyte2]
-  ifne [brbyte1 brbyte2] ["ifne" brbyte1 brbyte2]
-  iflt [brbyte1 brbyte2] ["iflt" brbyte1 brbyte2]
-  ifgt [brbyte1 brbyte2] ["ifgt" brbyte1 brbyte2]
-  ifle [brbyte1 brbyte2] ["ifle" brbyte1 brbyte2]
-  ifge [brbyte1 brbyte2] ["ifge" brbyte1 brbyte2])
-;;pop value<reference>
-(defn-n
-  ifnonnull [brbyte1 brbyte2] ["ifnonnull" brbyte1 brbyte2]
-  ifnull [brbyte1 brbyte2] ["ifnull" brbyte1 brbyte2])
-;;push returnAddress
-(defn-n
-  jsr [brbyte1 brbyte2] ["jsr" brbyte1 brbyte2]
-  jsr [brbyte1 brbyte2 brbyte3 brbyte4]
-  ["jsr" brbyte1 brbyte2 brbyte3 brbyte4])
-;;pop key
-;;todo - learn and implement when required
-(defn lookupswitch
-  [bytespad
-   defaultbyte1 defaultbyte2 defaultbyte3 defaultbyte4
-   npairs1 npairs2 npairs3 npairs4 & matchoffsetpairs]
-  ["lookupswitch"])
-;;todo
-(defn tableswitch
-  [pad
-   defaultbyte1 defaultbyte2 defaultbyte3 defaultbyte4
-   lowbyte1 lowbyte2 lowbyte3 lowbyte4
-   highbyte1 highbyte2 highbyte3 highbyte4
-   & jumpoffsets]
-  ["tableswitch"])
-;;pop object<reference>
-(def athrow "athrow")
-
-
-
-;;pop count<int>
-;;push array<reference>
-;;idx in constant pool refers to a class/interface/array type
-(defn anewarray [idxbyte1 idxbyte2] ["anewarray" idxbyte1 idxbyte2])
-;;pop count<int>
-;;push array<reference>
-;;bool-4, char-5, float-6, double-7, byte-8, short-9, int-10, long-11
-(defn newarray [atype] ["newarray" atype])
-;;push object<reference>
-;;idx in constant pool refers to a class/interface type
-(defn new [idxbyte1 idxbyte2] ["new" idxbyte1 idxbyte2])
-;;pop count1, count2, ...
-;;push array<reference>
-(defn multinewarray [idxbyte1 idxbyte2 dimensions]
-  ["multinewarray" idxbyte1 idxbyte2 dimensions])
-;;pop array<ref>
-;;push length<int>
-(def arraylength "arraylength")
-
-
-
-;;pop arrayref<reference>, idx<int>
-;;push value<op-type>
-(def-n
-  aaload "aaload" baload "baload" caload "caload" daload "daload"
-  faload "faload" iaload "iaload" laload "laload" saload "saload")
-;;pop arrayref<reference>, idx<int>, value<op-type>
-;;put value<op-type>, value type must be compatible
-(def-n
-  aastore "aastore" bastore "bastore" castore "castore" dastore "dastore"
-  fastore "fastore" iastore "iastore" lastore "lastore" sastore "sastore")
-
-
-
-(defn-n
-  astore [idx] ["astore" idx]
-  dstore [idx] ["dstore" idx]
-  fstore [idx] ["fstore" idx]
-  istore [idx] ["istore" idx]
-  lstore [idx] ["lstore" idx])
+  astore [var-num] ["astore" var-num]
+  dstore [var-num] ["dstore" var-num]
+  fstore [var-num] ["fstore" var-num]
+  istore [var-num] ["istore" var-num]
+  lstore [var-num] ["lstore" var-num])
 (def-n
   dstore_0 "dstore_0" dstore_1 "dstore_1" dstore_2 "dstore_2" dstore_3 "dstore_3"
   astore_0 "astore_0" astore_1 "astore_1" astore_2 "astore_2" astore_3 "astore_3"
@@ -151,11 +70,11 @@
   lstore_0 "lstore_0" lstore_1 "lstore_1" lstore_2 "lstore_2" lstore_3 "lstore_3")
 
 (defn-n
-  dload [idx] ["dload" idx]
-  fload [idx] ["fload" idx]
-  iload [idx] ["iload" idx]
-  lload [idx] ["lload" idx]
-  aload [idx] ["aload" idx])
+  dload [var-num] ["dload" var-num]
+  fload [var-num] ["fload" var-num]
+  iload [var-num] ["iload" var-num]
+  lload [var-num] ["lload" var-num]
+  aload [var-num] ["aload" var-num])
 (def-n
   aload_0 "aload_0" aload_1 "aload_1" aload_2 "aload_2" aload_3 "adlod_3"
   dload_0 "dload_0" dload_1 "dload_1" dload_2 "dload_2" dload_3 "dload_3"
@@ -164,22 +83,100 @@
   lload_0 "lload_0" lload_1 "lload_1" lload_2 "lload_2" lload_3 "lload_3")
 
 
-
-;;push null
-(def aconst_null "aconst_null")
-
-
-
-;;pop object<reference>
-;;push object<reference>
-(defn checkcast [idxbyte1 idxbyte2]
-  ["checkcast" idxbyte1 idxbyte2])
-;;pop object<reference>
-;;push value
-(defn instanceof [idxbyte1 idxbyte2] ["instanceof" idxbyte1 idxbyte2])
+                                        ;ARRAYS AND LOCAL VARIABLES
+(def-n
+  aaload "aaload" baload "baload" caload "caload" daload "daload"
+  faload "faload" iaload "iaload" laload "laload" saload "saload")
+(def-n
+  aastore "aastore" bastore "bastore" castore "castore" dastore "dastore"
+  fastore "fastore" iastore "iastore" lastore "lastore" sastore "sastore")
 
 
+                                        ;BIPUSH, SIPUSH, IINC
+(defn sipush [int] ["sipush" int])
+(defn bipush [int] ["bipush" int])
+(defn iinc [var-name amount] ["iinc" var-name amount])
 
+
+                                        ;BRANCH
+(defn goto [label] ["goto" label])
+(defn goto_w [label] ["goto_2" label])
+(defn-n
+  if_acmpeq [label] ["if_acmpeq" label]
+  if_acmpne [label] ["if_acmpne" label]
+  if_icmpeq [label] ["if_icmpeq" label]
+  if_icmpne [label] ["if_icmpne" label]
+  if_icmplt [label] ["if_icmplt" label]
+  if_icmple [label] ["if_icmple" label]
+  if_icmpgt [label] ["if_icmpgt" label]
+  if_icmpge [label] ["if_icmpge" label])
+(defn-n
+  ifeq [label] ["ifeq" label]
+  ifne [label] ["ifne" label]
+  iflt [label] ["iflt" label]
+  ifgt [label] ["ifgt" label]
+  ifle [label] ["ifle" label]
+  ifge [label] ["ifge" label])
+(defn-n
+  ifnonnull [label] ["ifnonnull" label]
+  ifnull [label] ["ifnull" label])
+(defn-n
+  jsr [label] ["jsr" label]
+  jsr_w [label] ["jsr_w" label])
+
+
+                                        ;CLASS AND OBJECT OPERATIONS
+(defn checkcast [class] ["checkcast" class])
+(defn instanceof [class] ["instanceof" class])
+(defn new [class] ["new" class])
+
+
+                                        ;METHOD INVOCATION
+(defn invokevirtual [class-path method arguments return]
+  (vector "invokevirtual" (invoke-some-method class-path method arguments return)))
+(defn invokenonvirtual [class-path method arguments return]
+  (vector "invokenonvirtual" (invoke-some-method class-path method arguments return)))
+(defn invokestatic [class-path method arguments return]
+  (vector "invokestatic" (invoke-some-method class-path method arguments return)))
+
+
+                                        ;FIELD MANIPULATION
+(defn-n
+  getfield [field-spec descriptor] (vector "getfield" (get-some-field field-spec descriptor))
+  getstatic [field-spec descriptor] (vector "getstatic" (get-some-field field-spec descriptor))
+  putfield [field-spec descriptor] (vector  "putfield" (get-some-field field-spec descriptor))
+  putstatic [field-spec descriptor] (vector "putstatic" (get-some-field field-spec descriptor)))
+
+
+                                        ;NEWARRAY
+(defn-n
+  anewarray [class] ["anewarray" class]
+  newarray [array-type] ["newarray" array-type]
+  multinewarray [array-descriptor num-dimensions]
+  ["multinewarray" array-descriptor num-dimensions])
+(def arraylength "arraylength")
+
+
+                                        ;LDC AND LDC_W
+(defn-n
+  ldc [constant] ["ldc" (format-constant constant)]
+  ldc_w [constant] ["ldc_w" (format-constant constant)])
+
+
+                                        ;LOOKUPSWITCH, TABLESWITCH
+(defn lookupswitch [] ["lookupswitch"])
+(defn tableswitch [] ["tableswitch"])
+
+
+                                        ;THROW
+(def athrow "athrow")
+
+
+                                        ;MONITOR
+(def-n monitorenter "monitorenter", monitorexit "monitorexit")
+
+
+                                        ;CONVERSION
 (def-n
   d2f "d2f" d2i "d2i" d2l "d2l"
   f2d "f2d" f2i "f2i" f2l "f2l"
@@ -187,7 +184,7 @@
   l2d "l2d" l2f "l2f" l2i "l2i")
 
 
-
+                                        ;ARITHMETICS
 (def-n
   dadd "dadd" fadd "fadd" iadd "iadd" ladd "ladd"
   ddiv "ddiv" fdib "fdiv" idiv "idiv" ldiv "ldiv"
@@ -197,34 +194,24 @@
   dsub "dsub" fsub "fsub" isub "isub" lsub "lsub")
 
 
-
-(defn iinc [idx const] ["iinc" idx const])
-(defn-n
-  wide-sl [opcode idxbyte1 idxbyte2] ["wide" opcode idxbyte1 idxbyte2]
-  wide-iinc [idxbyte1 idxbyte2 constbyte1 constbyte2]
-  ["wide" "iinc" idxbyte1 idxbyte2 constbyte1 constbyte2])
-
-
-
+                                        ;BITWISE
 (def-n ishl "ishl" lshl "lshl"
   ishr "ishr" lshr "lshr"
   iushr "iushr" lushr "lushr"
   lxor "lxor" ixor "ixor")
 
 
-
+                                        ;BOOLEAN
 (def-n iand "iand" land "land" ior "ior" lor "lor")
 
 
-
+                                        ;COMPARISON
 (def-n
-  dcmpg "dcmpg" fcmpg "fcmpg"
-  dcmpl "dcmpl" fcmpl "fcmpl"
-  lcmp "lcmp")
+  dcmpg "dcmpg" fcmpg "fcmpg" dcmpl "dcmpl" fcmpl "fcmpl" lcmp "lcmp")
 
 
-
-;;push value
+                                        ;STACK CONSTANTS
+(def aconst_null "aconst_null")
 (def-n
   dconst_0 "dconst_0" dconst_1 "dconst_1"
   fconst_0 "fconst_0" fconst_1 "fconst_1"
@@ -232,34 +219,19 @@
   lconst_0 "lconst_0" lconst_1 "lconst_1")
 
 
-
-;;push from run-time constant pool
-(defn-n
-  ldc [idx] ["ldc" idx]
-  ldc_2 [idxbyte1 idxbyte2] ["ldc_w" idxbyte1 idxbyte2]
-  ldc2_w [idxbyte1 idxbyte2] ["ldc2_2" idxbyte1 idxbyte2])
-
-
-
-;;duplicate top stack element
+                                        ;STACK MANIPULATION
 (def-n
   dup "dup" dup_x1 "dup_x1" dup_x2 "dup_x2"
   dup2 "dup2" dup2_x1 "dup2_x1" dup2_x2 "dup2_x2"
   pop1 "pop" pop2 "pop2"
   swap "swap")
-(defn sipush [byte1 byte2] ["sipush" byte1 byte2])
 
 
-  
-;;pop and return
-(def-n
-  return "return" areturn "areturn"
-  ireturn "ireturn" dreturn "dreturn" freturn "freturn" lreturn "lreturn")
-;;return to returnAddress at local variable 'idx'
-(defn ret [idx] ["ret" idx])
-
-
-
+                                        ;THINGS
 (defn add-comment [comment] (str \; comment))
 (def nop "nop")
-
+(defn-n
+  limitstack [n] [".limit stack" n]
+  limitlocals [n] [".limit locals" n]
+  line [n] [".line" n]
+  label [l] [l \:])
