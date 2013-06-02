@@ -1,6 +1,9 @@
 (ns jacket.codegen.codegen
-  (:use [jacket.codegen.program]
+  (:use [jacket.codegen.classgen]
         [jacket.codegen.instructions]
+        [jacket.lexer.lexer]
+        [jacket.parser]
+        [jacket.semantics]
         ))
 
 
@@ -63,5 +66,46 @@
   (spit (str "wardrobe" \/ f) content))
 
 (defn gen-hello-world []
-  (->> hello-world program-text (spit-class "HelloWorld.jt"))
-  (->> console-library program-text (spit-class "Console.jt")))
+  (->> hello-world program-text (spit-class "HelloWorld.jasm"))
+  (->> console-library program-text (spit-class "Console.jasm")))
+
+
+
+                                        ;Program file to jasmin file
+(defn debug [x] (println x) x)
+
+(defn precompile-libraries []
+  (->> console-library program-text (spit-class "Console.jasm")))
+
+(defn print-object-program [object-program file-name]
+  (->> object-program program-text (spit file-name)))
+
+(defn generate-ast-code [])
+
+(defn generate-println [args]
+  (vector
+   (limitstack 2)
+   (generate-ast-code args)
+   (invokestatic ['Console] 'println [(gen-path 'java 'lang 'String)] :void)
+   return))
+
+(defn generate-string-const [ast]
+  (ldc ast))
+
+(defn generate-ast-code [ast]
+  (let [type (.value (first ast))
+        args (rest ast)]
+    (cond
+     (= type :println) (generate-println args)
+     (string? type) (generate-string-const type)
+     :else (throw (RuntimeException.)))))
+  
+
+(defn generate [ast]
+  (println  (map generate-ast-code ast))
+  (generate-main-class "Main"
+                       (apply concat (map generate-ast-code ast))))
+
+(defn compile-jacket [f]
+  (precompile-libraries)
+  (->> f slurp tokenize debug parse semantics generate program-text (spit-class "Main.jasm")))

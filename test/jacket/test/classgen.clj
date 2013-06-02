@@ -1,6 +1,6 @@
-(ns jacket.test.program
+(ns jacket.test.classgen
   (:use [clojure.test]
-        [jacket.codegen.program]
+        [jacket.codegen.classgen]
         [jacket.codegen.instructions]
         ))
 
