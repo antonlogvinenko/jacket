@@ -1,8 +1,8 @@
 (ns jacket.test.lexer
   (:require [clojure.tools.reader.reader-types :as rt])
   (:use [clojure.test]
-        [jacket.fsm]
-        [jacket.lexer]))
+        [jacket.lexer.fsm]
+        [jacket.lexer.lexer]))
 
 (deftest letter?-test
   (are [char result] (= result (letter? char))

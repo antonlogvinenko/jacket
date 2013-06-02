@@ -1,8 +1,8 @@
 (ns jacket.semantics
-  (:use [jacket.lexer]
+  (:use [jacket.lexer.lexer]
         [jacket.errors]
         [jacket.parser]
-        [jacket.fsm]
+        [jacket.lexer.fsm]
         ))
 
 (defn is-sexpr? [expr]
@@ -111,6 +111,12 @@
       (-> ok
           (+error "Quote may have a single argument")))))
 
+(defn check-println [sexpr]
+  (let [length (count sexpr)]
+    (if (> length 1)
+      ok
+      (-> ok (+error "'println' requires at least a single argument")))))
+
 (defn check-dynamic-list [state sexpr]
   (let [f (first sexpr)
         other (rest sexpr)
@@ -135,12 +141,13 @@
                    (str "Undefined symbols in s-expression: "))))
       
       :else new-state)))
-  
+
 (defn check-sexpr [state sexpr]
   (let [f (first sexpr)
         dispatch {:define check-define
                   :lambda check-lambda
                   :quote check-quote
+                  :println check-println
                   :let check-let}]
     (if (nil? f)
       (-> ok

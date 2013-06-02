@@ -1,12 +1,12 @@
-(ns jacket.lexer
-  (:use [jacket.fsm])
+(ns jacket.lexer.lexer
+  (:use [jacket.lexer.fsm])
   (:require [clojure.tools.reader.reader-types :as rt]))
 
 (def KEYWORDS ["-" "*" "+" "=" "!=" "<" ">" ">=" "<="
                "define" "lambda" "let"
                "and" "or" "not"
                "car" "cdr" "cons" "quote"
-               "print" "read"])
+               "print" "read" "println" "readln"])
 
 (defn matches [coll key]
   (if (coll? coll)

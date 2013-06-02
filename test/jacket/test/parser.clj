@@ -1,9 +1,9 @@
 (ns jacket.test.parser
   (:use [clojure.test]
         [jacket.parser]
-        [jacket.lexer]
+        [jacket.lexer.lexer]
         )
-  (:import [jacket.fsm Token]
+  (:import [jacket.lexer.fsm Token]
            ))
 
 (defn to-tokens [ts]

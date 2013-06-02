@@ -1,5 +1,5 @@
-(ns jacket.codegen
-  (:use [jacket.instructions]))
+(ns jacket.codegen.program
+  (:use [jacket.codegen.instructions]))
 
 (def FILE-TYPES
   {:class ".class" :interface ".interface"})
@@ -71,32 +71,7 @@
 (defn print-file [program-file file-name]
   (->> program-file program-text (spit file-name)))
 
+(def object-path (gen-path 'java 'lang 'Object))
 
-(def default-init
-  {:access :public :name "<init>"
-   :arguments [] :return :void
-   :instructions [aload_0
-                  (invokenonvirtual ['java 'lang 'Object] '<init> [] :void)
-                  return]})
 
-(def hello-world
-  {:access :public :type :class :name 'HelloWorld
-   :super (gen-path 'java 'lang 'Object)
-   :methods
-   [default-init
-    {:access :public :static true :name "main"
-     :arguments [[(gen-path 'java 'lang 'String)]] :return :void
-     :instructions [
-                    (limitstack 2)
-                    (getstatic ['java 'lang 'System 'out]
-                               ['java 'io 'PrintStream])
-                    (ldc "Hello world!!!")
-                    (invokevirtual ['java 'io 'PrintStream]
-                                   'println
-                                   [(gen-path 'java 'lang 'String)]
-                                   :void)
-                    return
-                    ]}]})
 
-(defn gen-hello-world []
-  (->> hello-world program-text (spit "HelloWorld.jt")))

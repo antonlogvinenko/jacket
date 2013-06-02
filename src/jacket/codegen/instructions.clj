@@ -1,4 +1,4 @@
-(ns jacket.instructions)
+(ns jacket.codegen.instructions)
 
 
 (def TYPE

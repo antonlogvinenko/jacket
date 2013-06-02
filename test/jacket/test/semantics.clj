@@ -1,9 +1,9 @@
 (ns jacket.test.semantics
   (:use [clojure.test]
         [jacket.semantics]
-        [jacket.fsm]
+        [jacket.lexer.fsm]
         )
-  (:import [jacket.fsm Token])
+  (:import [jacket.lexer.fsm Token])
   )
 
 (def sexpr-z {:symtable [] :errors []})
@@ -111,6 +111,19 @@
        [] [] [] []
 
        ))
+
+(deftest check-println-test
+  (are [sexpr sym-g sym-l errors sexprs]
+    (= (check-println (to-tokens sexpr))
+       [sym-g sym-l errors sexprs])
+
+    [:println]
+    [] [] ["'println' requires at least a single argument"] []
+
+    [:println 'a 'b]
+    [] [] [] []
+
+    ))
 
 (deftest check-dynamic-list-test
   (are [sexpr sym-g sym-l errors

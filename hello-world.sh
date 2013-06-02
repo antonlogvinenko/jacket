@@ -1,5 +1,5 @@
-rm HelloWorld.class
-
-java -jar jasmin-2.4/jasmin.jar HelloWorld.jt
+cd wardrobe
+rm *.class
+java -jar ../jasmin-2.4/jasmin.jar *.jt
 
 java HelloWorld

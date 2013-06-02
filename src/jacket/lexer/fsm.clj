@@ -1,4 +1,4 @@
-(ns jacket.fsm
+(ns jacket.lexer.fsm
   (:use [jacket.errors])
   (:require [clojure.tools.reader.reader-types :as rt]))
 
