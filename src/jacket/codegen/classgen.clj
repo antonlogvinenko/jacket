@@ -1,4 +1,4 @@
-(ns jacket.codegen.program
+(ns jacket.codegen.classgen
   (:use [jacket.codegen.instructions]))
 
 (def FILE-TYPES
@@ -13,7 +13,7 @@
   (cond
     (string? instruction) instruction
     (vector? instruction) (->> instruction (interpose \space) (apply str))
-    :else (-> "Unknown instruction format in codegenerator"
+    :else (-> (str "Unknown instruction format in codegenerator: " instruction)
               RuntimeException.
               throw)))
 
@@ -68,8 +68,6 @@
        (interpose \newline)
        (apply str)))
 
-(defn print-file [program-file file-name]
-  (->> program-file program-text (spit file-name)))
 
 (def object-path (gen-path 'java 'lang 'Object))
 
