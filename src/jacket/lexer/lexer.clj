@@ -52,9 +52,8 @@
 
               :non-strict-inequality {separator? [:done return-char keywordize]}
 
-              :string {letter? [:string append]
-                       \" [:done skip-char parse-string]
-                       [\tab \newline \return] [:string append]}
+              :string {\" [:done skip-char parse-string]
+                       [separator? letter? digit?] [:string append]}
               
               :boolean {\t [:boolean true]
                         \f [:boolean false]

@@ -3,10 +3,10 @@
 /lib
 /classes
 /native
+/wardrobe
 /target
 /.lein-failures
 /checkouts
-/wardrobe
 /.lein-deps-sum
 /jasmin-2.4
 .DS_Store

@@ -1,4 +1,4 @@
-(ns jacket.test.classgen
+(ns jacket.test.codegen.classgen
   (:use [clojure.test]
         [jacket.codegen.classgen]
         [jacket.codegen.instructions]
@@ -178,7 +178,3 @@
        program-under-test
        ".class public Cake\n.super java/lang/Object\n.implements java/io/Serializable\n.implements java/lang/Cloneable\n.method public static main([Ljava/lang/String;)V\n\tdadd\n\tiinc 1 2\n\taconst_null\n\tret 42\n.end method\n.method private bla([I)Ljava/lang/String;\n\taconst_null\n\tpop\n.end method"
        ))
-         
-
-(deftest generate-main-class-test
-  )

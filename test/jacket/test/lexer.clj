@@ -51,7 +51,10 @@
 
 (deftest read-string-constant-test
   (are [text result] (-> text tokenize first (= result))
-       "\"cake\"" "cake"))
+       "\"cake\"" "cake"
+       "\"42\"" "42"
+       "\"the answer 42\"" "the answer 42"
+       ))
 
 (deftest read-number-constant-test
   (are [text number] (-> text tokenize first (= number))

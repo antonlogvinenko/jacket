@@ -62,23 +62,19 @@
     return
     ]))
 
-(defn spit-class [f content]
-  (spit (str "wardrobe" \/ f) content))
+(defn precompile-libraries [])
 
 (defn gen-hello-world []
-  (->> hello-world program-text (spit-class "HelloWorld.jasm"))
-  (->> console-library program-text (spit-class "Console.jasm")))
+  (precompile-libraries "wardrobe")
+  (->> hello-world program-text (spit "wardrobe/HelloWorld.jasm")))
 
 
 
                                         ;Program file to jasmin file
 (defn debug [x] (println x) x)
 
-(defn precompile-libraries []
-  (->> console-library program-text (spit-class "Console.jasm")))
-
-(defn print-object-program [object-program file-name]
-  (->> object-program program-text (spit file-name)))
+(defn precompile-libraries [dir]
+  (->> console-library program-text (spit (str dir \/ "Console.jasm"))))
 
 (defn generate-ast-code [])
 
@@ -99,13 +95,14 @@
      (= type :println) (generate-println args)
      (string? type) (generate-string-const type)
      :else (throw (RuntimeException.)))))
-  
 
-(defn generate [ast]
-  (println  (map generate-ast-code ast))
-  (generate-main-class "Main"
+(defn generate [name ast]
+  (generate-main-class name
                        (apply concat (map generate-ast-code ast))))
 
-(defn compile-jacket [f]
-  (precompile-libraries)
-  (->> f slurp tokenize debug parse semantics generate program-text (spit-class "Main.jasm")))
+(defn compile-jacket [in location name]
+  (precompile-libraries location)
+  (->> in slurp
+       tokenize parse semantics
+       (generate name) program-text
+       (spit (str location name ".jasm"))))
