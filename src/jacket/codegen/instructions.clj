@@ -128,7 +128,7 @@
                                         ;CLASS AND OBJECT OPERATIONS
 (defn checkcast [class] ["checkcast" class])
 (defn instanceof [class] ["instanceof" class])
-(defn new [class] ["new" class])
+(defn jnew [class] ["new" class])
 
 
                                         ;METHOD INVOCATION

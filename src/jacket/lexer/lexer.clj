@@ -5,6 +5,7 @@
 (def KEYWORDS ["-" "*" "+" "=" "!=" "<" ">" ">=" "<="
                "define" "lambda" "let"
                "and" "or" "not"
+               "if" "cond"
                "car" "cdr" "cons" "quote"
                "print" "read" "println" "readln"])
 

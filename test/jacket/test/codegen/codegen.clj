@@ -32,5 +32,6 @@
 
       "println" "cake"
       "println-answer" "the answer"
+      "println-sum-float" "3.0"
 
       )))
