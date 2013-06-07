@@ -17,8 +17,8 @@
        (= type (gen-type definition))
 
        :void "V"
-       :long "L"
-       [:long] "[L"
+       :long "J"
+       [:long] "[J"
        [(gen-path 'java 'lang 'String)] "[Ljava/lang/String;"
        
        ))

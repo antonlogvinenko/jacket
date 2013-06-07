@@ -13,12 +13,18 @@
 (defn generate-sexpr [])
 (defn generate-ast [])
 
+(defn generate-to-string-conversion []
+  [(invokevirtual ['java 'lang 'Object]
+                  'toString
+                  []
+                  (gen-path 'java 'lang 'String))])
+
 (defn generate-println [args]
   (concat
    [(limitstack 10)]
    (-> args first generate-ast)
+   (generate-to-string-conversion)
    [(invokestatic ['Console] 'println [(gen-path 'java 'lang 'String)] :void)]))
-
 
 (defn generate-string-const [ast]
   [(-> ast .value ldc)])
@@ -34,6 +40,7 @@
   [(jnew (gen-path 'java 'lang 'Long))
    dup
    (-> ast .value ldc_w)
+   i2l
    (invokenonvirtual ['java 'lang 'Long] '<init> [:long] :void)])
 
 (defn generate-number-const [ast]
@@ -43,20 +50,18 @@
    :else (throw (RuntimeException. "Who is Mr. Putin?"))
    ))
 
-(defn generate-add-of-two [args]
+(defn generate-add-of-two [arg]
   (concat
-   (->> args (map generate-ast) (apply concat))
+   (generate-ast arg)
    [(invokestatic ['Numbers]
                   'add
                   [(gen-path 'java 'lang 'Number) (gen-path 'java 'lang 'Number)]
-                  (gen-path 'java 'lang 'String))]))
+                  (gen-path 'java 'lang 'Number))]))
 
 (defn generate-add [args]
-  (let [length (count args)]
-    (condp = length
-      1 (generate-ast (first args))
-      2 (generate-add-of-two args)
-      )))
+  (concat (generate-ast (first args))
+          (if (-> args count zero?) []
+            (->> args rest (map generate-add-of-two) (apply concat)))))
 
 (defn generate-atom [ast]
   (cond

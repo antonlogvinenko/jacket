@@ -24,7 +24,7 @@ public class Numbers {
 	return a1 + a2;
     }
     
-    public static Object add0(Number a1, Number a2) {
+    public static Number add(Number a1, Number a2) {
 	if (a1 instanceof Double || a2 instanceof Double) {
 	    return add(a1.doubleValue(), a2.doubleValue());
 	}
@@ -44,10 +44,6 @@ public class Numbers {
 	    return add(a1.byteValue(), a2.byteValue());
 	}
 	throw new RuntimeException("Exceptional cake");
-    }
-
-    public static String add(Number a1, Number a2) {
-	return add0(a1, a2).toString();
     }
 
 }

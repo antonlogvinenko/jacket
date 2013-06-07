@@ -2,7 +2,7 @@
 
 
 (def TYPE
-  {:int "I" :boolean "B" :char "C" :float "F" :double "D" :long "L" :void "V"})
+  {:int "I" :boolean "Z" :char "C" :float "F" :double "D" :long "J" :void "V"})
 
 (defn gen-type [type]
   (cond
