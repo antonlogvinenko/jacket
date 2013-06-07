@@ -73,7 +73,7 @@
 
 (defn generate [name ast]
   (generate-main-class name
-                       (apply concat (map generate-sexpr ast))))
+                       (apply concat (map generate-ast ast))))
 
 (defn compile-jacket [in location name]
   (precompile-libraries location)
