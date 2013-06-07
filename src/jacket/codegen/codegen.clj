@@ -36,7 +36,7 @@
    :super object-path
    :methods [default-init
              {:access :public :static true :name 'println
-              :arguments [(gen-path 'java 'lang 'String)]
+              :arguments [(gen-path 'java 'lang 'Object)]
               :return :void
               :instructions [(limitstack 2)
                              (limitlocals 1)
@@ -44,7 +44,7 @@
                              aload_0
                              (invokevirtual ['java 'io 'PrintStream]
                                             'println
-                                            [(gen-path 'java 'lang 'String)] :void)
+                                            [(gen-path 'java 'lang 'Object)] :void)
                              return
                              ]}]})
 
@@ -58,7 +58,7 @@
      (ldc "Hey hey!!!")
      (invokestatic ['Console]
                    'println
-                   [(gen-path 'java 'lang 'String)]
+                   [(gen-path 'java 'lang 'Object)]
                    :void)]
     [return])))
 

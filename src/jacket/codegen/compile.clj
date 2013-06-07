@@ -14,17 +14,16 @@
 (defn generate-ast [])
 
 (defn generate-to-string-conversion []
-  [(invokevirtual ['java 'lang 'Object]
-                  'toString
-                  []
+  [(invokestatic ['java 'lang 'String]
+                  'valueOf
+                  [(gen-path 'java 'lang 'Object)]
                   (gen-path 'java 'lang 'String))])
 
 (defn generate-println [args]
   (concat
    [(limitstack 10)]
    (-> args first generate-ast)
-   (generate-to-string-conversion)
-   [(invokestatic ['Console] 'println [(gen-path 'java 'lang 'String)] :void)]))
+   [(invokestatic ['Console] 'println [(gen-path 'java 'lang 'Object)] :void)]))
 
 (defn generate-string-const [ast]
   [(-> ast .value ldc)])
