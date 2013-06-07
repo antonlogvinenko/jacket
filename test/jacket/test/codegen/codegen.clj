@@ -5,7 +5,7 @@
         [clojure.string :only [split]]))
 
 (defn run-hello-world []
-  (let [result (->> (sh  "./hello-world.sh" "HelloWorld")
+  (let [result (->> (sh  "./run-program.sh" "HelloWorld")
                     (with-sh-dir ".")
                     :out)]
     (-> result (split #"\n") last)))
