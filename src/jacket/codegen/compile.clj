@@ -19,11 +19,15 @@
                   [(gen-path 'java 'lang 'Object)]
                   (gen-path 'java 'lang 'String))])
 
+(defn generate-print-single [arg]
+  (concat (generate-ast arg)
+          [(invokestatic ['Console] 'print [(gen-path 'java 'lang 'Object)] :void)]))
+
 (defn generate-println [args]
   (concat
    [(limitstack 10)]
-   (-> args first generate-ast)
-   [(invokestatic ['Console] 'println [(gen-path 'java 'lang 'Object)] :void)]))
+   (->> args (map generate-print-single) (apply concat))
+   [(invokestatic ['Console] 'println [] :void)]))
 
 (defn generate-string-const [ast]
   [(-> ast .value ldc)])

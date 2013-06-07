@@ -36,5 +36,6 @@
       "println-sum-int" "3"
       "println-sum-n" "6.0"
       "println-sum-1" "1"
+      "println-n-arity" "Cake is a 42.0 lie"
 
       )))

@@ -45,8 +45,29 @@
                              (invokevirtual ['java 'io 'PrintStream]
                                             'println
                                             [(gen-path 'java 'lang 'Object)] :void)
-                             return
-                             ]}]})
+                             return]}
+             {:access :public :static true :name 'print
+              :arguments [(gen-path 'java 'lang 'Object)]
+              :return :void
+              :instructions [(limitstack 2)
+                             (limitlocals 1)
+                             (getstatic ['java 'lang 'System 'out] ['java 'io 'PrintStream])
+                             aload_0
+                             (invokevirtual ['java 'io 'PrintStream]
+                                            'print
+                                            [(gen-path 'java 'lang 'Object)] :void)
+                             return]}
+             {:access :public :static true :name 'println
+              :arguments []
+              :return :void
+              :instructions [(limitstack 2)
+                             (limitlocals 1)
+                             (getstatic ['java 'lang 'System 'out] ['java 'io 'PrintStream])
+                             (invokevirtual ['java 'io 'PrintStream]
+                                            'println
+                                            [] :void)
+                             return]}
+             ]})
 
 
                                         ;HELLO WORLD, for experiments
