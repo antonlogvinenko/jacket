@@ -27,11 +27,11 @@
 (defn generate-ast [])
 
 (defn generate-to-string-conversion []
-  (with ops 
-        (invokestatic ['java 'lang 'String]
-                      'valueOf
-                      [(gen-path 'java 'lang 'Object)]
-                      (gen-path 'java 'lang 'String))))
+  (with ops
+        invokestatic ['java 'lang 'String]
+        'valueOf
+        [(gen-path 'java 'lang 'Object)]
+        (gen-path 'java 'lang 'String)))
 
 (defn generate-print-single [arg]
   (-> ops
@@ -85,11 +85,10 @@
 (defn generate-add [args]
   (-> ops
       (with (generate-ast (first args)))
-      (with (if (-> args count zero?) []
-                    (->> args
-                         rest
-                         (map generate-add-of-two)
-                         (reduce into []))))))
+      (with (->> args
+                 rest
+                 (map generate-add-of-two)
+                 (reduce into [])))))
 
 (defn generate-atom [atom]
   (cond

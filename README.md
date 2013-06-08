@@ -1,37 +1,30 @@
-jacket
+Jacket
 ===
 
-Jacket, implementation of Lisp (probably in future - Racket) on JVM.
-Pet project pursuing several goals:
+Jacket, implementation of Lisp on JVM.
+This is a pet project. It's goals:
 * Learning JVM internals
 * Practicing theory of compilation and interpretation
 * Building yet another LISP implementation
 * Doing something fun, big and ambitious
-* - in that order
 
-Have an idea to try to implement currying in s-expressions.
+Also, have an idea to try to implement currying in s-expressions.
 
-Clojure:
->(def f (partial conj [3]))
+What's ready:
+* Lexer with regular grammar described by the means of finite state machine. Batteries included (fsm).
+* Parser.
+* Semantic analysis.
 
->(f 1)
+Under development:
+* Code generation. Polymorphic n-arity funcitons: println, + operator.
+* Coming soon: print, readln, read functions; all arithmetic, comparison, logic operators
 
->[3 1]
+Not yet
+* Code generation: conditionals, lists and operations, variables and scopes, lambda functions
 
-Jacket:
->(def f (conj [3]))
-
->(f 1)
-
->[3 1]
-
-"partial" in Jacket will have to have a "greedy" notion attached, for making n-arity functions partial application.
-
-Current state:
-* Lexer with regular grammar described by the means of finite state machine. Batteries included (fsm). Complete.
-* Parser. Complete.
-* Semantic analysis. Complete.
-* Code generation. In progress, "jacket-2" branch.
-* Optimizations. Probably.
+Probably
+* Macros
+* S-expressions currying
+* Optimizations
 
 Not really serious about optimizations and production ready release. For now. :)
