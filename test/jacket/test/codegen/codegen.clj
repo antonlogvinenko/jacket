@@ -4,8 +4,12 @@
         [clojure.java.shell]
         [clojure.string :only [split]]))
 
-(defn run-hello-world []
-  (let [result (->> (sh  "./run-program.sh" "HelloWorld")
+(->> "./compile-libs.sh" sh (with-sh-dir "."))
+;;(precompile-libraries "jasm-impl")
+
+
+(defn run-program [name]
+  (let [result (->> (sh  "./run-program.sh" name)
                     (with-sh-dir ".")
                     :out)]
     (-> result (split #"\n") last)))
@@ -13,16 +17,10 @@
 (deftest hello-world-test
   (are [result]
     (do (gen-hello-world)
-        (= result (run-hello-world)))
+        (= result (run-program "HelloWorld")))
 
     "Hey hey!!!"
     ))
-
-(defn run-program [name]
-  (let [result (->> (sh  "./run-program.sh" name)
-                    (with-sh-dir ".")
-                    :out)]
-    (-> result (split #"\n") last)))
 
 (deftest run-program-test
   (let [location "wardrobe/"]

@@ -10,74 +10,100 @@
                                         ;Program file to jasmin file
 (defn debug [x] (println x) x)
 
+(defn codegen-error []
+  (throw (RuntimeException. "Who is Mr. Putin?")))
+
+(def ops [])
+
+(defn with [ops arg1 & args]
+  (into ops (if (vector? arg1)
+              arg1
+              (if (empty? args)
+                [arg1] 
+                [(apply arg1 args)]))))
+
+
 (defn generate-sexpr [])
 (defn generate-ast [])
 
 (defn generate-to-string-conversion []
-  [(invokestatic ['java 'lang 'String]
-                  'valueOf
-                  [(gen-path 'java 'lang 'Object)]
-                  (gen-path 'java 'lang 'String))])
+  (with ops 
+        (invokestatic ['java 'lang 'String]
+                      'valueOf
+                      [(gen-path 'java 'lang 'Object)]
+                      (gen-path 'java 'lang 'String))))
 
 (defn generate-print-single [arg]
-  (concat (generate-ast arg)
-          [(invokestatic ['Console] 'print [(gen-path 'java 'lang 'Object)] :void)]))
+  (-> ops
+      (with (generate-ast arg))
+      (with invokestatic ['Console] 'print
+            [(gen-path 'java 'lang 'Object)]
+            :void)))
 
 (defn generate-println [args]
-  (concat
-   [(limitstack 10)]
-   (->> args (map generate-print-single) (apply concat))
-   [(invokestatic ['Console] 'println [] :void)]))
+  (-> ops
+      (with limitstack 10)
+      (with (->> args
+                 (map generate-print-single)
+                 (reduce into [])))
+      (with invokestatic ['Console] 'println [] :void)))
 
 (defn generate-string-const [ast]
-  [(-> ast .value ldc)])
+  (with ops
+        ldc (.value ast)))
 
 (defn generate-float-const [ast]
-  [(jnew (gen-path 'java 'lang 'Double))
-   dup
-   (-> ast .value ldc_w)
-   f2d
-   (invokenonvirtual ['java 'lang 'Double] '<init> [:double] :void)])
+  (-> ops
+      (with jnew (gen-path 'java 'lang 'Double))
+      (with dup)
+      (with ldc_w (.value ast))
+      (with f2d)
+      (with invokenonvirtual ['java 'lang 'Double] '<init> [:double] :void)))
 
 (defn generate-integer-const [ast]
-  [(jnew (gen-path 'java 'lang 'Long))
-   dup
-   (-> ast .value ldc_w)
-   i2l
-   (invokenonvirtual ['java 'lang 'Long] '<init> [:long] :void)])
+  (-> ops
+      (with jnew (gen-path 'java 'lang 'Long))
+      (with dup)
+      (with ldc_w (.value ast))
+      (with i2l)
+      (with invokenonvirtual ['java 'lang 'Long] '<init> [:long] :void)))
 
 (defn generate-number-const [ast]
   (cond
    (is? ast float?) (generate-float-const ast)
    (is? ast integer?) (generate-integer-const ast)
-   :else (throw (RuntimeException. "Who is Mr. Putin?"))
-   ))
+   :else (codegen-error)))
 
 (defn generate-add-of-two [arg]
-  (concat
-   (generate-ast arg)
-   [(invokestatic ['Numbers]
-                  'add
-                  [(gen-path 'java 'lang 'Number) (gen-path 'java 'lang 'Number)]
-                  (gen-path 'java 'lang 'Number))]))
+  (-> ops
+      (with (generate-ast arg))
+      (with invokestatic ['Numbers]
+            'add
+            [(gen-path 'java 'lang 'Number) (gen-path 'java 'lang 'Number)]
+            (gen-path 'java 'lang 'Number))))
 
 (defn generate-add [args]
-  (concat (generate-ast (first args))
-          (if (-> args count zero?) []
-            (->> args rest (map generate-add-of-two) (apply concat)))))
+  (-> ops
+      (with (generate-ast (first args)))
+      (with (if (-> args count zero?) []
+                    (->> args
+                         rest
+                         (map generate-add-of-two)
+                         (reduce into []))))))
 
-(defn generate-atom [ast]
+(defn generate-atom [atom]
   (cond
-   (is? ast string?) (generate-string-const ast)
-   (is? ast number?) (generate-number-const ast)))
+   (is? atom string?) (generate-string-const atom)
+   (is? atom number?) (generate-number-const atom)
+   :else (codegen-error)))
 
-(defn generate-sexpr [ast]
-  (let [type (first ast)
-        args (rest ast)]
+(defn generate-sexpr [sexpr]
+  (let [type (first sexpr)
+        args (rest sexpr)]
     (cond
      (= type :println) (generate-println args)
      (= type :+) (generate-add args)
-     :else (throw (RuntimeException.)))))
+     :else (codegen-error))))
 
 (defn generate-ast [ast]
   (if (vector? ast)
