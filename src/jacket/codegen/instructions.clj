@@ -51,7 +51,8 @@
 
 
                                         ;RETURN
-(def return "return")
+(def-n return "return" areturn "areturn"
+  dreturn "dreturn" freturn "freturn" ireturn "ireturn" lreturn "lreturn")
 (defn ret [var-num] ["ret" var-num])
 
 

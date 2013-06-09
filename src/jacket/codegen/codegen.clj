@@ -35,6 +35,24 @@
   {:access :public :type :class :name 'Console ;(gen-path 'jacket 'core 'Console)
    :super object-path
    :methods [default-init
+             {:access :public :static true :name 'readln
+              :arguments []
+              :return (gen-path 'java 'lang 'String)
+              :instructions [(limitstack 5)
+                             (jnew (gen-path 'java 'util 'Scanner))
+                             dup
+                             (getstatic ['java 'lang 'System 'in] ['java 'io 'InputStream])
+                             (invokenonvirtual ['java 'util 'Scanner]
+                                               '<init>
+                                               [(gen-path 'java 'io 'InputStream)]
+                                               :void)
+                             (invokevirtual ['java 'util 'Scanner]
+                                            'nextLine
+                                            []
+                                            (gen-path 'java 'lang 'String))
+                             areturn]
+              }
+             
              {:access :public :static true :name 'println
               :arguments [(gen-path 'java 'lang 'Object)]
               :return :void
@@ -86,7 +104,6 @@
 (defn precompile-libraries [])
 
 (defn gen-hello-world []
-  (precompile-libraries "wardrobe")
   (->> hello-world program-text (spit "wardrobe/HelloWorld.jasm")))
 
 (defn precompile-libraries [dir]
@@ -97,7 +114,6 @@
                        (apply concat (map generate-ast ast))))
 
 (defn compile-jacket [in location name]
-  (precompile-libraries location)
   (->> in slurp
        tokenize parse semantics
        (generate name) program-text

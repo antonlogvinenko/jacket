@@ -41,6 +41,23 @@
      ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
      ["invokestatic" "Console/print(Ljava/lang/Object;)V"]
      ]
+    
+    [[1 1.0 "1.0"]] generate-print
+    [[".limit stack" 10]
+     ["new" "java/lang/Long"]
+     "dup"
+     ["ldc_w" 1]
+     "i2l"
+     ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
+     ["invokestatic" "Console/print(Ljava/lang/Object;)V"]
+     ["new" "java/lang/Double"]
+     "dup"
+     ["ldc_w" 1.0]
+     "f2d"
+     ["invokenonvirtual" "java/lang/Double/<init>(D)V"]
+     ["invokestatic" "Console/print(Ljava/lang/Object;)V"]
+     ["ldc" "\"1.0\""]
+     ["invokestatic" "Console/print(Ljava/lang/Object;)V"]]
 
     [[1 1.0 "1.0"]] generate-println
     [[".limit stack" 10]
@@ -60,6 +77,9 @@
      ["invokestatic" "Console/print(Ljava/lang/Object;)V"]
      ["invokestatic" "Console/println()V"]]
 
+    [] generate-readln
+    [["invokestatic" "Console/readln()Ljava/lang/String;"]]
+    
     ["cake"] generate-string-const
     [["ldc" "\"cake\""]]
 

@@ -40,13 +40,25 @@
             [(gen-path 'java 'lang 'Object)]
             :void)))
 
-(defn generate-println [args]
+(defn generate-print [args]
   (-> ops
       (with limitstack 10)
       (with (->> args
                  (map generate-print-single)
-                 (reduce into [])))
+                 (reduce into [])))))
+
+(defn generate-println [args]
+  (-> ops
+      (with (generate-print args))
       (with invokestatic ['Console] 'println [] :void)))
+
+(defn generate-readln []
+  (-> ops
+      (with invokestatic ['Console] 'readln [] (gen-path 'java 'lang 'String))))
+
+(defn generate-read []
+  (-> ops
+      (with invokestatic ['Console] 'read [] (gen-path 'java 'lang 'String))))
 
 (defn generate-string-const [ast]
   (with ops
@@ -101,6 +113,8 @@
         args (rest sexpr)]
     (cond
      (= type :println) (generate-println args)
+     (= type :print) (generate-print args)
+     (= type :readln) (generate-readln)
      (= type :+) (generate-add args)
      :else (codegen-error))))
 

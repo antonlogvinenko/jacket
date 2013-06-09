@@ -111,11 +111,18 @@
       (-> ok
           (+error "Quote may have a single argument")))))
 
-(defn check-println [sexpr]
+(defn check-read-utility [sexpr]
+  (if (-> sexpr count dec zero?)
+    ok
+    (-> ok (+error
+            (str \' (first sexpr) \' " requires no arguments")))))
+
+(defn check-print-utility [sexpr]
   (let [length (count sexpr)]
     (if (> length 1)
       ok
-      (-> ok (+error "'println' requires at least a single argument")))))
+      (-> ok (+error
+              (str \' (first sexpr) \' " requires at least a single argument"))))))
 
 (defn check-dynamic-list [state sexpr]
   (let [f (first sexpr)
@@ -147,7 +154,10 @@
         dispatch {:define check-define
                   :lambda check-lambda
                   :quote check-quote
-                  :println check-println
+                  :println check-print-utility
+                  :print check-print-utility
+                  :read check-read-utility
+                  :readln check-read-utility
                   :let check-let}]
     (if (nil? f)
       (-> ok

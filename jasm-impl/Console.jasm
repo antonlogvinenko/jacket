@@ -6,6 +6,15 @@
 	invokenonvirtual java/lang/Object/<init>()V
 	return
 .end method
+.method public static readln()Ljava/lang/String;
+	.limit stack 5
+	new java/util/Scanner
+	dup
+	getstatic java/lang/System/in Ljava/io/InputStream;
+	invokenonvirtual java/util/Scanner/<init>(Ljava/io/InputStream;)V
+	invokevirtual java/util/Scanner/nextLine()Ljava/lang/String;
+	areturn
+.end method
 .method public static println(Ljava/lang/Object;)V
 	.limit stack 2
 	.limit locals 1

@@ -11,13 +11,13 @@ This is a pet project. It's goals:
 Also, have an idea to try to implement currying in s-expressions.
 
 What's ready:
-* Lexer with regular grammar described by the means of finite state machine. Batteries included (fsm).
+* Lexer with regular grammar recognized by a finite state machine. Batteries included (FSM).
 * Parser.
 * Semantic analysis.
 
 Under development:
-* Code generation. Polymorphic n-arity funcitons: println, + operator.
-* Coming soon: print, readln, read functions; all arithmetic, comparison, logic operators
+* Code generation. Polymorphic n-arity funcitons: println, print, + operator, readln.
+* Coming soon: print, readln functions; all arithmetic, comparison, logic operators
 
 Not yet
 * Code generation: conditionals, lists and operations, variables and scopes, lambda functions
@@ -25,6 +25,5 @@ Not yet
 Probably
 * Macros
 * S-expressions currying
+* Java interop
 * Optimizations
-
-Not really serious about optimizations and production ready release. For now. :)

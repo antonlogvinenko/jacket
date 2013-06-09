@@ -112,15 +112,38 @@
 
        ))
 
-(deftest check-println-test
+(deftest check-print-utility-test
   (are [sexpr sym-g sym-l errors sexprs]
-    (= (check-println (to-tokens sexpr))
+    (= (check-print-utility (to-tokens sexpr))
        [sym-g sym-l errors sexprs])
 
     [:println]
-    [] [] ["'println' requires at least a single argument"] []
+    [] [] ["':println' requires at least a single argument"] []
+    [:print]
+    [] [] ["':print' requires at least a single argument"] []
 
     [:println 'a 'b]
+    [] [] [] []
+
+    [:print 'a 'b]
+    [] [] [] []
+
+    ))
+
+(deftest check-read-utility-test
+  (are [sexpr sym-g sym-l errors sexprs]
+    (= (check-read-utility (to-tokens sexpr))
+       [sym-g sym-l errors sexprs])
+
+    [:readln 1]
+    [] [] ["':readln' requires no arguments"] []
+    [:read 1]
+    [] [] ["':read' requires no arguments"] []
+
+    [:readln]
+    [] [] [] []
+
+    [:read]
     [] [] [] []
 
     ))
