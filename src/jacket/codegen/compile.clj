@@ -86,21 +86,30 @@
    (is? ast integer?) (generate-integer-const ast)
    :else (codegen-error)))
 
-(defn generate-add-of-two [arg]
+(defn generate-single [instruction arg]
   (-> ops
       (with (generate-ast arg))
       (with invokestatic ['Numbers]
-            'add
+            instruction
             [(gen-path 'java 'lang 'Number) (gen-path 'java 'lang 'Number)]
             (gen-path 'java 'lang 'Number))))
 
-(defn generate-add [args]
+(defn generate-several [instruction args]
   (-> ops
       (with (generate-ast (first args)))
       (with (->> args
                  rest
-                 (map generate-add-of-two)
+                 (map (partial generate-single instruction))
                  (reduce into [])))))
+
+(defn generate-add [args]
+  (generate-several 'add args))
+(defn generate-mul [args]
+  (generate-several 'mul args))
+(defn generate-div [args]
+  (generate-several 'div args))
+(defn generate-sub [args]
+  (generate-several 'sub args))
 
 (defn generate-atom [atom]
   (cond
@@ -116,6 +125,9 @@
      (= type :print) (generate-print args)
      (= type :readln) (generate-readln)
      (= type :+) (generate-add args)
+     (= type :*) (generate-mul args)
+     (= type :-) (generate-sub args)
+     (= type (keyword "/")) (generate-div args)
      :else (codegen-error))))
 
 (defn generate-ast [ast]

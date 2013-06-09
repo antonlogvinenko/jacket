@@ -38,5 +38,8 @@
       "println-sum-1" ""  "1"
       "println-n-arity" ""  "Cake is a 42.0 lie"
       "print-sum-n" "" "6.0"
+      "println-mul-n" "" "36.0"
+      "println-sub-n" "" "5"
+      "println-div-n" "" "20.0"
 
       )))

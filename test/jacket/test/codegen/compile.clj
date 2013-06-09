@@ -111,7 +111,7 @@
      "f2d"
      ["invokenonvirtual" "java/lang/Double/<init>(D)V"]]
 
-    [1.0] generate-add-of-two
+    [1.0] (partial generate-single 'add)
     [["new" "java/lang/Double"]
      "dup"
      ["ldc_w" 1.0]
@@ -119,7 +119,7 @@
      ["invokenonvirtual" "java/lang/Double/<init>(D)V"]
      ["invokestatic" "Numbers/add(Ljava/lang/Number;Ljava/lang/Number;)Ljava/lang/Number;"]]
 
-    [[1.0 2.0]] generate-add
+    [[1.0 2.0]] (partial generate-several 'add)
     [["new" "java/lang/Double"]
      "dup"
      ["ldc_w" 1.0]
@@ -144,6 +144,45 @@
      "i2l"
      ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
      ["invokestatic" "Numbers/add(Ljava/lang/Number;Ljava/lang/Number;)Ljava/lang/Number;"]]
+
+    [[1.0 2]] generate-mul
+    [["new" "java/lang/Double"]
+     "dup"
+     ["ldc_w" 1.0]
+     "f2d"
+     ["invokenonvirtual" "java/lang/Double/<init>(D)V"]
+     ["new" "java/lang/Long"]
+     "dup"
+     ["ldc_w" 2]
+     "i2l"
+     ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
+     ["invokestatic" "Numbers/mul(Ljava/lang/Number;Ljava/lang/Number;)Ljava/lang/Number;"]]
+
+    [[1.0 2]] generate-div
+    [["new" "java/lang/Double"]
+     "dup"
+     ["ldc_w" 1.0]
+     "f2d"
+     ["invokenonvirtual" "java/lang/Double/<init>(D)V"]
+     ["new" "java/lang/Long"]
+     "dup"
+     ["ldc_w" 2]
+     "i2l"
+     ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
+     ["invokestatic" "Numbers/div(Ljava/lang/Number;Ljava/lang/Number;)Ljava/lang/Number;"]]
+
+    [[1.0 2]] generate-sub
+    [["new" "java/lang/Double"]
+     "dup"
+     ["ldc_w" 1.0]
+     "f2d"
+     ["invokenonvirtual" "java/lang/Double/<init>(D)V"]
+     ["new" "java/lang/Long"]
+     "dup"
+     ["ldc_w" 2]
+     "i2l"
+     ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
+     ["invokestatic" "Numbers/sub(Ljava/lang/Number;Ljava/lang/Number;)Ljava/lang/Number;"]]
 
     [42] generate-atom
     [["new" "java/lang/Long"]

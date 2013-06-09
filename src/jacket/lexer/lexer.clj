@@ -2,7 +2,7 @@
   (:use [jacket.lexer.fsm])
   (:require [clojure.tools.reader.reader-types :as rt]))
 
-(def KEYWORDS ["-" "*" "+" "=" "!=" "<" ">" ">=" "<="
+(def KEYWORDS ["-" "*" "+" "/" "=" "!=" "<" ">" ">=" "<="
                "define" "lambda" "let"
                "and" "or" "not"
                "if" "cond"
@@ -40,7 +40,7 @@
                      letter? [:name append]
                      [\!] [:not-equal append]
                      [\< \>] [:strict-inequality append]
-                     [\+ \\ \* \=] [:keyword append]
+                     [\+ \/ \* \=] [:keyword append]
                      \- [:minus append]}
 
               :minus {digit? [:integer append]

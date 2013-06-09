@@ -4,23 +4,7 @@ public class Numbers {
 	return a1 + a2;
     }
 
-    public static Float add(Float a1, Float a2) {
-	return a1 + a2;
-    }
-
     public static Long add(Long a1, Long a2) {
-	return a1 + a2;
-    }
-
-    public static Integer add(Integer a1, Integer a2) {
-	return a1 + a2;
-    }
-
-    public static Integer add(Short a1, Short a2) {
-	return a1 + a2;
-    }
-
-    public static Integer add(Byte a1, Byte a2) {
 	return a1 + a2;
     }
     
@@ -28,20 +12,66 @@ public class Numbers {
 	if (a1 instanceof Double || a2 instanceof Double) {
 	    return add(a1.doubleValue(), a2.doubleValue());
 	}
-	if (a1 instanceof Float || a2 instanceof Float) {
-	    return add(a1.floatValue(), a2.floatValue());
-	}
 	if (a1 instanceof Long || a2 instanceof Long) {
 	    return add(a1.longValue(), a2.longValue());
 	}
-	if (a1 instanceof Integer || a2 instanceof Integer) {
-	    return add(a1.intValue(), a2.intValue());
+	throw new RuntimeException("Exceptional cake");
+    }
+
+
+    public static Double mul(Double a1, Double a2) {
+	return a1 * a2;
+    }
+
+    public static Long mul(Long a1, Long a2) {
+	return a1 * a2;
+    }
+
+    public static Number mul(Number a1, Number a2) {
+	if (a1 instanceof Double || a2 instanceof Double) {
+	    return mul(a1.doubleValue(), a2.doubleValue());
 	}
-	if (a1 instanceof Short || a2 instanceof Short) {
-	    return add(a1.shortValue(), a2.shortValue());
+	if (a1 instanceof Long || a2 instanceof Long) {
+	    return mul(a1.longValue(), a2.longValue());
 	}
-	if (a1 instanceof Byte || a2 instanceof Byte) {
-	    return add(a1.byteValue(), a2.byteValue());
+	throw new RuntimeException("Exceptional cake");
+    }
+
+
+
+    public static Double sub(Double a1, Double a2) {
+	return a1 - a2;
+    }
+
+    public static Long sub(Long a1, Long a2) {
+	return a1 - a2;
+    }
+
+    public static Number sub(Number a1, Number a2) {
+	if (a1 instanceof Double || a2 instanceof Double) {
+	    return sub(a1.doubleValue(), a2.doubleValue());
+	}
+	if (a1 instanceof Long || a2 instanceof Long) {
+	    return sub(a1.longValue(), a2.longValue());
+	}
+	throw new RuntimeException("Exceptional cake");
+    }
+
+
+    public static Double div(Double a1, Double a2) {
+	return a1 / a2;
+    }
+
+    public static Long div(Long a1, Long a2) {
+	return a1 / a2;
+    }
+
+    public static Number div(Number a1, Number a2) {
+	if (a1 instanceof Double || a2 instanceof Double) {
+	    return div(a1.doubleValue(), a2.doubleValue());
+	}
+	if (a1 instanceof Long || a2 instanceof Long) {
+	    return div(a1.longValue(), a2.longValue());
 	}
 	throw new RuntimeException("Exceptional cake");
     }
