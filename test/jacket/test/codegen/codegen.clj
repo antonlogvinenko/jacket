@@ -28,6 +28,12 @@
       (do (compile-jacket (str "test-programs/" name ".jt") location name)
           (= result (run-program name in)))
 
+      "bool-and" "" "true false"
+      "bool-or" "" "true false"
+      "bool-xor" "" "true false"
+      "bool-not" "" "true false"
+      "bool-and-n-arity" "" "false"
+      "bool-polymorphic" "" "true"
       "readln" "cake is a" "cake is a lie"
       "println" ""  "cake"
       "print" "" "cakezzz"

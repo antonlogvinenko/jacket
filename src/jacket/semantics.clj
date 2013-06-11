@@ -111,6 +111,12 @@
       (-> ok
           (+error "Quote may have a single argument")))))
 
+(defn check-not-utility [sexpr]
+  (if (-> sexpr count (- 2) zero?)
+    ok
+    (-> ok (+error
+            (str \' (first sexpr) \' " requires a single argument")))))
+
 (defn check-read-utility [sexpr]
   (if (-> sexpr count dec zero?)
     ok
@@ -158,6 +164,7 @@
                   :print check-print-utility
                   :read check-read-utility
                   :readln check-read-utility
+                  :not check-not-utility
                   :let check-let}]
     (if (nil? f)
       (-> ok

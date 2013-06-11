@@ -29,6 +29,10 @@
 
     ))
 
+(deftest boolean?-test
+  (is (true? (boolean? true)))
+  (is (false? (boolean? 42))))
+
 (deftest generate-test
   (are [args gen-fn result]
     (= result (apply gen-fn (to-tokens args)))
@@ -111,7 +115,7 @@
      "f2d"
      ["invokenonvirtual" "java/lang/Double/<init>(D)V"]]
 
-    [1.0] (partial generate-single 'add)
+    [1.0] (partial generate-single-generic (generate-single-arithmetic 'add) generate-ast)
     [["new" "java/lang/Double"]
      "dup"
      ["ldc_w" 1.0]
@@ -119,7 +123,7 @@
      ["invokenonvirtual" "java/lang/Double/<init>(D)V"]
      ["invokestatic" "Numbers/add(Ljava/lang/Number;Ljava/lang/Number;)Ljava/lang/Number;"]]
 
-    [[1.0 2.0]] (partial generate-several 'add)
+    [[1.0 2.0]] (partial generate-several generate-single-arithmetic 'add generate-ast)
     [["new" "java/lang/Double"]
      "dup"
      ["ldc_w" 1.0]
@@ -183,6 +187,32 @@
      "i2l"
      ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
      ["invokestatic" "Numbers/sub(Ljava/lang/Number;Ljava/lang/Number;)Ljava/lang/Number;"]]
+
+    [[true false]] generate-and
+    [["getstatic" "java/lang/Boolean/TRUE Ljava/lang/Boolean;"]
+     ["invokestatic" "Logic/toBoolean(Ljava/lang/Object;)Ljava/lang/Boolean;"]
+     ["getstatic" "java/lang/Boolean/FALSE Ljava/lang/Boolean;"]
+     ["invokestatic" "Logic/toBoolean(Ljava/lang/Object;)Ljava/lang/Boolean;"]
+     ["invokestatic" "Logic/and(Ljava/lang/Boolean;Ljava/lang/Boolean;)Ljava/lang/Boolean;"]]
+
+    [[false false]] generate-or
+    [["getstatic" "java/lang/Boolean/FALSE Ljava/lang/Boolean;"]
+     ["invokestatic" "Logic/toBoolean(Ljava/lang/Object;)Ljava/lang/Boolean;"]
+     ["getstatic" "java/lang/Boolean/FALSE Ljava/lang/Boolean;"]
+     ["invokestatic" "Logic/toBoolean(Ljava/lang/Object;)Ljava/lang/Boolean;"]
+     ["invokestatic" "Logic/or(Ljava/lang/Boolean;Ljava/lang/Boolean;)Ljava/lang/Boolean;"]]
+
+    [[true false]] generate-xor
+    [["getstatic" "java/lang/Boolean/TRUE Ljava/lang/Boolean;"]
+     ["invokestatic" "Logic/toBoolean(Ljava/lang/Object;)Ljava/lang/Boolean;"]
+     ["getstatic" "java/lang/Boolean/FALSE Ljava/lang/Boolean;"]
+     ["invokestatic" "Logic/toBoolean(Ljava/lang/Object;)Ljava/lang/Boolean;"]
+     ["invokestatic" "Logic/xor(Ljava/lang/Boolean;Ljava/lang/Boolean;)Ljava/lang/Boolean;"]]
+
+    [[true]] generate-not
+    [["getstatic" "java/lang/Boolean/TRUE Ljava/lang/Boolean;"]
+     ["invokestatic" "Logic/toBoolean(Ljava/lang/Object;)Ljava/lang/Boolean;"]
+     ["invokestatic" "Logic/not(Ljava/lang/Boolean;)Ljava/lang/Boolean;"]]
 
     [42] generate-atom
     [["new" "java/lang/Long"]

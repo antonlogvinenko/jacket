@@ -112,6 +112,22 @@
 
        ))
 
+(deftest check-not-utility-test
+  (are [sexpr sym-g sym-l errors sexprs]
+    (= (check-not-utility (to-tokens sexpr))
+       [sym-g sym-l errors sexprs])
+
+    [:not]
+    [] [] ["':not' requires a single argument"] []
+
+    [:not 4]
+    [] [] [] []
+
+    [:not 1 2]
+    [] [] ["':not' requires a single argument"] []
+
+    ))
+
 (deftest check-print-utility-test
   (are [sexpr sym-g sym-l errors sexprs]
     (= (check-print-utility (to-tokens sexpr))

@@ -1,0 +1,1 @@
+(println (xor #t #f) " " (xor #t #t))

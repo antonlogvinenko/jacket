@@ -86,35 +86,87 @@
    (is? ast integer?) (generate-integer-const ast)
    :else (codegen-error)))
 
-(defn generate-single [instruction arg]
-  (-> ops
-      (with (generate-ast arg))
-      (with invokestatic ['Numbers]
-            instruction
-            [(gen-path 'java 'lang 'Number) (gen-path 'java 'lang 'Number)]
-            (gen-path 'java 'lang 'Number))))
+(defn generate-boolean-const [ast]
+  (let [value (if (.value ast) 'TRUE 'FALSE)]
+    (-> ops
+        (with getstatic
+              ['java 'lang 'Boolean value]
+              ['java 'lang 'Boolean]))))
 
-(defn generate-several [instruction args]
+(defn generate-single-generic [instructions generate-arg arg]
   (-> ops
-      (with (generate-ast (first args)))
+      (with (generate-arg arg))
+      (with instructions)))
+
+(defn generate-several [generate-single instruction generate-arg args]
+  (-> ops
+      (with (generate-arg (first args)))
       (with (->> args
                  rest
-                 (map (partial generate-single instruction))
+                 (map (partial generate-single-generic
+                               (generate-single instruction)
+                               generate-arg))
                  (reduce into [])))))
 
+                                        ;Arithmetic operations
+(defn generate-single-arithmetic [instruction]
+  [(invokestatic ['Numbers]
+                 instruction
+                 [(gen-path 'java 'lang 'Number) (gen-path 'java 'lang 'Number)]
+                 (gen-path 'java 'lang 'Number))])
+
+(defn generate-arithmetic [instruction args]
+  (generate-several generate-single-arithmetic instruction generate-ast args))
+
 (defn generate-add [args]
-  (generate-several 'add args))
+  (generate-arithmetic 'add args))
 (defn generate-mul [args]
-  (generate-several 'mul args))
+  (generate-arithmetic 'mul args))
 (defn generate-div [args]
-  (generate-several 'div args))
+  (generate-arithmetic 'div args))
 (defn generate-sub [args]
-  (generate-several 'sub args))
+  (generate-arithmetic 'sub args))
+
+
+                                        ;Logic operations
+(defn generate-ast-to-boolean [arg]
+  (-> ops
+      (with (generate-ast arg))
+      (with invokestatic ['Logic]
+            'toBoolean
+            [(gen-path 'java 'lang 'Object)]
+            (gen-path 'java 'lang 'Boolean))))
+
+(defn generate-single-logic [instruction]
+  (let [signature (if (= 'not instruction) nil
+                      (gen-path 'java 'lang 'Boolean))]
+    [(invokestatic ['Logic]
+                   instruction
+                   (conj [(gen-path 'java 'lang 'Boolean)] signature)
+                   (gen-path 'java 'lang 'Boolean))]))
+
+(defn generate-logic [instruction args]
+  (generate-several generate-single-logic instruction generate-ast-to-boolean args))
+
+(defn generate-and [args]
+  (generate-logic 'and args))
+(defn generate-or [args]
+  (generate-logic 'or args))
+(defn generate-xor [args]
+  (generate-logic 'xor args))
+(defn generate-not [args]
+  (-> ops
+      (with (generate-ast-to-boolean (first args)))
+      (with (generate-single-logic 'not))))
+
+(defn boolean? [atom]
+  (-> atom type (= java.lang.Boolean)))
 
 (defn generate-atom [atom]
   (cond
    (is? atom string?) (generate-string-const atom)
    (is? atom number?) (generate-number-const atom)
+   (is? atom boolean?) (generate-boolean-const atom)
    :else (codegen-error)))
 
 (defn generate-sexpr [sexpr]
@@ -128,6 +180,10 @@
      (= type :*) (generate-mul args)
      (= type :-) (generate-sub args)
      (= type (keyword "/")) (generate-div args)
+     (= type :and) (generate-and args)
+     (= type :or) (generate-or args)
+     (= type :not) (generate-not args)
+     (= type :xor) (generate-xor args)
      :else (codegen-error))))
 
 (defn generate-ast [ast]
