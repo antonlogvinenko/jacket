@@ -1,7 +1,7 @@
 Jacket
 ===
 
-Jacket, implementation of Lisp on JVM.
+Jacket, implementation of Lisp on the JVM.
 This is a pet project. It's goals:
 * Learning JVM internals
 * Practicing theory of compilation and interpretation
