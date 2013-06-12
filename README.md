@@ -14,16 +14,17 @@ What's ready:
 * Lexer with regular grammar recognized by a finite state machine. Batteries included (FSM).
 * Parser.
 * Semantic analysis.
-* Code generation: polymorphic n-arity funcitons: println, print, readln; +, -, *, / arithmetics
+* Code generation: readln; polymorphic n-arity funcitons: println, print, arithmetics (+, -, *, /), logical operations (and, or, xor, not)
 
 Under development:
-* Coming very soon: all comparison, logic operators
+* Coming very soon: comparison operators
 
 Not yet
-* Code generation: conditionals, lists and operations, variables and scopes, lambda functions
+* Code generation: conditionals (if, cond), lists and operations (cons, car, cdr), variables and scopes (let, define), lambda functions
 
 Probably
 * Macros
 * S-expressions currying
+* tail recursions support
 * Java interop
 * Optimizations
