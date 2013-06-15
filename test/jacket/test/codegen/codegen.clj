@@ -34,6 +34,14 @@
       "bool-not" "" "true false"
       "bool-and-n-arity" "" "false"
       "bool-polymorphic" "" "true"
+
+      "comp-less" "" "true false"
+      "comp-greater" "" "true false"
+      "comp-greater-or-equal" "" "true false"
+      "comp-less-or-equal" "" "true false"
+      "comp-equal" "" "false true true false"
+      "comp-nequal" "" "true false true false"
+      
       "readln" "cake is a" "cake is a lie"
       "println" ""  "cake"
       "print" "" "cakezzz"

@@ -108,6 +108,7 @@
                                generate-arg))
                  (reduce into [])))))
 
+
                                         ;Arithmetic operations
 (defn generate-single-arithmetic [instruction]
   [(invokestatic ['Numbers]
@@ -162,6 +163,52 @@
 (defn boolean? [atom]
   (-> atom type (= java.lang.Boolean)))
 
+
+
+                                        ;Comparison
+(defn generate-single-comparison [instruction]
+  [(invokestatic ['Comparison]
+                 instruction
+                 [(gen-path 'java 'lang 'Number) (gen-path 'java 'lang 'Number)]
+                 (gen-path 'java 'lang 'Boolean))])
+
+(defn generate-comparison [instruction args]
+  (generate-several generate-single-logic 'and
+                    (fn [[a b]] (-> ops
+                                    (with (generate-ast a))
+                                    (with (generate-ast b))
+                                    (with instruction)))
+                    (->> args (drop 1) (interleave args) (partition 2))))
+
+(defn generate-eq [args]
+  (generate-comparison [(invokevirtual ['java 'lang 'Object]
+                                       'equals
+                                       [(gen-path 'java 'lang 'Object)]
+                                       :boolean)
+                        (invokestatic ['java 'lang 'Boolean]
+                                      'valueOf
+                                      [:boolean]
+                                      (gen-path 'java 'lang 'Boolean))]
+                       args))
+
+(defn generate-neq [args]
+  (-> ops
+      (with (generate-eq args))
+      (with (generate-single-logic 'not))))
+
+(defn generate-le [args]
+  (generate-comparison (generate-single-comparison 'lessOrEqual) args))
+
+(defn generate-l [args]
+  (generate-comparison (generate-single-comparison 'less) args))
+
+(defn generate-g [args]
+  (generate-comparison (generate-single-comparison 'greater) args))
+
+(defn generate-ge [args]
+  (generate-comparison (generate-single-comparison 'greaterOrEqual) args))
+
+
 (defn generate-atom [atom]
   (cond
    (is? atom string?) (generate-string-const atom)
@@ -184,6 +231,12 @@
      (= type :or) (generate-or args)
      (= type :not) (generate-not args)
      (= type :xor) (generate-xor args)
+     (= type :<) (generate-l args)
+     (= type :>) (generate-g args)
+     (= type :>=) (generate-ge args)
+     (= type :<=) (generate-le args)
+     (= type :=) (generate-eq args)
+     (= type :!=) (generate-neq args)
      :else (codegen-error))))
 
 (defn generate-ast [ast]

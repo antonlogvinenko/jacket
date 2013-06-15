@@ -75,5 +75,4 @@ public class Numbers {
 	}
 	throw new RuntimeException("Exceptional cake");
     }
-
 }

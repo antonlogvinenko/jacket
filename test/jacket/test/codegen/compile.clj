@@ -214,6 +214,59 @@
      ["invokestatic" "Logic/toBoolean(Ljava/lang/Object;)Ljava/lang/Boolean;"]
      ["invokestatic" "Logic/not(Ljava/lang/Boolean;)Ljava/lang/Boolean;"]]
 
+    [[2 3]] generate-eq
+    [["new" "java/lang/Long"]
+     "dup"
+     ["ldc_w" 2]
+     "i2l"
+     ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
+     ["new" "java/lang/Long"]
+     "dup"
+     ["ldc_w" 3]
+     "i2l"
+     ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
+     ["invokevirtual" "java/lang/Object/equals(Ljava/lang/Object;)Z"]
+     ["invokestatic" "java/lang/Boolean/valueOf(Z)Ljava/lang/Boolean;"]]
+
+    [[2 3]] generate-neq
+    [["new" "java/lang/Long"]
+     "dup"
+     ["ldc_w" 2]
+     "i2l"
+     ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
+     ["new" "java/lang/Long"]
+     "dup"
+     ["ldc_w" 3]
+     "i2l"
+     ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
+     ["invokevirtual" "java/lang/Object/equals(Ljava/lang/Object;)Z"]
+     ["invokestatic" "java/lang/Boolean/valueOf(Z)Ljava/lang/Boolean;"]
+     ["invokestatic" "Logic/not(Ljava/lang/Boolean;)Ljava/lang/Boolean;"]]
+
+    [[42 42.0 45.0]] generate-le
+    [["new" "java/lang/Long"]
+     "dup"
+     ["ldc_w" 42]
+     "i2l"
+     ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
+     ["new" "java/lang/Double"]
+     "dup"
+     ["ldc_w" 42.0]
+     "f2d"
+     ["invokenonvirtual" "java/lang/Double/<init>(D)V"]
+     ["invokestatic" "Comparison/lessOrEqual(Ljava/lang/Number;Ljava/lang/Number;)Ljava/lang/Boolean;"] ["new" "java/lang/Double"]
+     "dup"
+     ["ldc_w" 42.0]
+     "f2d"
+     ["invokenonvirtual" "java/lang/Double/<init>(D)V"]
+     ["new" "java/lang/Double"]
+     "dup"
+     ["ldc_w" 45.0]
+     "f2d"
+     ["invokenonvirtual" "java/lang/Double/<init>(D)V"]
+     ["invokestatic" "Comparison/lessOrEqual(Ljava/lang/Number;Ljava/lang/Number;)Ljava/lang/Boolean;"]
+     ["invokestatic" "Logic/and(Ljava/lang/Boolean;Ljava/lang/Boolean;)Ljava/lang/Boolean;"]]
+
     [42] generate-atom
     [["new" "java/lang/Long"]
      "dup"
