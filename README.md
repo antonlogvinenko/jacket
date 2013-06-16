@@ -20,9 +20,7 @@ Under development:
 * Some codegeneration refactoring now when simple expressions codegeneration is ready.
 
 Not yet
-* conditionals
-** if
-** con
+* conditionals (if, cond)
 * lists and operations (cons, car, cdr)
 * variables and scopes (let, define)
 * lambda functions
