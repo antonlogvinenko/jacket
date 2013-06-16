@@ -17,10 +17,15 @@ What's ready:
 * Code generation: readln; println, print, arithmetics (+, -, *, /), logical operations (and, or, xor, not), comparison operations(<, <=, >, >=, =, !=). All operations are polymorphic, n-arity functions meaning "(<= 100 101 200)", "(= 100 100 100)" and "(and (not true) true false)" are legal expressions.
 
 Under development:
-* Some codegeneration refactoring now when simple expressions codegenerations is ready.
+* Some codegeneration refactoring now when simple expressions codegeneration is ready.
 
 Not yet
-* Code generation: conditionals (if, cond), lists and operations (cons, car, cdr), variables and scopes (let, define), lambda functions
+* conditionals
+** if
+** con
+* lists and operations (cons, car, cdr)
+* variables and scopes (let, define)
+* lambda functions
 
 Probably
 * Macros
