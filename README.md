@@ -14,10 +14,10 @@ What's ready:
 * Lexer with regular grammar recognized by a finite state machine. Batteries included (FSM).
 * Parser.
 * Semantic analysis.
-* Code generation: readln; polymorphic n-arity funcitons: println, print, arithmetics (+, -, *, /), logical operations (and, or, xor, not)
+* Code generation: readln; println, print, arithmetics (+, -, *, /), logical operations (and, or, xor, not), comparison operations(<, <=, >, >=, =, !=). All operations are polymorphic, n-arity functions.
 
 Under development:
-* Coming very soon: comparison operators
+* Some codegeneration refactoring now when simple expressions codegenerations is ready.
 
 Not yet
 * Code generation: conditionals (if, cond), lists and operations (cons, car, cdr), variables and scopes (let, define), lambda functions
