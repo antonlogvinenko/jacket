@@ -2,7 +2,7 @@ Jacket
 ===
 
 Jacket, implementation of Lisp on the JVM.
-This is a pet project. It's goals:
+This is a pet project in the way a dinosaur could be a pet. It's goals:
 * Learning JVM internals
 * Practicing theory of compilation and interpretation
 * Building yet another LISP implementation
