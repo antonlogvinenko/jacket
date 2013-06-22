@@ -6,7 +6,7 @@ This is a pet project in the way a dinosaur could be a pet. It's goals:
 * Learning JVM internals
 * Practicing theory of compilation and interpretation
 * Building yet another LISP implementation
-* Doing something fun, big and ambitious
+* Just for fun
 
 Also, have an idea to try to implement currying in s-expressions.
 
@@ -18,10 +18,10 @@ What's ready:
 * Conditionals: if-expressions.
 
 Under development:
-* Some codegeneration refactoring now when simple expressions codegeneration is ready.
+* Conditionals
 
 Not yet
-* conditionals (if, cond)
+* conditionals (cond)
 * lists and operations (cons, car, cdr)
 * variables and scopes (let, define)
 * lambda functions
