@@ -229,10 +229,10 @@
 
 
                                         ;THINGS
-(defn add-comment [comment] (str \; comment))
+(defn add-comment [comment] (str \tab \; comment))
 (def nop "nop")
 (defn-n
   limitstack [n] [".limit stack" n]
   limitlocals [n] [".limit locals" n]
   line [n] [".line" n]
-  label [l] [l \:])
+  label [l] (str l \:))

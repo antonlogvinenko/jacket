@@ -15,6 +15,7 @@ What's ready:
 * Parser.
 * Semantic analysis.
 * Code generation: readln; println, print, arithmetics (+, -, *, /), logical operations (and, or, xor, not), comparison operations(<, <=, >, >=, =, !=). All operations are polymorphic, n-arity functions meaning "(<= 100 101 200)", "(= 100 100 100)" and "(and (not true) true false)" are legal expressions.
+* Conditionals: if-expressions.
 
 Under development:
 * Some codegeneration refactoring now when simple expressions codegeneration is ready.

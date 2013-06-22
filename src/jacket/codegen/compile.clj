@@ -10,6 +10,8 @@
                                         ;Program file to jasmin file
 (defn debug [x] (println x) x)
 
+(def ^:dynamic last-label 0)
+
 (defn codegen-error []
   (throw (RuntimeException. "Who is Mr. Putin?")))
 
@@ -24,7 +26,7 @@
 
 
 (defn generate-sexpr [])
-(defn generate-ast [])
+(defn generate-ast-with-context [])
 
 (defn generate-to-string-conversion []
   (with ops
@@ -35,7 +37,7 @@
 
 (defn generate-print-single [arg]
   (-> ops
-      (with (generate-ast arg))
+      (with (generate-ast-with-context arg))
       (with invokestatic ['Console] 'print
             [(gen-path 'java 'lang 'Object)]
             :void)))
@@ -117,7 +119,7 @@
                  (gen-path 'java 'lang 'Number))])
 
 (defn generate-arithmetic [instruction args]
-  (generate-several generate-single-arithmetic instruction generate-ast args))
+  (generate-several generate-single-arithmetic instruction generate-ast-with-context args))
 
 (defn generate-add [args]
   (generate-arithmetic 'add args))
@@ -130,9 +132,9 @@
 
 
                                         ;Logic operations
-(defn generate-ast-to-boolean [arg]
+(defn generate-ast-with-context-to-boolean [arg]
   (-> ops
-      (with (generate-ast arg))
+      (with (generate-ast-with-context arg))
       (with invokestatic ['Logic]
             'toBoolean
             [(gen-path 'java 'lang 'Object)]
@@ -147,7 +149,7 @@
                    (gen-path 'java 'lang 'Boolean))]))
 
 (defn generate-logic [instruction args]
-  (generate-several generate-single-logic instruction generate-ast-to-boolean args))
+  (generate-several generate-single-logic instruction generate-ast-with-context-to-boolean args))
 
 (defn generate-and [args]
   (generate-logic 'and args))
@@ -157,7 +159,7 @@
   (generate-logic 'xor args))
 (defn generate-not [args]
   (-> ops
-      (with (generate-ast-to-boolean (first args)))
+      (with (generate-ast-with-context-to-boolean (first args)))
       (with (generate-single-logic 'not))))
 
 (defn boolean? [atom]
@@ -175,8 +177,8 @@
 (defn generate-comparison [instruction args]
   (generate-several generate-single-logic 'and
                     (fn [[a b]] (-> ops
-                                    (with (generate-ast a))
-                                    (with (generate-ast b))
+                                    (with (generate-ast-with-context a))
+                                    (with (generate-ast-with-context b))
                                     (with instruction)))
                     (->> args (drop 1) (interleave args) (partition 2))))
 
@@ -208,6 +210,25 @@
 (defn generate-ge [args]
   (generate-comparison (generate-single-comparison 'greaterOrEqual) args))
 
+(defn generate-label []
+  (set! last-label (inc last-label))
+  (str "Label-" last-label))
+
+(defn generate-if-cond [args]
+  (let [label1 (generate-label)
+        label2 (generate-label)]
+    (-> ops
+        (with add-comment (str ">>> if statement " label1 " / " label2))
+        (with (generate-ast-with-context-to-boolean (first args)))
+        (with invokevirtual [(gen-path 'java 'lang 'Boolean)] 'booleanValue
+              [] :boolean)
+        (with ifeq label1)
+        (with (generate-ast-with-context (second args)))
+        (with goto label2)
+        (with label label1)
+        (with (generate-ast-with-context (nth args 2)))
+        (with label label2)
+        (with add-comment (str "<<< if statement " label1 " / " label2)))))
 
 (defn generate-atom [atom]
   (cond
@@ -237,9 +258,15 @@
      (= type :<=) (generate-le args)
      (= type :=) (generate-eq args)
      (= type :!=) (generate-neq args)
+     (= type :if) (generate-if-cond args)
      :else (codegen-error))))
 
-(defn generate-ast [ast]
+(defn generate-ast-with-context [ast]
   (if (vector? ast)
     (generate-sexpr ast)
     (generate-atom ast)))
+
+
+(defn generate-ast [ast]
+  (binding [last-label 0]
+    (generate-ast-with-context ast)))

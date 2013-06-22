@@ -35,6 +35,10 @@
       "bool-and-n-arity" "" "false"
       "bool-polymorphic" "" "true"
 
+      "cond-if-true" "" "I told you"
+      "cond-if-false" "" "Ooops"
+      "cond-if-if" "" "222"
+      
       "comp-less" "" "true false"
       "comp-greater" "" "true false"
       "comp-greater-or-equal" "" "true false"

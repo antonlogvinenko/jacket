@@ -294,6 +294,19 @@
       "i2l"
       ["invokenonvirtual" "java/lang/Long/<init>(J)V"]]
 
+     [[:if true "a" "b"]] generate-ast
+     ["\t;>>> if statement Label-1 / Label-2"
+      ["getstatic" "java/lang/Boolean/TRUE Ljava/lang/Boolean;"]
+      ["invokestatic" "Logic/toBoolean(Ljava/lang/Object;)Ljava/lang/Boolean;"]
+      ["invokevirtual" "java/lang/Boolean/booleanValue()Z"]
+      ["ifeq" "Label-1"]
+      ["ldc" "\"a\""]
+      ["goto" "Label-2"]
+      "Label-1:"
+      ["ldc" "\"b\""]
+      "Label-2:"
+      "\t;<<< if statement Label-1 / Label-2"]
+
      [[:+ 1 2]] generate-ast
      [["new" "java/lang/Long"]
       "dup"
