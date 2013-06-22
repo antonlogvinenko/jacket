@@ -29,6 +29,6 @@ Not yet
 Probably
 * Macros
 * S-expressions currying
-* tail recursions support
+* Tail recursions support
 * Java interop
-* Optimizations
+* REPL with a simple Swing GUI and errors reporting straight to github
