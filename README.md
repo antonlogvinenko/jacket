@@ -6,7 +6,7 @@ This is a pet project in the way a dinosaur could be a pet. It's goals:
 * Learning JVM internals
 * Practicing theory of compilation and interpretation
 * Building yet another LISP implementation
-* Just for fun
+* Having fun
 
 Also, have an idea to try to implement currying in s-expressions.
 
