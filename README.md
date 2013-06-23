@@ -15,14 +15,12 @@ What's ready:
 * Parser.
 * Semantic analysis.
 * Code generation: readln; println, print, arithmetics (+, -, *, /), logical operations (and, or, xor, not), comparison operations(<, <=, >, >=, =, !=). All operations are polymorphic, n-arity functions meaning "(<= 100 101 200)", "(= 100 100 100)" and "(and (not true) true false)" are legal expressions.
-* Conditionals: if-expressions.
+* Conditionals: if-expressions, cond-expressions.
 
 Under development:
-* Conditionals
+* lists and operations (cons, car, cdr)
 
 Not yet
-* conditionals (cond)
-* lists and operations (cons, car, cdr)
 * variables and scopes (let, define)
 * lambda functions
 

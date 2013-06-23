@@ -1,0 +1,4 @@
+(cond
+	(< 100 99) (println "nope")
+	(= 100 101) (println "nope again")
+	(println "default"))

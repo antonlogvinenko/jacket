@@ -1,0 +1,4 @@
+(cond
+	(> 2 1) (println "first")
+	(> 41 42) (println "oooops")
+	(println "oh no"))

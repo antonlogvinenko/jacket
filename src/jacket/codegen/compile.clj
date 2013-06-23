@@ -214,14 +214,13 @@
   (set! last-label (inc last-label))
   (str "Label-" last-label))
 
-(defn generate-if-cond [args]
+(defn generate-if [args]
   (let [label1 (generate-label)
         label2 (generate-label)]
     (-> ops
         (with add-comment (str ">>> if statement " label1 " / " label2))
         (with (generate-ast-with-context-to-boolean (first args)))
-        (with invokevirtual [(gen-path 'java 'lang 'Boolean)] 'booleanValue
-              [] :boolean)
+        (with invokevirtual [(gen-path 'java 'lang 'Boolean)] 'booleanValue [] :boolean)
         (with ifeq label1)
         (with (generate-ast-with-context (second args)))
         (with goto label2)
@@ -229,6 +228,36 @@
         (with (generate-ast-with-context (nth args 2)))
         (with label label2)
         (with add-comment (str "<<< if statement " label1 " / " label2)))))
+
+(defn generate-cond-branch [end-label condition code]
+  (if (nil? condition)
+    (-> ops
+        (with add-comment (str ">>> default branch cond " end-label))
+        (with (generate-ast-with-context code))
+        (with add-comment (str "<<< default branch cond" end-label)))
+    (let [label-next (generate-label)]
+      (-> ops
+          (with add-comment (str ">>> cond branch " label-next))
+          (with (generate-ast-with-context-to-boolean condition))
+          (with invokevirtual [(gen-path 'java 'lang 'Boolean)] 'booleanValue [] :boolean)
+          (with ifeq label-next)
+          (with (generate-ast-with-context code))
+          (with goto end-label)
+          (with label label-next)
+          (with add-comment (str "<<< cond branch " label-next))))))
+
+(defn generate-cond [args]
+  (let [end-label (generate-label)]
+    (-> ops
+        (with add-comment (str ">>> cond statement " end-label))
+        (with (->> args
+                   (partition 2)
+                   (map (partial apply generate-cond-branch end-label))
+                   (apply concat)
+                   (into [])))
+        (with (generate-cond-branch end-label nil (last args)))
+        (with label end-label)
+        (with add-comment (str "<<< cond statement " end-label)))))
 
 (defn generate-atom [atom]
   (cond
@@ -258,7 +287,8 @@
      (= type :<=) (generate-le args)
      (= type :=) (generate-eq args)
      (= type :!=) (generate-neq args)
-     (= type :if) (generate-if-cond args)
+     (= type :if) (generate-if args)
+     (= type :cond) (generate-cond args)
      :else (codegen-error))))
 
 (defn generate-ast-with-context [ast]

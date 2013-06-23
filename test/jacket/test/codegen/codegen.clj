@@ -38,7 +38,11 @@
       "cond-if-true" "" "I told you"
       "cond-if-false" "" "Ooops"
       "cond-if-if" "" "222"
-      
+
+      "cond-cond" "" "yes"
+      "cond-first-expr" "" "first"
+      "cond-default-expr" "" "default"
+
       "comp-less" "" "true false"
       "comp-greater" "" "true false"
       "comp-greater-or-equal" "" "true false"

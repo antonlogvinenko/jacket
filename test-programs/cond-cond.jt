@@ -1,0 +1,4 @@
+(cond
+	(< 5 4) (println "no no no")
+	(< 5 6) (println "yes")
+	(println "no way"))

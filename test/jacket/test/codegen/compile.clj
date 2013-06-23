@@ -307,6 +307,27 @@
       "Label-2:"
       "\t;<<< if statement Label-1 / Label-2"]
 
+     [[ :cond true [:println "a"] [:println "b"]]] generate-ast
+     ["\t;>>> cond statement Label-1"
+      "\t;>>> cond branch Label-2"
+      ["getstatic" "java/lang/Boolean/TRUE Ljava/lang/Boolean;"]
+      ["invokestatic" "Logic/toBoolean(Ljava/lang/Object;)Ljava/lang/Boolean;"]
+      ["invokevirtual" "java/lang/Boolean/booleanValue()Z"]
+      ["ifeq" "Label-2"]
+      [".limit stack" 10]
+      ["ldc" "\"a\""]
+      ["invokestatic" "Console/print(Ljava/lang/Object;)V"]
+      ["invokestatic" "Console/println()V"]
+      ["goto" "Label-1"]
+      "Label-2:" "\t;<<< cond branch Label-2"
+      "\t;>>> default branch cond Label-1"
+      [".limit stack" 10]
+      ["ldc" "\"b\""]
+      ["invokestatic" "Console/print(Ljava/lang/Object;)V"]
+      ["invokestatic" "Console/println()V"]
+      "\t;<<< default branch condLabel-1"
+      "Label-1:" "\t;<<< cond statement Label-1"]
+
      [[:+ 1 2]] generate-ast
      [["new" "java/lang/Long"]
       "dup"
