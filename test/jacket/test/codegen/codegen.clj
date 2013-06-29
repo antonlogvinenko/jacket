@@ -43,6 +43,13 @@
       "cond-first-expr" "" "first"
       "cond-default-expr" "" "default"
 
+      "list-list" "" "[]"
+      "list-list-args" "" "[1, 2, 3]"
+      "list-cons" "" "[1, 2, 3, 100500, 42]"
+      "list-get" "" "42"
+      "list-set" "" "[1, 54, 3]"
+      "list-combined" "" "[1, 2, 44, 4, 5]"
+      
       "comp-less" "" "true false"
       "comp-greater" "" "true false"
       "comp-greater-or-equal" "" "true false"

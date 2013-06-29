@@ -6,7 +6,8 @@
                "define" "lambda" "let"
                "and" "or" "not" "xor"
                "if" "cond"
-               "car" "cdr" "cons" "quote"
+               "list" "cons" "get" "set"
+               "quote"
                "print" "read" "println" "readln"])
 
 (defn matches [coll key]

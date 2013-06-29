@@ -1,0 +1,1 @@
+(println (cons (list 1 2 3) 100500 42))

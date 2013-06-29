@@ -214,6 +214,9 @@
   (set! last-label (inc last-label))
   (str "Label-" last-label))
 
+
+
+                                        ;Conditionals
 (defn generate-if [args]
   (let [label1 (generate-label)
         label2 (generate-label)]
@@ -259,6 +262,61 @@
         (with label end-label)
         (with add-comment (str "<<< cond statement " end-label)))))
 
+
+
+                                        ;Lists
+(defn generate-single-cons [arg]
+  (-> ops
+      (with dup)
+      (with (generate-ast-with-context arg))
+      (with invokevirtual ['java 'util 'ArrayList]
+            'add
+            [(gen-path 'java 'lang 'Object)]
+            :boolean)
+      (with pop1)))
+
+(defn generate-multiple-cons [args]
+  (->> args
+       (map generate-single-cons)
+       (apply concat)
+       (into [])))
+
+(defn generate-cons [args]
+  (-> ops
+      (with (-> args first generate-ast-with-context))
+      (with (-> args rest generate-multiple-cons))))
+
+(defn generate-list [args]
+  (-> ops
+      (with jnew (gen-path 'java 'util 'ArrayList))
+      (with dup)
+      (with invokenonvirtual ['java 'util 'ArrayList] '<init> [] :void)
+      (with (->> args
+                 (map generate-single-cons)
+                 (apply concat)
+                 (into [])))))
+
+(defn generate-list-get [args]
+  (-> ops
+      (with (-> args first generate-ast-with-context))
+      (with (-> args second generate-ast-with-context))
+      (with invokevirtual ['java 'lang 'Number] 'intValue [] :int)
+      (with invokevirtual ['java 'util 'ArrayList]
+            'get [:int] (gen-path 'java 'lang 'Object))))
+
+(defn generate-list-set [args]
+  (-> ops
+      (with (-> args first generate-ast-with-context))
+      (with dup)
+      (with (-> args second generate-ast-with-context))
+      (with invokevirtual ['java 'lang 'Number] 'intValue [] :int)
+      (with (-> args (nth 2) generate-ast-with-context))
+      (with invokevirtual ['java 'util 'ArrayList]
+            'set [:int (gen-path 'java 'lang 'Object)]
+            (gen-path 'java 'lang 'Object))
+      (with pop1)))
+
+
 (defn generate-atom [atom]
   (cond
    (is? atom string?) (generate-string-const atom)
@@ -289,6 +347,10 @@
      (= type :!=) (generate-neq args)
      (= type :if) (generate-if args)
      (= type :cond) (generate-cond args)
+     (= type :list) (generate-list args)
+     (= type :cons) (generate-cons args)
+     (= type :get) (generate-list-get args)
+     (= type :set) (generate-list-set args)
      :else (codegen-error))))
 
 (defn generate-ast-with-context [ast]

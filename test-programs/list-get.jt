@@ -1,0 +1,1 @@
+(println (get (list 41 42 43) 1))

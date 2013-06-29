@@ -128,6 +128,23 @@
 
     ))
 
+(deftest check-dynamic-utility-test
+  (are [sexpr n sym-g sym-l errors sexprs]
+    (= ((check-dynamic-utility > n) (to-tokens sexpr))
+       [sym-g sym-l errors sexprs])
+
+    [:not] 2
+    [] [] ["':not' requires at least 2 argument(s)"] []
+
+    [:not 4] 1
+    [] [] [] []
+
+    [:not 1 2] 3
+    [] [] ["':not' requires at least 3 argument(s)"] []
+
+    ))
+
+
 (deftest check-print-utility-test
   (are [sexpr sym-g sym-l errors sexprs]
     (= (check-print-utility (to-tokens sexpr))

@@ -117,6 +117,13 @@
     (-> ok (+error
             (str \' (first sexpr) \' " requires a single argument")))))
 
+(defn check-dynamic-utility [op n]
+  (fn [sexpr]
+    (if (-> sexpr count (op n))
+      ok
+      (-> ok (+error
+              (str \' (first sexpr) \' " requires at least " n " argument(s)"))))))
+
 (defn check-read-utility [sexpr]
   (if (-> sexpr count dec zero?)
     ok
@@ -165,6 +172,9 @@
                   :read check-read-utility
                   :readln check-read-utility
                   :not check-not-utility
+                  :cons (check-dynamic-utility >= 2)
+                  :get (check-dynamic-utility = 2)
+                  :set (check-dynamic-utility = 3)
                   :let check-let}]
     (if (nil? f)
       (-> ok

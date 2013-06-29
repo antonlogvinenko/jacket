@@ -328,6 +328,92 @@
       "\t;<<< default branch condLabel-1"
       "Label-1:" "\t;<<< cond statement Label-1"]
 
+     [[:list]] generate-ast
+     [["new" "java/util/ArrayList"]
+      "dup"
+      ["invokenonvirtual" "java/util/ArrayList/<init>()V"]]
+
+     [[:list 1]] generate-ast
+     [["new" "java/util/ArrayList"]
+      "dup"
+      ["invokenonvirtual" "java/util/ArrayList/<init>()V"]
+      "dup"
+      ["new" "java/lang/Long"]
+      "dup"
+      ["ldc_w" 1]
+      "i2l"
+      ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
+      ["invokevirtual" "java/util/ArrayList/add(Ljava/lang/Object;)Z"]
+      "pop"]
+
+     [[:cons [:list 2] 42]] generate-ast
+     [["new" "java/util/ArrayList"]
+      "dup"
+      ["invokenonvirtual" "java/util/ArrayList/<init>()V"]
+      "dup"
+      ["new" "java/lang/Long"]
+      "dup"
+      ["ldc_w" 2]
+      "i2l"
+      ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
+      ["invokevirtual" "java/util/ArrayList/add(Ljava/lang/Object;)Z"]
+      "pop"
+      "dup"
+      ["new" "java/lang/Long"]
+      "dup"
+      ["ldc_w" 42]
+      "i2l"
+      ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
+      ["invokevirtual" "java/util/ArrayList/add(Ljava/lang/Object;)Z"]
+      "pop"]
+
+     [[:get [:list 1] 0]] generate-ast
+     [["new" "java/util/ArrayList"]
+      "dup"
+      ["invokenonvirtual" "java/util/ArrayList/<init>()V"]
+      "dup"
+      ["new" "java/lang/Long"]
+      "dup"
+      ["ldc_w" 1]
+      "i2l"
+      ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
+      ["invokevirtual" "java/util/ArrayList/add(Ljava/lang/Object;)Z"]
+      "pop"
+      ["new" "java/lang/Long"]
+      "dup"
+      ["ldc_w" 0]
+      "i2l"
+      ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
+      ["invokevirtual" "java/lang/Number/intValue()I"]
+      ["invokevirtual" "java/util/ArrayList/get(I)Ljava/lang/Object;"]]
+
+     [[:set [:list 42] 0 1]] generate-ast
+     [["new" "java/util/ArrayList"]
+      "dup"
+      ["invokenonvirtual" "java/util/ArrayList/<init>()V"]
+      "dup"
+      ["new" "java/lang/Long"]
+      "dup"
+      ["ldc_w" 42]
+      "i2l"
+      ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
+      ["invokevirtual" "java/util/ArrayList/add(Ljava/lang/Object;)Z"]
+      "pop"
+      "dup"
+      ["new" "java/lang/Long"]
+      "dup"
+      ["ldc_w" 0]
+      "i2l"
+      ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
+      ["invokevirtual" "java/lang/Number/intValue()I"]
+      ["new" "java/lang/Long"]
+      "dup"
+      ["ldc_w" 1]
+      "i2l"
+      ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
+      ["invokevirtual" "java/util/ArrayList/set(ILjava/lang/Object;)Ljava/lang/Object;"]
+      "pop"]
+     
      [[:+ 1 2]] generate-ast
      [["new" "java/lang/Long"]
       "dup"
