@@ -81,7 +81,7 @@
      ["invokestatic" "Console/print(Ljava/lang/Object;)V"]
      ["invokestatic" "Console/println()V"]]
 
-    [] generate-readln
+    [nil] generate-readln
     [["invokestatic" "Console/readln()Ljava/lang/String;"]]
     
     ["cake"] generate-string-const

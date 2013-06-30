@@ -12,7 +12,7 @@
 
 (def ^:dynamic last-label 0)
 
-(defn codegen-error []
+(defn codegen-error [args]
   (throw (RuntimeException. "Who is Mr. Putin?")))
 
 (def ops [])
@@ -54,11 +54,11 @@
       (with (generate-print args))
       (with invokestatic ['Console] 'println [] :void)))
 
-(defn generate-readln []
+(defn generate-readln [args]
   (-> ops
       (with invokestatic ['Console] 'readln [] (gen-path 'java 'lang 'String))))
 
-(defn generate-read []
+(defn generate-read [args]
   (-> ops
       (with invokestatic ['Console] 'read [] (gen-path 'java 'lang 'String))))
 
@@ -324,34 +324,20 @@
    (is? atom boolean?) (generate-boolean-const atom)
    :else (codegen-error)))
 
+(def sexpr-table
+  {:println generate-println :print generate-print :readln generate-readln
+   :+ generate-add :* generate-mul :- generate-sub (keyword "/") generate-div
+   :and generate-and :or generate-or :not generate-not :xor generate-xor
+   :< generate-l :> generate-g :<= generate-le :>= generate-ge := generate-eq :!= generate-neq
+   :if generate-if :cond generate-cond
+   :list generate-list :cons generate-cons :get generate-list-get :set generate-list-set
+   })
+
 (defn generate-sexpr [sexpr]
   (let [type (first sexpr)
-        args (rest sexpr)]
-    (cond
-     (= type :println) (generate-println args)
-     (= type :print) (generate-print args)
-     (= type :readln) (generate-readln)
-     (= type :+) (generate-add args)
-     (= type :*) (generate-mul args)
-     (= type :-) (generate-sub args)
-     (= type (keyword "/")) (generate-div args)
-     (= type :and) (generate-and args)
-     (= type :or) (generate-or args)
-     (= type :not) (generate-not args)
-     (= type :xor) (generate-xor args)
-     (= type :<) (generate-l args)
-     (= type :>) (generate-g args)
-     (= type :>=) (generate-ge args)
-     (= type :<=) (generate-le args)
-     (= type :=) (generate-eq args)
-     (= type :!=) (generate-neq args)
-     (= type :if) (generate-if args)
-     (= type :cond) (generate-cond args)
-     (= type :list) (generate-list args)
-     (= type :cons) (generate-cons args)
-     (= type :get) (generate-list-get args)
-     (= type :set) (generate-list-set args)
-     :else (codegen-error))))
+        args (rest sexpr)
+        handler (get sexpr-table (.value type) codegen-error)]
+    (handler args)))
 
 (defn generate-ast-with-context [ast]
   (if (vector? ast)
