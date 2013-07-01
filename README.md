@@ -2,7 +2,7 @@ Jacket
 ===
 
 Jacket, implementation of Lisp on the JVM.
-This is a pet project in the way a dinosaur could be a pet. It's goals:
+This is a pet project. It's goals:
 * Learning JVM internals
 * Practicing theory of compilation and interpretation
 * Building yet another LISP implementation
@@ -16,12 +16,13 @@ What's ready:
 * Semantic analysis.
 * Code generation: readln; println, print, arithmetics (+, -, *, /), logical operations (and, or, xor, not), comparison operations(<, <=, >, >=, =, !=). All operations are polymorphic, n-arity functions meaning "(<= 100 101 200)", "(= 100 100 100)" and "(and (not true) true false)" are legal expressions.
 * Conditionals: if-expressions, cond-expressions.
+* Lists and list operations: list, cons, get, set.
 
 Under development:
-* lists and operations (cons, car, cdr)
+* define - defining global variables
 
 Not yet
-* variables and scopes (let, define)
+* let - defining local variables
 * lambda functions
 
 Probably
