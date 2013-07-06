@@ -35,7 +35,7 @@
 
 (deftest generate-test
   (are [args gen-fn result]
-    (= result (apply gen-fn (to-tokens args)))
+    (= result (apply gen-fn {:label 0 :global {} :local '()} (to-tokens args)))
 
     [42] generate-print-single
     [["new" "java/lang/Long"]
@@ -327,6 +327,7 @@
       ["invokestatic" "Console/println()V"]
       "\t;<<< default branch condLabel-1"
       "Label-1:" "\t;<<< cond statement Label-1"]
+
 
      [[:list]] generate-ast
      [["new" "java/util/ArrayList"]

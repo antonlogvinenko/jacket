@@ -10,9 +10,7 @@
                                         ;Program file to jasmin file
 (defn debug [x] (println x) x)
 
-(def ^:dynamic last-label 0)
-
-(defn codegen-error [args]
+(defn codegen-error [context args]
   (throw (RuntimeException. "Who is Mr. Putin?")))
 
 (def ops [])
@@ -26,7 +24,7 @@
 
 
 (defn generate-sexpr [])
-(defn generate-ast-with-context [])
+(defn generate-ast [])
 
 (defn generate-to-string-conversion []
   (with ops
@@ -35,38 +33,38 @@
         [(gen-path 'java 'lang 'Object)]
         (gen-path 'java 'lang 'String)))
 
-(defn generate-print-single [arg]
+(defn generate-print-single [context arg]
   (-> ops
-      (with (generate-ast-with-context arg))
+      (with (generate-ast context arg))
       (with invokestatic ['Console] 'print
             [(gen-path 'java 'lang 'Object)]
             :void)))
 
-(defn generate-print [args]
+(defn generate-print [context args]
   (-> ops
       (with limitstack 10)
       (with (->> args
-                 (map generate-print-single)
+                 (map (partial generate-print-single context))
                  (reduce into [])))))
 
-(defn generate-println [args]
+(defn generate-println [context args]
   (-> ops
-      (with (generate-print args))
+      (with (generate-print context args))
       (with invokestatic ['Console] 'println [] :void)))
 
-(defn generate-readln [args]
+(defn generate-readln [context args]
   (-> ops
       (with invokestatic ['Console] 'readln [] (gen-path 'java 'lang 'String))))
 
-(defn generate-read [args]
+(defn generate-read [context args]
   (-> ops
       (with invokestatic ['Console] 'read [] (gen-path 'java 'lang 'String))))
 
-(defn generate-string-const [ast]
+(defn generate-string-const [context ast]
   (with ops
         ldc (.value ast)))
 
-(defn generate-float-const [ast]
+(defn generate-float-const [context ast]
   (-> ops
       (with jnew (gen-path 'java 'lang 'Double))
       (with dup)
@@ -74,7 +72,7 @@
       (with f2d)
       (with invokenonvirtual ['java 'lang 'Double] '<init> [:double] :void)))
 
-(defn generate-integer-const [ast]
+(defn generate-integer-const [context ast]
   (-> ops
       (with jnew (gen-path 'java 'lang 'Long))
       (with dup)
@@ -82,32 +80,33 @@
       (with i2l)
       (with invokenonvirtual ['java 'lang 'Long] '<init> [:long] :void)))
 
-(defn generate-number-const [ast]
+(defn generate-number-const [context ast]
   (cond
-   (is? ast float?) (generate-float-const ast)
-   (is? ast integer?) (generate-integer-const ast)
+   (is? ast float?) (generate-float-const context  ast)
+   (is? ast integer?) (generate-integer-const context ast)
    :else (codegen-error)))
 
-(defn generate-boolean-const [ast]
+(defn generate-boolean-const [context ast]
   (let [value (if (.value ast) 'TRUE 'FALSE)]
     (-> ops
         (with getstatic
               ['java 'lang 'Boolean value]
               ['java 'lang 'Boolean]))))
 
-(defn generate-single-generic [instructions generate-arg arg]
+(defn generate-single-generic [instructions generate-arg context arg]
   (-> ops
-      (with (generate-arg arg))
+      (with (generate-arg context arg))
       (with instructions)))
 
-(defn generate-several [generate-single instruction generate-arg args]
+(defn generate-several [generate-single instruction generate-arg context args]
   (-> ops
-      (with (generate-arg (first args)))
+      (with (generate-arg context (first args)))
       (with (->> args
                  rest
                  (map (partial generate-single-generic
                                (generate-single instruction)
-                               generate-arg))
+                               generate-arg
+                               context))
                  (reduce into [])))))
 
 
@@ -118,23 +117,23 @@
                  [(gen-path 'java 'lang 'Number) (gen-path 'java 'lang 'Number)]
                  (gen-path 'java 'lang 'Number))])
 
-(defn generate-arithmetic [instruction args]
-  (generate-several generate-single-arithmetic instruction generate-ast-with-context args))
+(defn generate-arithmetic [instruction context args]
+  (generate-several generate-single-arithmetic instruction generate-ast context args))
 
-(defn generate-add [args]
-  (generate-arithmetic 'add args))
-(defn generate-mul [args]
-  (generate-arithmetic 'mul args))
-(defn generate-div [args]
-  (generate-arithmetic 'div args))
-(defn generate-sub [args]
-  (generate-arithmetic 'sub args))
+(defn generate-add [context args]
+  (generate-arithmetic 'add context args))
+(defn generate-mul [context args]
+  (generate-arithmetic 'mul context args))
+(defn generate-div [context args]
+  (generate-arithmetic 'div context args))
+(defn generate-sub [context args]
+  (generate-arithmetic 'sub context args))
 
 
                                         ;Logic operations
-(defn generate-ast-with-context-to-boolean [arg]
+(defn generate-ast-to-boolean [context arg]
   (-> ops
-      (with (generate-ast-with-context arg))
+      (with (generate-ast context arg))
       (with invokestatic ['Logic]
             'toBoolean
             [(gen-path 'java 'lang 'Object)]
@@ -148,18 +147,19 @@
                    (conj [(gen-path 'java 'lang 'Boolean)] signature)
                    (gen-path 'java 'lang 'Boolean))]))
 
-(defn generate-logic [instruction args]
-  (generate-several generate-single-logic instruction generate-ast-with-context-to-boolean args))
+(defn generate-logic [instruction context args]
+  (generate-several
+   generate-single-logic instruction generate-ast-to-boolean context args))
 
-(defn generate-and [args]
-  (generate-logic 'and args))
-(defn generate-or [args]
-  (generate-logic 'or args))
-(defn generate-xor [args]
-  (generate-logic 'xor args))
-(defn generate-not [args]
+(defn generate-and [context args]
+  (generate-logic 'and context args))
+(defn generate-or [context args]
+  (generate-logic 'or context args))
+(defn generate-xor [context args]
+  (generate-logic 'xor context args))
+(defn generate-not [context args]
   (-> ops
-      (with (generate-ast-with-context-to-boolean (first args)))
+      (with (generate-ast-to-boolean context (first args)))
       (with (generate-single-logic 'not))))
 
 (defn boolean? [atom]
@@ -174,15 +174,16 @@
                  [(gen-path 'java 'lang 'Number) (gen-path 'java 'lang 'Number)]
                  (gen-path 'java 'lang 'Boolean))])
 
-(defn generate-comparison [instruction args]
+(defn generate-comparison [instruction context args]
   (generate-several generate-single-logic 'and
-                    (fn [[a b]] (-> ops
-                                    (with (generate-ast-with-context a))
-                                    (with (generate-ast-with-context b))
-                                    (with instruction)))
+                    (fn [context [a b]] (-> ops
+                                            (with (generate-ast context a))
+                                            (with (generate-ast context b))
+                                            (with instruction)))
+                    context
                     (->> args (drop 1) (interleave args) (partition 2))))
 
-(defn generate-eq [args]
+(defn generate-eq [context args]
   (generate-comparison [(invokevirtual ['java 'lang 'Object]
                                        'equals
                                        [(gen-path 'java 'lang 'Object)]
@@ -191,138 +192,147 @@
                                       'valueOf
                                       [:boolean]
                                       (gen-path 'java 'lang 'Boolean))]
+                       context
                        args))
 
-(defn generate-neq [args]
+(defn generate-neq [context args]
   (-> ops
-      (with (generate-eq args))
+      (with (generate-eq context args))
       (with (generate-single-logic 'not))))
 
-(defn generate-le [args]
-  (generate-comparison (generate-single-comparison 'lessOrEqual) args))
+(defn generate-le [context args]
+  (generate-comparison (generate-single-comparison 'lessOrEqual) context args))
 
-(defn generate-l [args]
-  (generate-comparison (generate-single-comparison 'less) args))
+(defn generate-l [context args]
+  (generate-comparison (generate-single-comparison 'less) context args))
 
-(defn generate-g [args]
-  (generate-comparison (generate-single-comparison 'greater) args))
+(defn generate-g [context args]
+  (generate-comparison (generate-single-comparison 'greater) context args))
 
-(defn generate-ge [args]
-  (generate-comparison (generate-single-comparison 'greaterOrEqual) args))
+(defn generate-ge [context args]
+  (generate-comparison (generate-single-comparison 'greaterOrEqual) context args))
 
-(defn generate-label []
-  (set! last-label (inc last-label))
-  (str "Label-" last-label))
-
+(defn generate-label [{label :label :as context}]
+  (let [last-label (inc label)
+        label-name (str "Label-" last-label)]
+    [label-name (assoc context :label last-label)]))
 
 
                                         ;Conditionals
-(defn generate-if [args]
-  (let [label1 (generate-label)
-        label2 (generate-label)]
+(defn generate-if [context args]
+  (let [[label1 context] (generate-label context)
+        [label2 context] (generate-label context)]
     (-> ops
         (with add-comment (str ">>> if statement " label1 " / " label2))
-        (with (generate-ast-with-context-to-boolean (first args)))
+        (with (generate-ast-to-boolean context (first args)))
         (with invokevirtual [(gen-path 'java 'lang 'Boolean)] 'booleanValue [] :boolean)
         (with ifeq label1)
-        (with (generate-ast-with-context (second args)))
+        (with (generate-ast context (second args)))
         (with goto label2)
         (with label label1)
-        (with (generate-ast-with-context (nth args 2)))
+        (with (generate-ast context (nth args 2)))
         (with label label2)
         (with add-comment (str "<<< if statement " label1 " / " label2)))))
 
-(defn generate-cond-branch [end-label condition code]
+(defn generate-cond-branch [end-label label-next context condition code]
   (if (nil? condition)
     (-> ops
         (with add-comment (str ">>> default branch cond " end-label))
-        (with (generate-ast-with-context code))
+        (with (generate-ast context code))
         (with add-comment (str "<<< default branch cond" end-label)))
-    (let [label-next (generate-label)]
-      (-> ops
-          (with add-comment (str ">>> cond branch " label-next))
-          (with (generate-ast-with-context-to-boolean condition))
-          (with invokevirtual [(gen-path 'java 'lang 'Boolean)] 'booleanValue [] :boolean)
-          (with ifeq label-next)
-          (with (generate-ast-with-context code))
-          (with goto end-label)
-          (with label label-next)
-          (with add-comment (str "<<< cond branch " label-next))))))
+    (-> ops
+        (with add-comment (str ">>> cond branch " label-next))
+        (with (generate-ast-to-boolean context condition))
+        (with invokevirtual [(gen-path 'java 'lang 'Boolean)] 'booleanValue [] :boolean)
+        (with ifeq label-next)
+        (with (generate-ast context code))
+        (with goto end-label)
+        (with label label-next)
+        (with add-comment (str "<<< cond branch " label-next)))))
 
-(defn generate-cond [args]
-  (let [end-label (generate-label)]
+(defn generate-cond-branches [end-label context list]
+  (loop [context context, list list, accum []]
+    (if (empty? list) accum
+        (let [[label context] (generate-label context)]
+          (recur context
+                 (rest list)
+                 (into accum
+                       (apply
+                        (partial generate-cond-branch end-label label context)
+                        (first list))))))))
+
+(defn generate-cond [context args]
+  (let [[end-label context] (generate-label context)]
     (-> ops
         (with add-comment (str ">>> cond statement " end-label))
         (with (->> args
                    (partition 2)
-                   (map (partial apply generate-cond-branch end-label))
-                   (apply concat)
-                   (into [])))
-        (with (generate-cond-branch end-label nil (last args)))
+                   (generate-cond-branches end-label context)))
+        (with (generate-cond-branch end-label nil context nil (last args)))
         (with label end-label)
         (with add-comment (str "<<< cond statement " end-label)))))
 
 
 
                                         ;Lists
-(defn generate-single-cons [arg]
+(defn generate-single-cons [context arg]
   (-> ops
       (with dup)
-      (with (generate-ast-with-context arg))
+      (with (generate-ast context arg))
       (with invokevirtual ['java 'util 'ArrayList]
             'add
             [(gen-path 'java 'lang 'Object)]
             :boolean)
       (with pop1)))
 
-(defn generate-multiple-cons [args]
+(defn generate-multiple-cons [context args]
   (->> args
-       (map generate-single-cons)
+       (map (partial generate-single-cons context))
        (apply concat)
        (into [])))
 
-(defn generate-cons [args]
+(defn generate-cons [context args]
   (-> ops
-      (with (-> args first generate-ast-with-context))
-      (with (-> args rest generate-multiple-cons))))
+      (with (->> args first (generate-ast context)))
+      (with (->> args rest (generate-multiple-cons context)))))
 
-(defn generate-list [args]
+(defn generate-list [context args]
   (-> ops
       (with jnew (gen-path 'java 'util 'ArrayList))
       (with dup)
       (with invokenonvirtual ['java 'util 'ArrayList] '<init> [] :void)
       (with (->> args
-                 (map generate-single-cons)
+                 (map (partial generate-single-cons context))
                  (apply concat)
                  (into [])))))
 
-(defn generate-list-get [args]
+(defn generate-list-get [context args]
   (-> ops
-      (with (-> args first generate-ast-with-context))
-      (with (-> args second generate-ast-with-context))
+      (with (->> args first (generate-ast context)))
+      (with (->> args second (generate-ast context)))
       (with invokevirtual ['java 'lang 'Number] 'intValue [] :int)
       (with invokevirtual ['java 'util 'ArrayList]
             'get [:int] (gen-path 'java 'lang 'Object))))
 
-(defn generate-list-set [args]
+(defn generate-list-set [context args]
   (-> ops
-      (with (-> args first generate-ast-with-context))
+      (with (->> args first (generate-ast context)))
       (with dup)
-      (with (-> args second generate-ast-with-context))
+      (with (->> args second (generate-ast context)))
       (with invokevirtual ['java 'lang 'Number] 'intValue [] :int)
-      (with (-> args (nth 2) generate-ast-with-context))
+      (with (->> 2 (nth args) (generate-ast context)))
       (with invokevirtual ['java 'util 'ArrayList]
             'set [:int (gen-path 'java 'lang 'Object)]
             (gen-path 'java 'lang 'Object))
       (with pop1)))
 
 
-(defn generate-atom [atom]
+(defn generate-atom [context atom]
   (cond
-   (is? atom string?) (generate-string-const atom)
-   (is? atom number?) (generate-number-const atom)
-   (is? atom boolean?) (generate-boolean-const atom)
-   :else (codegen-error)))
+   (is? atom string?) (generate-string-const context atom)
+   (is? atom number?) (generate-number-const context atom)
+   (is? atom boolean?) (generate-boolean-const context atom)
+   :else (codegen-error context atom)))
 
 (def sexpr-table
   {:println generate-println :print generate-print :readln generate-readln
@@ -333,18 +343,13 @@
    :list generate-list :cons generate-cons :get generate-list-get :set generate-list-set
    })
 
-(defn generate-sexpr [sexpr]
+(defn generate-sexpr [context sexpr]
   (let [type (first sexpr)
         args (rest sexpr)
         handler (get sexpr-table (.value type) codegen-error)]
-    (handler args)))
+    (handler context args)))
 
-(defn generate-ast-with-context [ast]
+(defn generate-ast [context ast]
   (if (vector? ast)
-    (generate-sexpr ast)
-    (generate-atom ast)))
-
-
-(defn generate-ast [ast]
-  (binding [last-label 0]
-    (generate-ast-with-context ast)))
+    (generate-sexpr context ast)
+    (generate-atom context ast)))
