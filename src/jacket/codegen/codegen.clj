@@ -110,8 +110,10 @@
   (->> console-library program-text (spit (str dir \/ "Console.jasm"))))
 
 (defn generate [name ast]
-  (generate-main-class name
-                       (apply concat (map generate-ast ast))))
+  (->> ast
+       (map (partial generate-ast {:label 0 :local '() :global {}}))
+       (apply concat)
+       (generate-main-class name)))
 
 (defn compile-jacket [in location name]
   (->> in slurp
