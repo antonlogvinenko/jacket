@@ -327,11 +327,66 @@
       (with pop1)))
 
 
+
+                                        ;Let expression
+;; context = {:local '({:a 1} {:a 1 :b 2})}
+;; new :local list for each lambda
+;; new {} for each let inside another one
+(defn generate-let-variables [context pairs]
+  (loop [context (->> {}
+                      (conj (context :local))
+                      (assoc context :local))
+         pairs pairs
+         code []]
+    (if (empty? pairs)
+      [context code]
+      (let [pair (first pairs)
+            instructions (->> pair second (generate-ast context) (into code))
+            local (->> context :local first)
+            variable-name (first pair)
+            variable-number (-> context :local first count)
+            instructions (with instructions astore variable-number)
+            context (->> variable-number
+                         (assoc local variable-name)
+                         (conj (drop 1 local))
+                         (assoc context :local))]
+        (recur context (rest pairs) instructions)))))
+
+(defn generate-let [context args]
+  (let [[context code] (generate-let-variables context (first args))
+        body (generate-ast context (second args))]
+    (-> (with ops limitlocals 10) 
+        (into code)
+        (into body))))
+
+
+
+                                        ;Variables
+(defn get-variable-number [context atom]
+  (let [scopes (-> context
+                   :local
+                   vec
+                   (conj (context :global)))
+        variable-number (->> scopes
+                             (map #(get % atom))
+                             (filter (comp not nil?))
+                             first)]
+    (if (nil? variable-number)
+      (codegen-error context atom)
+      variable-number)))
+
+(defn generate-variable [context atom]
+  (->> atom
+       (get-variable-number context)
+       (with ops aload)))
+
+                                        ;Atoms
 (defn generate-atom [context atom]
   (cond
    (is? atom string?) (generate-string-const context atom)
    (is? atom number?) (generate-number-const context atom)
    (is? atom boolean?) (generate-boolean-const context atom)
+   (is? atom symbol?) (generate-variable context atom)
    :else (codegen-error context atom)))
 
 (def sexpr-table
@@ -341,6 +396,7 @@
    :< generate-l :> generate-g :<= generate-le :>= generate-ge := generate-eq :!= generate-neq
    :if generate-if :cond generate-cond
    :list generate-list :cons generate-cons :get generate-list-get :set generate-list-set
+   :let generate-let
    })
 
 (defn generate-sexpr [context sexpr]

@@ -35,7 +35,7 @@
 
 (deftest generate-test
   (are [args gen-fn result]
-    (= result (apply gen-fn {:label 0 :global {} :local '()} (to-tokens args)))
+    (= result (apply gen-fn {:label 0 :global {} :local '([] ())} (to-tokens args)))
 
     [42] generate-print-single
     [["new" "java/lang/Long"]
@@ -427,5 +427,18 @@
       "i2l"
       ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
       ["invokestatic" "Numbers/add(Ljava/lang/Number;Ljava/lang/Number;)Ljava/lang/Number;"]]
-     
+
+
+     [[:let [['a 1]] [:println 'a]]] generate-ast
+     [[".limit locals" 10]
+      ["new" "java/lang/Long"]
+      "dup"
+      ["ldc_w" 1]
+      "i2l"
+      ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
+      ["astore" 0]
+      [".limit stack" 10]
+      ["aload" 0]
+      ["invokestatic" "Console/print(Ljava/lang/Object;)V"]
+      ["invokestatic" "Console/println()V"]]
     ))
