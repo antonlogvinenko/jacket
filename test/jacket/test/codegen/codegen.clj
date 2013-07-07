@@ -49,6 +49,9 @@
       "list-get" "" "42"
       "list-set" "" "[1, 54, 3]"
       "list-combined" "" "[1, 2, 44, 4, 5]"
+
+      "let-simple" "" "3"
+      "let-cool-one" "" "hey 100500"
       
       "comp-less" "" "true false"
       "comp-greater" "" "true false"
