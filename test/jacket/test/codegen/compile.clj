@@ -441,4 +441,12 @@
       ["aload" 0]
       ["invokestatic" "Console/print(Ljava/lang/Object;)V"]
       ["invokestatic" "Console/println()V"]]
+
+     [[:define 'a 42]] generate-ast
+     [["new" "java/lang/Long"]
+      "dup"
+      ["ldc_w" 42]
+      "i2l"
+      ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
+      ["putstatic" "/a Ljava/lang/Object;"]]
     ))

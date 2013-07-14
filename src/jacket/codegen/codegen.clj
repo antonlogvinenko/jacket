@@ -15,9 +15,10 @@
                   (invokenonvirtual ['java 'lang 'Object] '<init> [] :void)
                   return]})
 
-(defn generate-main-class [name instructions]
+(defn generate-main-class [name fields instructions]
   {:access :public :type :class :name name
    :super object-path
+   :fields fields
    :methods
    [default-init
     {:access :public :static true :name "main"
@@ -26,7 +27,7 @@
      :instructions (concat instructions [return])}]})
 
 (defn generate-entry-point [instructions]
-  (generate-main-class 'WearJacket instructions))
+  (generate-main-class 'WearJacket []  instructions))
 
 
 
@@ -92,6 +93,7 @@
 (def hello-world
   (generate-main-class
    'HelloWorld
+   []
    (concat
     [(limitstack 10)
      (ldc "Hey hey!!!")
@@ -109,11 +111,17 @@
 (defn precompile-libraries [dir]
   (->> console-library program-text (spit (str dir \/ "Console.jasm"))))
 
-(defn generate [name ast]
+(defn get-fields-names [ast]
   (->> ast
-       (map (partial generate-ast {:label 0 :local '() :global {}}))
-       (apply concat)
-       (generate-main-class name)))
+       (filter #(-> % first .value (= :define)))
+       (map second)))
+
+(defn generate [name ast]
+  (let [fields (get-fields-names ast)]
+    (->> ast
+         (map (partial generate-ast {:label 0 :local '() :class name}))
+         (apply concat)
+         (generate-main-class name fields))))
 
 (defn compile-jacket [in location name]
   (->> in slurp
