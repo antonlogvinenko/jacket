@@ -18,11 +18,9 @@ What's ready:
 * Conditionals: if-expressions, cond-expressions.
 * Lists and list operations: list, cons, get, set.
 * Local variables scopes, let-expressions, variables evaluation
+* Global variables
 
 Under development:
-* define - defining global variables
-
-Not yet
 * lambda functions
 
 Probably
