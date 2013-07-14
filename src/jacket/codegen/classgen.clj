@@ -55,16 +55,34 @@
        \newline
        ".end method"))
 
+(defn field-text [field]
+  (str ".field"
+       \space
+       (ACCESS :public)
+       \space
+       "static"
+       \space
+       field
+       \space
+       (gen-type (gen-path 'java 'lang 'Object))))
+
+(defn fields-text [code]
+  (->> code
+       :fields
+       (map field-text)
+       (into [])))
+
 (defn methods-text [code]
   (->> code
        :methods
        (map method-text)))
 
 (defn program-text [code]
-  (->> (into [(file-type-text code)
+  (->> (-> [(file-type-text code)
               (super-text code)
               (implements-text code)]
-             (methods-text code))
+           (into (fields-text code))
+           (into (methods-text code)))
        (interpose \newline)
        (apply str)))
 

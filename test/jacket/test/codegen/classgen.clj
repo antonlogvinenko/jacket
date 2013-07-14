@@ -163,6 +163,7 @@
           :super (gen-path 'java 'lang 'Object)
           :implements [(gen-path 'java 'io 'Serializable)
                        (gen-path 'java 'lang 'Cloneable)]
+          :fields ['a 'b]
           :methods
           [{:access :public :static true :name "main"
             :arguments [[(gen-path 'java 'lang 'String)]] :return :void
@@ -176,5 +177,5 @@
        (= text (program-text code))
 
        program-under-test
-       ".class public Cake\n.super java/lang/Object\n.implements java/io/Serializable\n.implements java/lang/Cloneable\n.method public static main([Ljava/lang/String;)V\n\tdadd\n\tiinc 1 2\n\taconst_null\n\tret 42\n.end method\n.method private bla([I)Ljava/lang/String;\n\taconst_null\n\tpop\n.end method"
+       ".class public Cake\n.super java/lang/Object\n.implements java/io/Serializable\n.implements java/lang/Cloneable\n.field public static a Ljava/lang/Object;\n.field public static b Ljava/lang/Object;\n.method public static main([Ljava/lang/String;)V\n\tdadd\n\tiinc 1 2\n\taconst_null\n\tret 42\n.end method\n.method private bla([I)Ljava/lang/String;\n\taconst_null\n\tpop\n.end method"
        ))

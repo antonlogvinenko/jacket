@@ -359,26 +359,29 @@
         (into code)
         (into body))))
 
+(defn generate-define [context args]
+  (-> ops
+      (with (->> args second (generate-ast context)))
+      (with putstatic
+            [(context :class) (first args)]
+            ['java 'lang 'Object])))
 
 
                                         ;Variables
 (defn get-variable-number [context atom]
-  (let [scopes (-> context
-                   :local
-                   vec
-                   (conj (context :global)))
-        variable-number (->> scopes
-                             (map #(get % atom))
-                             (filter (comp not nil?))
-                             first)]
-    (if (nil? variable-number)
-      (codegen-error context atom)
-      variable-number)))
+  (->> (-> context :local vec)
+       (map #(get % atom))
+       (filter (comp not nil?))
+       first))
+
+(defn generate-global-variable [context atom]
+  (with ops getstatic [(context :class) atom] ['java 'lang 'Object]))
 
 (defn generate-variable [context atom]
-  (->> atom
-       (get-variable-number context)
-       (with ops aload)))
+  (let [variable-number (get-variable-number context atom)]
+    (if (nil? variable-number)
+      (generate-global-variable context atom)
+      (with ops aload variable-number))))
 
                                         ;Atoms
 (defn generate-atom [context atom]
@@ -396,7 +399,7 @@
    :< generate-l :> generate-g :<= generate-le :>= generate-ge := generate-eq :!= generate-neq
    :if generate-if :cond generate-cond
    :list generate-list :cons generate-cons :get generate-list-get :set generate-list-set
-   :let generate-let
+   :let generate-let :define generate-define
    })
 
 (defn generate-sexpr [context sexpr]

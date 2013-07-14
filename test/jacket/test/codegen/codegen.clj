@@ -59,6 +59,9 @@
       "comp-less-or-equal" "" "true false"
       "comp-equal" "" "false true true false"
       "comp-nequal" "" "true false true false"
+
+
+      "define" "" "42"
       
       "readln" "cake is a" "cake is a lie"
       "println" ""  "cake"
