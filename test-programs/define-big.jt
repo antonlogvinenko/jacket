@@ -1,0 +1,14 @@
+(define a "cake")
+(define b 100500)
+(define c 42)
+
+(define answer (cond
+		(< c 42) "nofuckingway"
+		(= b 100501) "neither"
+		(= c (+ 41 1)) "obviously"
+		"no no no"))
+
+(let ((prefix "the answer "))
+     (println prefix answer))
+
+		

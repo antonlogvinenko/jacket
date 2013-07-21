@@ -62,6 +62,10 @@
 
 
       "define" "" "42"
+      "define-arithm" "" "42"
+      "define-comparis" "" "true"
+      "define-logic" "" "true"
+      "define-big" "" "the answer obviously"
       
       "readln" "cake is a" "cake is a lie"
       "println" ""  "cake"
