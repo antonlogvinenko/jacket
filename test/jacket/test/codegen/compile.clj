@@ -121,7 +121,7 @@
      ["ldc_w" 1.0]
      "f2d"
      ["invokenonvirtual" "java/lang/Double/<init>(D)V"]
-     ["invokestatic" "Numbers/add(Ljava/lang/Number;Ljava/lang/Number;)Ljava/lang/Number;"]]
+     ["invokestatic" "Numbers/add(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"]]
 
     [[1.0 2.0]] (partial generate-several generate-single-arithmetic 'add generate-ast)
     [["new" "java/lang/Double"]
@@ -134,7 +134,7 @@
      ["ldc_w" 2.0]
      "f2d"
      ["invokenonvirtual" "java/lang/Double/<init>(D)V"]
-     ["invokestatic" "Numbers/add(Ljava/lang/Number;Ljava/lang/Number;)Ljava/lang/Number;"]]
+     ["invokestatic" "Numbers/add(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"]]
 
     [[1.0 2]] generate-add
     [["new" "java/lang/Double"]
@@ -147,7 +147,7 @@
      ["ldc_w" 2]
      "i2l"
      ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
-     ["invokestatic" "Numbers/add(Ljava/lang/Number;Ljava/lang/Number;)Ljava/lang/Number;"]]
+     ["invokestatic" "Numbers/add(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"]]
 
     [[1.0 2]] generate-mul
     [["new" "java/lang/Double"]
@@ -160,7 +160,7 @@
      ["ldc_w" 2]
      "i2l"
      ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
-     ["invokestatic" "Numbers/mul(Ljava/lang/Number;Ljava/lang/Number;)Ljava/lang/Number;"]]
+     ["invokestatic" "Numbers/mul(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"]]
 
     [[1.0 2]] generate-div
     [["new" "java/lang/Double"]
@@ -173,7 +173,7 @@
      ["ldc_w" 2]
      "i2l"
      ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
-     ["invokestatic" "Numbers/div(Ljava/lang/Number;Ljava/lang/Number;)Ljava/lang/Number;"]]
+     ["invokestatic" "Numbers/div(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"]]
 
     [[1.0 2]] generate-sub
     [["new" "java/lang/Double"]
@@ -186,7 +186,7 @@
      ["ldc_w" 2]
      "i2l"
      ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
-     ["invokestatic" "Numbers/sub(Ljava/lang/Number;Ljava/lang/Number;)Ljava/lang/Number;"]]
+     ["invokestatic" "Numbers/sub(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"]]
 
     [[true false]] generate-and
     [["getstatic" "java/lang/Boolean/TRUE Ljava/lang/Boolean;"]
@@ -254,7 +254,7 @@
      ["ldc_w" 42.0]
      "f2d"
      ["invokenonvirtual" "java/lang/Double/<init>(D)V"]
-     ["invokestatic" "Comparison/lessOrEqual(Ljava/lang/Number;Ljava/lang/Number;)Ljava/lang/Boolean;"] ["new" "java/lang/Double"]
+     ["invokestatic" "Comparison/lessOrEqual(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Boolean;"] ["new" "java/lang/Double"]
      "dup"
      ["ldc_w" 42.0]
      "f2d"
@@ -264,7 +264,7 @@
      ["ldc_w" 45.0]
      "f2d"
      ["invokenonvirtual" "java/lang/Double/<init>(D)V"]
-     ["invokestatic" "Comparison/lessOrEqual(Ljava/lang/Number;Ljava/lang/Number;)Ljava/lang/Boolean;"]
+     ["invokestatic" "Comparison/lessOrEqual(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Boolean;"]
      ["invokestatic" "Logic/and(Ljava/lang/Boolean;Ljava/lang/Boolean;)Ljava/lang/Boolean;"]]
 
     [42] generate-atom
@@ -426,7 +426,7 @@
       ["ldc_w" 2]
       "i2l"
       ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
-      ["invokestatic" "Numbers/add(Ljava/lang/Number;Ljava/lang/Number;)Ljava/lang/Number;"]]
+      ["invokestatic" "Numbers/add(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"]]
 
 
      [[:let [['a 1]] [:println 'a]]] generate-ast

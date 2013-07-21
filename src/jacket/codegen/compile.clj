@@ -114,8 +114,8 @@
 (defn generate-single-arithmetic [instruction]
   [(invokestatic ['Numbers]
                  instruction
-                 [(gen-path 'java 'lang 'Number) (gen-path 'java 'lang 'Number)]
-                 (gen-path 'java 'lang 'Number))])
+                 [(gen-path 'java 'lang 'Object) (gen-path 'java 'lang 'Object)]
+                 (gen-path 'java 'lang 'Object))])
 
 (defn generate-arithmetic [instruction context args]
   (generate-several generate-single-arithmetic instruction generate-ast context args))
@@ -171,7 +171,7 @@
 (defn generate-single-comparison [instruction]
   [(invokestatic ['Comparison]
                  instruction
-                 [(gen-path 'java 'lang 'Number) (gen-path 'java 'lang 'Number)]
+                 [(gen-path 'java 'lang 'Object) (gen-path 'java 'lang 'Object)]
                  (gen-path 'java 'lang 'Boolean))])
 
 (defn generate-comparison [instruction context args]

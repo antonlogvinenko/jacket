@@ -1,0 +1,5 @@
+(define a 1)
+(define b #t)
+(define c (not b))
+(define d (< a 2))
+(println (or c d))
