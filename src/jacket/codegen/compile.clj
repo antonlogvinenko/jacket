@@ -13,15 +13,15 @@
 (defn codegen-error [context args]
   (throw (RuntimeException. "Who is Mr. Putin?")))
 
-(def ops [])
+(def ops {:ops [] :closures []})
 
-(defn with [ops arg1 & args]
-  (into ops (if (vector? arg1)
-              arg1
-              (if (empty? args)
-                [arg1] 
-                [(apply arg1 args)]))))
-
+(defn with [{ops :ops closures :closures :as p} arg1 & args]
+  (if (map? arg1)
+    (merge-with into p arg1)
+    {:closures closures :ops
+     (into ops (cond (vector? arg1) arg1
+                     (empty? args) [arg1]
+                     :else [(apply arg1 args)]))}))
 
 (defn generate-sexpr [])
 (defn generate-ast [])
@@ -45,12 +45,13 @@
       (with limitstack 10)
       (with (->> args
                  (map (partial generate-print-single context))
-                 (reduce into [])))))
+                 (reduce with ops)))))
 
 (defn generate-println [context args]
   (-> ops
       (with (generate-print context args))
-      (with invokestatic ['Console] 'println [] :void)))
+      (with invokestatic ['Console] 'println [] :void)
+      (with aconst_null)))
 
 (defn generate-readln [context args]
   (-> ops
@@ -107,7 +108,7 @@
                                (generate-single instruction)
                                generate-arg
                                context))
-                 (reduce into [])))))
+                 (reduce with ops)))))
 
 
                                         ;Arithmetic operations
@@ -217,6 +218,10 @@
         label-name (str "Label-" last-label)]
     [label-name (assoc context :label last-label)]))
 
+(defn generate-fun [{[closure closure-name] :closure}]
+  (let [new-closure (inc closure)
+        new-closure-name (str closure-name closure)]
+    [new-closure new-closure-name]))
 
                                         ;Conditionals
 (defn generate-if [context args]
@@ -251,12 +256,12 @@
         (with add-comment (str "<<< cond branch " label-next)))))
 
 (defn generate-cond-branches [end-label context list]
-  (loop [context context, list list, accum []]
+  (loop [context context, list list, accum ops]
     (if (empty? list) accum
         (let [[label context] (generate-label context)]
           (recur context
                  (rest list)
-                 (into accum
+                 (with accum
                        (apply
                         (partial generate-cond-branch end-label label context)
                         (first list))))))))
@@ -288,8 +293,7 @@
 (defn generate-multiple-cons [context args]
   (->> args
        (map (partial generate-single-cons context))
-       (apply concat)
-       (into [])))
+       (reduce with ops)))
 
 (defn generate-cons [context args]
   (-> ops
@@ -303,8 +307,7 @@
       (with invokenonvirtual ['java 'util 'ArrayList] '<init> [] :void)
       (with (->> args
                  (map (partial generate-single-cons context))
-                 (apply concat)
-                 (into [])))))
+                 (reduce with ops)))))
 
 (defn generate-list-get [context args]
   (-> ops
@@ -337,11 +340,11 @@
                       (conj (context :local))
                       (assoc context :local))
          pairs pairs
-         code []]
+         code ops]
     (if (empty? pairs)
       [context code]
       (let [pair (first pairs)
-            instructions (->> pair second (generate-ast context) (into code))
+            instructions (with code (->> pair second (generate-ast context)))
             local (->> context :local first)
             variable-name (first pair)
             variable-number (-> context :local first count)
@@ -355,9 +358,10 @@
 (defn generate-let [context args]
   (let [[context code] (generate-let-variables context (first args))
         body (generate-ast context (second args))]
-    (-> (with ops limitlocals 10) 
-        (into code)
-        (into body))))
+    (-> ops
+        (with limitlocals 10) 
+        (with code)
+        (with body))))
 
 (defn generate-define [context args]
   (-> ops
@@ -366,6 +370,20 @@
             [(context :class) (first args)]
             ['java 'lang 'Object])))
 
+
+                                        ;Closures
+(defn generate-closure [context args]
+  (let [[new-closure new-closure-name] (generate-fun context)
+        new-context (assoc context :local '() :closure [new-closure new-closure-name])
+        body (->> args second (generate-ast new-context))
+        closures (conj (:closures body)
+                       [new-closure-name (conj (:ops body) areturn)])]
+    (-> ops
+        (with {:closures closures})
+        (with limitstack 5)
+        (with jnew (gen-path new-closure-name))
+        (with dup)
+        (with invokenonvirtual [new-closure-name] '<init> [] :void))))
 
                                         ;Variables
 (defn get-variable-number [context atom]
@@ -400,13 +418,23 @@
    :if generate-if :cond generate-cond
    :list generate-list :cons generate-cons :get generate-list-get :set generate-list-set
    :let generate-let :define generate-define
+   :lambda generate-closure
    })
+
+(defn generate-invokation [context args]
+  (-> ops
+      (with (->> args first (generate-ast context)))
+      (with invokeinterface ['IClosure] 'invoke [] (gen-path 'java 'lang 'Object) 1)))
 
 (defn generate-sexpr [context sexpr]
   (let [type (first sexpr)
         args (rest sexpr)
-        handler (get sexpr-table (.value type) codegen-error)]
-    (handler context args)))
+        handler (if (is-sexpr? type)
+                  generate-invokation
+                  (get sexpr-table (.value type) generate-invokation))]
+    (if (= generate-invokation handler)
+      (handler context sexpr)
+      (handler context args))))
 
 (defn generate-ast [context ast]
   (if (vector? ast)

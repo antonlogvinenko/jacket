@@ -15,16 +15,34 @@
                   (invokenonvirtual ['java 'lang 'Object] '<init> [] :void)
                   return]})
 
-(defn generate-main-class [name fields instructions]
+(defn generate-class [name super implements fields method]
   {:access :public :type :class :name name
-   :super object-path
+   :super super
+   :implements implements
    :fields fields
-   :methods
-   [default-init
-    {:access :public :static true :name "main"
-     :arguments [[(gen-path 'java 'lang 'String)]]
-     :return :void
-     :instructions (concat instructions [return])}]})
+   :methods [default-init method]})
+
+(defn generate-closures [closures]
+  (for [[name code] closures]
+    [name (generate-class name object-path [(gen-path 'IClosure)] []
+                          {:access :public :static false :name "invoke"
+                           :arguments []
+                           :return (gen-path 'java 'lang 'Object)
+                           :instructions code})]))
+
+(defn generate-main-class [name fields instructions]
+  (generate-class name object-path [] fields
+                  {:access :public :static true :name "main"
+                   :arguments [[(gen-path 'java 'lang 'String)]]
+                   :return :void
+                   :instructions (concat instructions [return])}))
+
+(defn generate-fun-class [name instructions]
+  (generate-class name object-path [] []
+                  {:access :public :static false :name "invoke"
+                   :arguments []
+                   :return :void
+                   :instructions instructions}))
 
 (defn generate-entry-point [instructions]
   (generate-main-class 'WearJacket []  instructions))
@@ -113,19 +131,24 @@
 
 (defn get-fields-names [ast]
   (->> ast
-       (filter #(-> % first .value (= :define)))
+       (filter #(-> % first (= :define)))
        (map second)))
 
 (defn generate [name ast]
-  (let [fields (get-fields-names ast)]
-    (->> ast
-         (map (partial generate-ast {:label 0 :local '() :class name}))
-         (apply concat)
-         (generate-main-class name fields))))
+  (let [fields (get-fields-names ast)
+        code (map
+              (partial generate-ast {:label 0 :closure [0 "closure"] :local '() :class name})
+              ast)
+        ops (map :ops code)
+        closures (map :closures code)]
+    (conj (->> closures (apply concat) generate-closures)
+          [name (->> ops (apply concat) (generate-main-class name fields))])))
 
 (defn compile-jacket [in location name]
-  (->> in slurp
-       tokenize parse semantics
-       (generate name) program-text
-       (spit (str location name ".jasm"))))
+  (let [asm (->> in slurp tokenize parse semantics (generate name))]
+    (doall
+     (for [[name code] asm]
+       (->> code
+            program-text
+            (spit (str location name ".jasm")))))))
 

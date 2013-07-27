@@ -3,12 +3,13 @@
   (:require [clojure.tools.reader.reader-types :as rt]))
 
 (def KEYWORDS ["-" "*" "+" "/" "=" "!=" "<" ">" ">=" "<="
-               "define" "lambda" "let"
                "and" "or" "not" "xor"
+               "print" "read" "println" "readln"
                "if" "cond"
                "list" "cons" "get" "set"
-               "quote"
-               "print" "read" "println" "readln"])
+               "define" "let"
+               "lambda"
+               "quote"])
 
 (defn matches [coll key]
   (if (coll? coll)

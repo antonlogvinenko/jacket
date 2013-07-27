@@ -137,6 +137,8 @@
       (-> ok (+error
               (str \' (first sexpr) \' " requires at least a single argument"))))))
 
+(defn check-sexpr [state sexpr])
+
 (defn check-dynamic-list [state sexpr]
   (let [f (first sexpr)
         other (rest sexpr)
@@ -148,19 +150,22 @@
                                (filter (partial symbol-undefined? state)))
         new-state (if (empty? sexprs) ok (+exprs ok sexprs))]
     (cond
-      (symbol-undefined? state f)
-      (-> new-state
-          (+error (str "Illegal first token for s-expression: " f)))
-      
-      (seq undefined-symbols)
-      (-> new-state
-          (+error (->>
-                   undefined-symbols
-                   (map #(.value %))
-                   vec
+     (is-sexpr? f)
+     (check-sexpr new-state f)
+     
+     (symbol-undefined? state f)
+     (-> new-state
+         (+error (str "Illegal first token for s-expression: " f)))
+     
+     (seq undefined-symbols)
+     (-> new-state
+         (+error (->>
+                  undefined-symbols
+                  (map #(.value %))
+                  vec
                    (str "Undefined symbols in s-expression: "))))
-      
-      :else new-state)))
+     
+     :else new-state)))
 
 (defn check-sexpr [state sexpr]
   (let [f (first sexpr)
@@ -176,12 +181,11 @@
                   :get (check-dynamic-utility = 2)
                   :set (check-dynamic-utility = 3)
                   :let check-let}]
-    (if (nil? f)
-      (-> ok
-          (+error "First token in s-expression must be function"))
-      (if-let [impl (get dispatch (.value f))]
-        (impl sexpr)
-        (check-dynamic-list state sexpr)))))
+    (cond (nil? f) (-> ok (+error "First token in s-expression must be function"))
+          (is-sexpr? f) (check-dynamic-list state sexpr)
+          :else (if-let [impl (get dispatch (.value f))]
+                  (impl sexpr)
+                  (check-dynamic-list state sexpr)))))
       
 (defn check-atom [state expr]
   (if (and (or (is? expr symbol?) (is? expr keyword?))
@@ -213,7 +217,7 @@
 
 (defn analyze-lonely-atom [_ expr]
   (->> expr
-       (str "Only s-expressions allowed in program top-level, found: ")
+       (str "Only s-expressions allowed in program top-level, found ")
        (+error ok)
        (drop-last 1)))
 

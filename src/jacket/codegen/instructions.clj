@@ -139,6 +139,8 @@
   (vector "invokenonvirtual" (invoke-some-method class-path method arguments return)))
 (defn invokestatic [class-path method arguments return]
   (vector "invokestatic" (invoke-some-method class-path method arguments return)))
+(defn invokeinterface [class-path method arguments return num-args]
+  (vector "invokeinterface" (invoke-some-method class-path method arguments return) num-args))
 
 
                                         ;FIELD MANIPULATION

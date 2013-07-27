@@ -328,7 +328,7 @@
        ['a] [] ["Undefined symbol: b"]
         
        42
-       [] [] ["Only s-expressions allowed in program top-level, found: 42"]
+       [] [] ["Only s-expressions allowed in program top-level, found 42"]
        
        ))
           

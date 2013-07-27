@@ -5,24 +5,9 @@
         [jacket.codegen.instructions]
         ))
 
-(deftest with-testing
-  (are [ops arg1 args result]
-    (= result (apply with (into (conj [] ops arg1) args)))
-
-    [1 2 3] [4] []
-    [1 2 3 4]
-
-    [nop] nop []
-    ["nop" "nop"]
-
-    [nop] iinc [1 2]
-    ["nop" ["iinc" 1 2]]
-
-    ))
-
 (deftest generate-to-string-conversion-test
   (are [result]
-    (= result (generate-to-string-conversion))
+    (= result (:ops (generate-to-string-conversion)))
 
     [["invokestatic"
       "java/lang/String/valueOf(Ljava/lang/Object;)Ljava/lang/String;"]]
@@ -35,7 +20,7 @@
 
 (deftest generate-test
   (are [args gen-fn result]
-    (= result (apply gen-fn {:label 0 :global {} :local '([] ())} (to-tokens args)))
+    (= result (:ops (apply gen-fn {:label 0 :closure [0 "closure"]  :local '([] ())} (to-tokens args))))
 
     [42] generate-print-single
     [["new" "java/lang/Long"]
@@ -79,7 +64,8 @@
      ["invokestatic" "Console/print(Ljava/lang/Object;)V"]
      ["ldc" "\"1.0\""]
      ["invokestatic" "Console/print(Ljava/lang/Object;)V"]
-     ["invokestatic" "Console/println()V"]]
+     ["invokestatic" "Console/println()V"]
+     "aconst_null"]
 
     [nil] generate-readln
     [["invokestatic" "Console/readln()Ljava/lang/String;"]]
@@ -284,7 +270,9 @@
      ["ldc_w" 42]
      "i2l"
      ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
-     ["invokestatic" "Console/print(Ljava/lang/Object;)V"] ["invokestatic" "Console/println()V"]]
+     ["invokestatic" "Console/print(Ljava/lang/Object;)V"]
+     ["invokestatic" "Console/println()V"]
+     "aconst_null"]
 
 
     [21] generate-ast
@@ -318,6 +306,7 @@
       ["ldc" "\"a\""]
       ["invokestatic" "Console/print(Ljava/lang/Object;)V"]
       ["invokestatic" "Console/println()V"]
+      "aconst_null"
       ["goto" "Label-1"]
       "Label-2:" "\t;<<< cond branch Label-2"
       "\t;>>> default branch cond Label-1"
@@ -325,6 +314,7 @@
       ["ldc" "\"b\""]
       ["invokestatic" "Console/print(Ljava/lang/Object;)V"]
       ["invokestatic" "Console/println()V"]
+      "aconst_null"
       "\t;<<< default branch condLabel-1"
       "Label-1:" "\t;<<< cond statement Label-1"]
 
@@ -440,7 +430,8 @@
       [".limit stack" 10]
       ["aload" 0]
       ["invokestatic" "Console/print(Ljava/lang/Object;)V"]
-      ["invokestatic" "Console/println()V"]]
+      ["invokestatic" "Console/println()V"]
+      "aconst_null"]
 
      [[:define 'a 42]] generate-ast
      [["new" "java/lang/Long"]
@@ -449,4 +440,32 @@
       "i2l"
       ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
       ["putstatic" "/a Ljava/lang/Object;"]]
+
+
     ))
+
+(deftest generate-closures-test
+  (are [args result]
+    (= result (generate-ast {:label 0 :closure [0 "closure"] :local '([] ())} (to-tokens args)))
+
+    [[:lambda [] [:println 42]]]
+    
+    {:closures [["closure0" [[".limit stack" 10]
+                             ["new" "java/lang/Long"]
+                             "dup"
+                             ["ldc_w" 42]
+                             "i2l"
+                             ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
+                             ["invokestatic" "Console/print(Ljava/lang/Object;)V"]
+                             ["invokestatic" "Console/println()V"]
+                             "aconst_null"
+                             "areturn"
+                             ]]],
+     :ops [[".limit stack" 5]
+           ["new" "closure0"]
+           "dup"
+           ["invokenonvirtual" "closure0/<init>()V"]
+           ["invokeinterface" "IClosure/invoke()Ljava/lang/Object;" 1]]}
+
+    ))
+
