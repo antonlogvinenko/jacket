@@ -46,6 +46,7 @@
             "define-big" "" "the answer obviously"
 
             "closure-no-arg" "" "42"
+            "closure-let" "" "100500"
             
             "readln" "cake is a" "cake is a lie"
             "println" ""  "cake"

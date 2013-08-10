@@ -137,7 +137,8 @@
 (defn generate [name ast]
   (let [fields (get-fields-names ast)
         code (map
-              (partial generate-ast {:label 0 :closure [0 "closure"] :local '() :class name})
+              (partial generate-ast
+                       {:label 0 :closure [0 (str name "-closure-")] :local '() :class name})
               ast)
         ops (map :ops code)
         closures (map :closures code)]
