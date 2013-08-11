@@ -92,7 +92,7 @@
     (-> ops
         (with getstatic
               ['java 'lang 'Boolean value]
-              ['java 'lang 'Boolean]))))
+              (gen-type (gen-path 'java 'lang 'Boolean))))))
 
 (defn generate-single-generic [instructions generate-arg context arg]
   (-> ops
@@ -368,22 +368,30 @@
       (with (->> args second (generate-ast context)))
       (with putstatic
             [(context :class) (first args)]
-            ['java 'lang 'Object])))
+            (gen-type (gen-path 'java 'lang 'Object)))))
 
 
                                         ;Closures
 (defn generate-closure [context args]
   (let [[new-closure new-closure-name] (generate-fun context)
-        new-context (assoc context :local '() :closure [new-closure new-closure-name])
+        new-context (assoc context
+                      :local '()
+                      :closure [new-closure new-closure-name]
+                      :class new-closure-name
+                      :arguments (->> args
+                                      first
+                                      (map-indexed (fn [i x] [(.value x) i]))
+                                      (into {})))
         body (->> args second (generate-ast new-context))
         closures (conj (:closures body)
                        [new-closure-name (conj (:ops body) areturn)])]
     (-> ops
         (with {:closures closures})
-        (with limitstack 5)
+        (with limitstack 10)
         (with jnew (gen-path new-closure-name))
         (with dup)
-        (with invokenonvirtual [new-closure-name] '<init> [] :void))))
+        (with ldc_w (-> args first count))
+        (with invokenonvirtual [new-closure-name] '<init> [:int] :void))))
 
                                         ;Variables
 (defn get-variable-number [context atom]
@@ -393,13 +401,26 @@
        first))
 
 (defn generate-global-variable [context atom]
-  (with ops getstatic [(context :class) atom] ['java 'lang 'Object]))
+  (with ops getstatic [(context :class) atom] (gen-type (gen-path 'java 'lang 'Object))))
+
+(defn get-argument-number [context atom]
+  (-> context :arguments (get (.value atom))))
+
+(defn generate-argument-variable [number context atom]
+  (-> ops
+      (with aload_0)
+      (with getfield
+            [(context :class) "arguments"]
+            (gen-type [(gen-path 'java 'lang 'Object)]))
+      (with ldc_w number)
+      (with aaload)))
 
 (defn generate-variable [context atom]
-  (let [variable-number (get-variable-number context atom)]
-    (if (nil? variable-number)
-      (generate-global-variable context atom)
-      (with ops aload variable-number))))
+  (if-let [local-number (get-variable-number context atom)]
+    (with ops aload local-number)
+    (if-let [argument-number (get-argument-number context atom)]
+      (generate-argument-variable argument-number context atom)
+      (generate-global-variable context atom))))
 
                                         ;Atoms
 (defn generate-atom [context atom]
@@ -421,10 +442,30 @@
    :lambda generate-closure
    })
 
-(defn generate-invokation [context args]
+(defn generate-single-argument [context idx arg]
   (-> ops
-      (with (->> args first (generate-ast context)))
-      (with invokeinterface ['IClosure] 'invoke [] (gen-path 'java 'lang 'Object) 1)))
+      (with dup)
+      (with ldc_w idx)
+      (with (generate-ast context arg))
+      (with aastore)))
+
+(defn generate-invokation-arguments [context args]
+  (->> args
+       (map-indexed (partial generate-single-argument context))
+       (reduce with ops)))
+
+(defn generate-invokation [context args]
+  (let [fun-args (rest args)]
+    (-> ops
+        (with (->> args first (generate-ast context)))
+        (with checkcast (gen-path 'AClosure))
+        (with ldc_w (count fun-args))
+        (with anewarray (gen-path 'java 'lang 'Object))
+        (with (generate-invokation-arguments context fun-args))
+        (with invokevirtual ['AClosure]
+              '_invoke
+              [[(gen-path 'java 'lang 'Object)]]
+              (gen-path 'java 'lang 'Object)))))
 
 (defn generate-sexpr [context sexpr]
   (let [type (first sexpr)

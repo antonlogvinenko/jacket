@@ -449,7 +449,7 @@
     (= result (generate-ast {:label 0 :closure [0 "closure"] :local '([] ())} (to-tokens args)))
 
     [[:lambda [] [:println 42]]]
-    
+
     {:closures [["closure0" [[".limit stack" 10]
                              ["new" "java/lang/Long"]
                              "dup"
@@ -459,13 +459,17 @@
                              ["invokestatic" "Console/print(Ljava/lang/Object;)V"]
                              ["invokestatic" "Console/println()V"]
                              "aconst_null"
-                             "areturn"
-                             ]]],
-     :ops [[".limit stack" 5]
+                             "areturn"]]],
+
+     :ops [[".limit stack" 10]
            ["new" "closure0"]
            "dup"
-           ["invokenonvirtual" "closure0/<init>()V"]
-           ["invokeinterface" "IClosure/invoke()Ljava/lang/Object;" 1]]}
-
+           ["ldc_w" 0]
+           ["invokenonvirtual" "closure0/<init>(I)V"]
+           ["checkcast" "AClosure"]
+           ["ldc_w" 0]
+           ["anewarray" "java/lang/Object"]
+           ["invokevirtual" "AClosure/_invoke([Ljava/lang/Object;)Ljava/lang/Object;"]]}
+    
     ))
 

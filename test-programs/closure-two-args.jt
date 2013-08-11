@@ -1,0 +1,2 @@
+(let ((f (lambda (a b) (println (+ a b)))))
+     (f 40 2))

@@ -34,7 +34,7 @@
 (defn get-some-field [field-path field-type]
   (str (apply gen-path field-path)
        \space
-       (->> field-type (apply gen-path) gen-type)))
+       field-type))
 
 
                                         ;MACROS FOR INSTRUCTIONS DEFINITIONS

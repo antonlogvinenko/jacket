@@ -69,7 +69,7 @@
     (= get-instruction (get-some-field field-spec descriptor))
 
     ['java 'lang 'System 'out]
-    ['java 'io 'PrintStream]
+    (gen-type (gen-path 'java 'io 'PrintStream))
     "java/lang/System/out Ljava/io/PrintStream;"
 
     ))

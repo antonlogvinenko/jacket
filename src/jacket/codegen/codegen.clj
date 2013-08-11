@@ -15,34 +15,39 @@
                   (invokenonvirtual ['java 'lang 'Object] '<init> [] :void)
                   return]})
 
-(defn generate-class [name super implements fields method]
+(defn generate-class [name super implements fields methods]
   {:access :public :type :class :name name
    :super super
    :implements implements
    :fields fields
-   :methods [default-init method]})
+   :methods methods})
 
 (defn generate-closures [closures]
   (for [[name code] closures]
-    [name (generate-class name object-path [(gen-path 'IClosure)] []
-                          {:access :public :static false :name "invoke"
-                           :arguments []
-                           :return (gen-path 'java 'lang 'Object)
-                           :instructions code})]))
+    [name (generate-class name (gen-path 'AClosure) [] []
+                          [{:access :public :static false :name "<init>"
+                            :arguments [:int]
+                            :return :void
+                            :instructions [(limitstack 2)
+                                           (limitlocals 2)
+                                           aload_0
+                                           iload_1
+                                           (invokenonvirtual ['AClosure] '<init> [:int] :void)
+                                           return]}
+                           {:access :public :static false :name "invoke"
+                            :arguments []
+                            :return (gen-path 'java 'lang 'Object)
+                            :instructions (into [(limitstack 10)
+                                                 (limitlocals 10)]
+                                                code)}])]))
 
 (defn generate-main-class [name fields instructions]
   (generate-class name object-path [] fields
-                  {:access :public :static true :name "main"
-                   :arguments [[(gen-path 'java 'lang 'String)]]
-                   :return :void
-                   :instructions (concat instructions [return])}))
-
-(defn generate-fun-class [name instructions]
-  (generate-class name object-path [] []
-                  {:access :public :static false :name "invoke"
-                   :arguments []
-                   :return :void
-                   :instructions instructions}))
+                  [default-init
+                   {:access :public :static true :name "main"
+                    :arguments [[(gen-path 'java 'lang 'String)]]
+                    :return :void
+                    :instructions (concat instructions [return])}]))
 
 (defn generate-entry-point [instructions]
   (generate-main-class 'WearJacket []  instructions))
@@ -138,7 +143,9 @@
   (let [fields (get-fields-names ast)
         code (map
               (partial generate-ast
-                       {:label 0 :closure [0 (str name "-closure-")] :local '() :class name})
+                       {:label 0 :class name
+                        :closure [0 (str name "-closure-")]
+                        :arguments {} :local '()})
               ast)
         ops (map :ops code)
         closures (map :closures code)]
