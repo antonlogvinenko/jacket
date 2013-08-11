@@ -50,6 +50,7 @@
             "closure-single-arg" "" "100500cakes"
             "closure-two-args" "" "42"
             "closure-currying" "" "3"
+            "closure-first-class" "" "42"
             
             "readln" "cake is a" "cake is a lie"
             "println" ""  "cake"

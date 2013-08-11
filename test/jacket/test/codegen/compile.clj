@@ -20,7 +20,7 @@
 
 (deftest generate-test
   (are [args gen-fn result]
-    (= result (:ops (apply gen-fn {:label 0 :closure [0 "closure"]  :local '([] ())} (to-tokens args))))
+    (= result (:ops (apply gen-fn {:label 0 :closure (agent 0) :local '([] ())} (to-tokens args))))
 
     [42] generate-print-single
     [["new" "java/lang/Long"]
@@ -446,11 +446,11 @@
 
 (deftest generate-closures-test
   (are [args result]
-    (= result (generate-ast {:label 0 :closure [0 "closure"] :local '([] ())} (to-tokens args)))
+    (= result (generate-ast {:label 0 :closure (agent 0) :local '([] ())} (to-tokens args)))
 
     [[:lambda [] [:println 42]]]
 
-    {:closures [["closure0" [[".limit stack" 10]
+    {:closures [["-closure-0" [[".limit stack" 10]
                              ["new" "java/lang/Long"]
                              "dup"
                              ["ldc_w" 42]
@@ -462,10 +462,10 @@
                              "areturn"]]],
 
      :ops [[".limit stack" 10]
-           ["new" "closure0"]
+           ["new" "-closure-0"]
            "dup"
            ["ldc_w" 0]
-           ["invokenonvirtual" "closure0/<init>(I)V"]
+           ["invokenonvirtual" "-closure-0/<init>(I)V"]
            ["checkcast" "AClosure"]
            ["ldc_w" 0]
            ["anewarray" "java/lang/Object"]

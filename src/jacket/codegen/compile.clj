@@ -218,10 +218,11 @@
         label-name (str "Label-" last-label)]
     [label-name (assoc context :label last-label)]))
 
-(defn generate-fun [{[closure closure-name] :closure}]
-  (let [new-closure (inc closure)
-        new-closure-name (str closure-name closure)]
-    [new-closure new-closure-name]))
+(defn get-unique-id [id-agent] (send id-agent inc) @id-agent)
+
+(defn generate-fun [{closure-agent :closure class-name :class}]
+  (->> closure-agent get-unique-id (str class-name "-closure-")))
+
 
                                         ;Conditionals
 (defn generate-if [context args]
@@ -373,10 +374,9 @@
 
                                         ;Closures
 (defn generate-closure [context args]
-  (let [[new-closure new-closure-name] (generate-fun context)
+  (let [new-closure-name (generate-fun context)
         new-context (assoc context
                       :local '()
-                      :closure [new-closure new-closure-name]
                       :class new-closure-name
                       :arguments (->> args
                                       first

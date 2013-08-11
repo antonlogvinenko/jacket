@@ -144,7 +144,7 @@
         code (map
               (partial generate-ast
                        {:label 0 :class name
-                        :closure [0 (str name "-closure-")]
+                        :closure (agent 0)
                         :arguments {} :local '()})
               ast)
         ops (map :ops code)
