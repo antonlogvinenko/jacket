@@ -49,6 +49,7 @@
             "closure-let" "" "100500"
             "closure-single-arg" "" "100500cakes"
             "closure-two-args" "" "42"
+            "closure-currying" "" "3"
             
             "readln" "cake is a" "cake is a lie"
             "println" ""  "cake"

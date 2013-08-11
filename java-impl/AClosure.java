@@ -2,6 +2,7 @@ public abstract class AClosure {
 
     final private int arity;
     protected Object[] arguments;
+    private int argsLength = 0;
     
     public AClosure(int arity) {
 	this.arity = arity;
@@ -9,14 +10,17 @@ public abstract class AClosure {
     }
 
     public Object _invoke(Object... args) {
-	this.arguments = args;
-	int argsLength = args.length;
-	if (argsLength != arity) {
-	    String message = "Wrong number of arguments: " +
-		argsLength + ", instead of: " + arity;
-	    throw new RuntimeException(message);
-	    }
-	return invoke();
+	if (argsLength + args.length > arity) {
+	    throw new RuntimeException("Too much arguments");
+	}
+	for (int i = 0; i < args.length; i++) {
+	    this.arguments[i + argsLength] = args[i];
+	}
+	this.argsLength += args.length;
+	if (argsLength == arity) {
+	    return invoke();
+	}
+	return this;
     }
 
     abstract public Object invoke();
