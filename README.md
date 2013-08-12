@@ -19,9 +19,10 @@ What's ready:
 * Lists and list operations: list, cons, get, set.
 * Local variables scopes, let-expressions, variables evaluation
 * Global variables
+* First-class partially applied anonymous functions
 
 Under development:
-* lambda functions
+* Lexical closures
 
 Probably
 * Macros
