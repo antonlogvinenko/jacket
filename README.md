@@ -26,7 +26,6 @@ Under development:
 
 Probably
 * Macros
-* S-expressions currying
 * Tail recursions support
 * Java interop
 * REPL with a simple Swing GUI and errors reporting straight to github
