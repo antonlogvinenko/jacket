@@ -373,11 +373,28 @@
 
 
                                         ;Closures
+(defn generate-single-closure [context [arg idx]]
+  (-> ops
+      (with dup)
+      (with ldc_w idx)
+      (with (generate-ast context arg))
+      (with aastore)))
+
+(defn generate-closed-arguments [context closed]
+  (->> closed
+       (map (partial generate-single-closure context))
+       (reduce with ops)))
+
 (defn generate-closure [context args]
   (let [new-closure-name (generate-fun context)
         new-context (assoc context
                       :local '()
                       :class new-closure-name
+                      :closed (->> :local
+                                   context
+                                   (apply merge)
+                                   (map (fn [[x i]] [(.value x) i]))
+                                   (into {}))
                       :arguments (->> args
                                       first
                                       (map-indexed (fn [i x] [(.value x) i]))
@@ -390,8 +407,14 @@
         (with limitstack 30)
         (with jnew (gen-path new-closure-name))
         (with dup)
+
+        (with ldc_w (-> :closed new-context count))
+        (with anewarray (gen-path 'java 'lang 'Object))
+        (with (generate-closed-arguments context (->> :local context (apply merge))))
+
         (with ldc_w (-> args first count))
-        (with invokenonvirtual [new-closure-name] '<init> [:int] :void))))
+        (with invokenonvirtual [new-closure-name]
+              '<init> [[(gen-path 'java 'lang 'Object)] :int] :void))))
 
                                         ;Variables
 (defn get-variable-number [context atom]
@@ -406,21 +429,32 @@
 (defn get-argument-number [context atom]
   (-> context :arguments (get (.value atom))))
 
-(defn generate-argument-variable [number context atom]
+(defn generate-fun-variable [name number context atom]
   (-> ops
       (with aload_0)
       (with getfield
-            [(context :class) "arguments"]
+            [(context :class) name]
             (gen-type [(gen-path 'java 'lang 'Object)]))
       (with ldc_w number)
       (with aaload)))
+
+(defn generate-argument-variable [number context atom]
+  (generate-fun-variable "arguments" number context atom))
+
+(defn get-closed-variable-number [context atom]
+  (-> context :closed (get (.value atom))))
+
+(defn generate-closed-variable [number context atom]
+  (generate-fun-variable "closed" number context atom))
 
 (defn generate-variable [context atom]
   (if-let [local-number (get-variable-number context atom)]
     (with ops aload local-number)
     (if-let [argument-number (get-argument-number context atom)]
       (generate-argument-variable argument-number context atom)
-      (generate-global-variable context atom))))
+      (if-let [closed-number (get-closed-variable-number context atom)]
+        (generate-closed-variable closed-number context atom)
+        (generate-global-variable context atom)))))
 
                                         ;Atoms
 (defn generate-atom [context atom]

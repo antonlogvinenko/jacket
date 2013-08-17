@@ -2,8 +2,15 @@ public abstract class AClosure implements Cloneable {
 
     final private int arity;
     protected Object[] arguments;
+    protected Object[] closed;
     
     public AClosure(int arity) {
+	this.arity = arity;
+	this.arguments = new Object[0];
+    }
+
+    public AClosure(Object[] closed, int arity) {
+	this.closed = closed;
 	this.arity = arity;
 	this.arguments = new Object[0];
     }

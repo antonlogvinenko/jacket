@@ -1,0 +1,3 @@
+(let ((a 41)
+     (b (lambda (x) (+ x a))))
+     (println (b 1)))

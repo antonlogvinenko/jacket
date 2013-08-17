@@ -26,13 +26,17 @@
   (for [[name code] closures]
     [name (generate-class name (gen-path 'AClosure) [] []
                           [{:access :public :static false :name "<init>"
-                            :arguments [:int]
+                            :arguments [[(gen-path 'java 'lang 'Object)]  :int]
                             :return :void
-                            :instructions [(limitstack 2)
-                                           (limitlocals 2)
+                            :instructions [(limitstack 3)
+                                           (limitlocals 3)
                                            aload_0
-                                           iload_1
-                                           (invokenonvirtual ['AClosure] '<init> [:int] :void)
+                                           aload_1
+                                           iload_2
+                                           (invokenonvirtual
+                                            ['AClosure] '<init>
+                                            [[(gen-path 'java 'lang 'Object)] :int]
+                                            :void)
                                            return]}
                            {:access :public :static false :name "invoke"
                             :arguments []
@@ -145,7 +149,7 @@
               (partial generate-ast
                        {:label 0 :class name
                         :closure (agent 0)
-                        :arguments {} :local '()})
+                        :arguments {} :closed {} :local '()})
               ast)
         ops (map :ops code)
         closures (map :closures code)]

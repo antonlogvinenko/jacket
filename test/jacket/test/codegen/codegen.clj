@@ -51,6 +51,8 @@
             "closure-two-args" "" "42"
             "closure-currying" "" "3"
             "closure-first-class" "" "42"
+            "closure-closed" "" "42"
+            "closure-closed-lambda-term" "" "42"
             
             "readln" "cake is a" "cake is a lie"
             "println" ""  "cake"
