@@ -42,7 +42,7 @@
 
 (defn generate-print [context args]
   (-> ops
-      (with limitstack 10)
+      (with limitstack 30)
       (with (->> args
                  (map (partial generate-print-single context))
                  (reduce with ops)))))
@@ -387,7 +387,7 @@
                        [new-closure-name (conj (:ops body) areturn)])]
     (-> ops
         (with {:closures closures})
-        (with limitstack 10)
+        (with limitstack 30)
         (with jnew (gen-path new-closure-name))
         (with dup)
         (with ldc_w (-> args first count))

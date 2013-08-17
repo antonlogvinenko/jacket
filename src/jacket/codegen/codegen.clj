@@ -37,8 +37,8 @@
                            {:access :public :static false :name "invoke"
                             :arguments []
                             :return (gen-path 'java 'lang 'Object)
-                            :instructions (into [(limitstack 10)
-                                                 (limitlocals 10)]
+                            :instructions (into [(limitstack 30)
+                                                 (limitlocals 30)]
                                                 code)}])]))
 
 (defn generate-main-class [name fields instructions]

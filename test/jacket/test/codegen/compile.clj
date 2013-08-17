@@ -32,7 +32,7 @@
      ]
     
     [[1 1.0 "1.0"]] generate-print
-    [[".limit stack" 10]
+    [[".limit stack" 30]
      ["new" "java/lang/Long"]
      "dup"
      ["ldc_w" 1]
@@ -49,7 +49,7 @@
      ["invokestatic" "Console/print(Ljava/lang/Object;)V"]]
 
     [[1 1.0 "1.0"]] generate-println
-    [[".limit stack" 10]
+    [[".limit stack" 30]
      ["new" "java/lang/Long"]
      "dup"
      ["ldc_w" 1]
@@ -264,7 +264,7 @@
     [["ldc" "\"cake\""]]
 
     [[:println 42]] generate-sexpr
-    [[".limit stack" 10]
+    [[".limit stack" 30]
      ["new" "java/lang/Long"]
      "dup"
      ["ldc_w" 42]
@@ -302,7 +302,7 @@
       ["invokestatic" "Logic/toBoolean(Ljava/lang/Object;)Ljava/lang/Boolean;"]
       ["invokevirtual" "java/lang/Boolean/booleanValue()Z"]
       ["ifeq" "Label-2"]
-      [".limit stack" 10]
+      [".limit stack" 30]
       ["ldc" "\"a\""]
       ["invokestatic" "Console/print(Ljava/lang/Object;)V"]
       ["invokestatic" "Console/println()V"]
@@ -310,7 +310,7 @@
       ["goto" "Label-1"]
       "Label-2:" "\t;<<< cond branch Label-2"
       "\t;>>> default branch cond Label-1"
-      [".limit stack" 10]
+      [".limit stack" 30]
       ["ldc" "\"b\""]
       ["invokestatic" "Console/print(Ljava/lang/Object;)V"]
       ["invokestatic" "Console/println()V"]
@@ -427,7 +427,7 @@
       "i2l"
       ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
       ["astore" 0]
-      [".limit stack" 10]
+      [".limit stack" 30]
       ["aload" 0]
       ["invokestatic" "Console/print(Ljava/lang/Object;)V"]
       ["invokestatic" "Console/println()V"]
@@ -450,7 +450,7 @@
 
     [[:lambda [] [:println 42]]]
 
-    {:closures [["-closure-0" [[".limit stack" 10]
+    {:closures [["-closure-0" [[".limit stack" 30]
                              ["new" "java/lang/Long"]
                              "dup"
                              ["ldc_w" 42]
@@ -461,7 +461,7 @@
                              "aconst_null"
                              "areturn"]]],
 
-     :ops [[".limit stack" 10]
+     :ops [[".limit stack" 30]
            ["new" "-closure-0"]
            "dup"
            ["ldc_w" 0]
