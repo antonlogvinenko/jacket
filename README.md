@@ -1,4 +1,4 @@
-§Jacket
+Jacket
 ===
 
 Jacket, implementation of Lisp on the JVM.
