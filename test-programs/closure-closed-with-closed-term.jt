@@ -1,0 +1,5 @@
+(let ((a 1)
+     (f (lambda () (lambda (x) (+ a x))))
+     (g (f)))
+     (println (g 41)))
+     

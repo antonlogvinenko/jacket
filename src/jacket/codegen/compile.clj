@@ -13,7 +13,7 @@
 (defn codegen-error [context args]
   (throw (RuntimeException. "Who is Mr. Putin?")))
 
-(def ops {:ops [] :closures []})
+(def ops {:ops [] :closures [] :globals []})
 
 (defn with [{ops :ops closures :closures :as p} arg1 & args]
   (if (map? arg1)
@@ -387,17 +387,17 @@
 
 (defn generate-closure [context args]
   (let [new-closure-name (generate-fun context)
+        closed (merge
+                (:closed context)
+                (:arguments context)
+                (->> :local context (apply merge)))
         new-context (assoc context
                       :local '()
                       :class new-closure-name
-                      :closed (->> :local
-                                   context
-                                   (apply merge)
-                                   (map (fn [[x i]] [(.value x) i]))
-                                   (into {}))
+                      :closed closed
                       :arguments (->> args
                                       first
-                                      (map-indexed (fn [i x] [(.value x) i]))
+                                      (map-indexed (fn [i x] [x i]))
                                       (into {})))
         body (->> args second (generate-ast new-context))
         closures (conj (:closures body)
@@ -410,7 +410,7 @@
 
         (with ldc_w (-> :closed new-context count))
         (with anewarray (gen-path 'java 'lang 'Object))
-        (with (generate-closed-arguments context (->> :local context (apply merge))))
+        (with (generate-closed-arguments context closed))
 
         (with ldc_w (-> args first count))
         (with invokenonvirtual [new-closure-name]
@@ -427,7 +427,7 @@
   (with ops getstatic [(context :class) atom] (gen-type (gen-path 'java 'lang 'Object))))
 
 (defn get-argument-number [context atom]
-  (-> context :arguments (get (.value atom))))
+  (-> context :arguments (get atom)))
 
 (defn generate-fun-variable [name number context atom]
   (-> ops
@@ -442,7 +442,7 @@
   (generate-fun-variable "arguments" number context atom))
 
 (defn get-closed-variable-number [context atom]
-  (-> context :closed (get (.value atom))))
+  (-> context :closed (get atom)))
 
 (defn generate-closed-variable [number context atom]
   (generate-fun-variable "closed" number context atom))
