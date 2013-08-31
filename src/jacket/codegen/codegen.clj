@@ -149,7 +149,7 @@
               (partial generate-ast
                        {:label 0 :class name
                         :closure (agent 0)
-                        :arguments {} :closed {} :local '()})
+                        :global {} :arguments {} :closed {} :local '()})
               ast)
         ops (map :ops code)
         closures (map :closures code)]
