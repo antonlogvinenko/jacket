@@ -19,10 +19,10 @@ Progress:
 * Lists and list operations: list, cons, get, set
 * Local variables scopes, let-expressions, variables evaluation
 * Global variables
-* First-class partially applied anonymous functions
+* First-class partially applied closures
 
 Under development:
-* Lexical closures
+* Closing terms with global variables
 
 Next episodes:
 * Macros
