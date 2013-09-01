@@ -1,0 +1,5 @@
+(define a 41)
+
+(let ((b 1)
+     (f (lambda (x) (+ x a))))
+     (println (f b)))

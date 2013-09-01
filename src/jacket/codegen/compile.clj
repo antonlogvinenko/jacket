@@ -15,13 +15,14 @@
 
 (def ops {:ops [] :closures [] :globals []})
 
-(defn with [{ops :ops closures :closures :as p} arg1 & args]
+(defn with [{ops :ops closures :closures globals :globals :as p} arg1 & args]
   (if (map? arg1)
     (merge-with into p arg1)
-    {:closures closures :ops
-     (into ops (cond (vector? arg1) arg1
-                     (empty? args) [arg1]
-                     :else [(apply arg1 args)]))}))
+    {:closures closures
+     :globals globals
+     :ops (into ops (cond (vector? arg1) arg1
+                          (empty? args) [arg1]
+                          :else [(apply arg1 args)]))}))
 
 (defn generate-sexpr [])
 (defn generate-ast [])
@@ -369,7 +370,8 @@
       (with (->> args second (generate-ast context)))
       (with putstatic
             [(context :class) (first args)]
-            (gen-type (gen-path 'java 'lang 'Object)))))
+            (gen-type (gen-path 'java 'lang 'Object)))
+      (with {:globals [(first args)]})))
 
 
                                         ;Closures
@@ -387,10 +389,14 @@
 
 (defn generate-closure [context args]
   (let [new-closure-name (generate-fun context)
-        closed (merge
-                (:closed context)
-                (:arguments context)
-                (->> :local context (apply merge)))
+        closed (concat
+                (->> :globals context)
+                (->> :closed context keys)
+                (->> :arguments context keys)
+                (->> :local context (apply merge) keys))
+        closed (->> closed
+                  (map-indexed (fn [i x] [x i]))
+                  (into {}))
         new-context (assoc context
                       :local '()
                       :class new-closure-name

@@ -145,12 +145,14 @@
 
 (defn generate [name ast]
   (let [fields (get-fields-names ast)
-        code (map
-              (partial generate-ast
-                       {:label 0 :class name
-                        :closure (agent 0)
-                        :global {} :arguments {} :closed {} :local '()})
-              ast)
+        code (loop [code [] ast ast globals []]
+               (if (empty? ast) code
+                   (let [ops (generate-ast
+                                      {:label 0 :class name
+                                       :closure (agent 0)
+                                       :globals globals :arguments {} :closed {} :local '()}
+                                      (first ast))]
+                     (recur (conj code ops) (rest ast) (into globals (:globals ops))))))
         ops (map :ops code)
         closures (map :closures code)]
     (conj (->> closures (apply concat) generate-closures)

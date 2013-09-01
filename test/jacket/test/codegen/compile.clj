@@ -452,6 +452,7 @@
 
     [[:lambda [] [:println 42]]]
 
+
     {:closures [["-closure-0" [[".limit stack" 30]
                                ["new" "java/lang/Long"]
                                "dup"
@@ -459,9 +460,8 @@
                                "i2l"
                                ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
                                ["invokestatic" "Console/print(Ljava/lang/Object;)V"]
-                               ["invokestatic" "Console/println()V"]
-                               "aconst_null" "areturn"]]],
-
+                               ["invokestatic" "Console/println()V"] "aconst_null" "areturn"]]],
+     :globals [],
      :ops [[".limit stack" 30]
            ["new" "-closure-0"]
            "dup"
