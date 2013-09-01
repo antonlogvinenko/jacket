@@ -21,9 +21,6 @@ Progress:
 * Global variables
 * First-class partially applied closures
 
-Under development:
-* Closing terms with global variables
-
 Next episodes:
 * Macros
 * Tail recursions support
