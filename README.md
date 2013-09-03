@@ -27,3 +27,7 @@ Next episodes:
 * Tail recursion macro support
 * Web UI in ClojureScript
 * Performance tests
+
+Ideas:
+* Implement (optional) type system (defn-t determinant [m] [Matrix -> Number] (...))
+* Green threads scheduler, actor model implementation (option for lmax disruptor scheduling mode)
