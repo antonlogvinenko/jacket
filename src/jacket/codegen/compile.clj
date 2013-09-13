@@ -507,13 +507,40 @@
               [[(gen-path 'java 'lang 'Object)]]
               (gen-path 'java 'lang 'Object)))))
 
+
+                                        ;java interop
+(defn generate-instantiation [context args]
+  (let [class-name (->> args first .toString (drop 1) (drop-last 1) (apply str))
+        fun-args (rest args)]
+    (-> ops
+        (with ldc_w class-name)
+        (with ldc_w (count fun-args))
+        (with anewarray (gen-path 'java 'lang 'Object))
+        (with (generate-invokation-arguments context fun-args))
+        (with invokestatic ['Interop]
+              'instantiate
+              [(gen-path 'java 'lang 'String) [(gen-path 'java 'lang 'Object)]]
+              (gen-path 'java 'lang 'Object)))))
+
+(defn generate-oop-access [context args])
+
+(defn generate-instance-access [context args])
+
+(defn generate-class-access [context args])
+
 (defn generate-sexpr [context sexpr]
   (let [type (first sexpr)
         args (rest sexpr)
-        handler (if (is-sexpr? type)
-                  generate-invokation
-                  (get sexpr-table (.value type) generate-invokation))]
-    (if (= generate-invokation handler)
+        handler (if (vector? type) generate-invokation
+                    (get sexpr-table (.value type)
+                         (let [value (-> type .value .toString)]
+                           (cond
+                            (.endsWith value ".") generate-instantiation
+                            (.startsWith value ".") generate-instance-access
+                            (= value ".") generate-oop-access
+                            (.contains value "/") generate-class-access
+                            :else generate-invokation))))]
+    (if (some (partial = handler) [generate-invokation])
       (handler context sexpr)
       (handler context args))))
 
