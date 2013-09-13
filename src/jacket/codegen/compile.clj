@@ -510,7 +510,7 @@
 
                                         ;java interop
 (defn generate-instantiation [context args]
-  (let [class-name (->> args first .toString (drop 1) (drop-last 1) (apply str))
+  (let [class-name (->> args first .toString (drop-last 1) (apply str))
         fun-args (rest args)]
     (-> ops
         (with ldc_w class-name)
@@ -540,7 +540,7 @@
                             (= value ".") generate-oop-access
                             (.contains value "/") generate-class-access
                             :else generate-invokation))))]
-    (if (some (partial = handler) [generate-invokation])
+    (if (some (partial = handler) [generate-invokation generate-instantiation])
       (handler context sexpr)
       (handler context args))))
 
