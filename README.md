@@ -22,7 +22,7 @@ Progress:
 * First-class partially applied closures
 
 Next episodes:
-* Java interop: instantiation, static/instance fields/methods access
+* Java interop: instantiation (class. args); invokation (. x method args); field-access (. x field); shortcuts for instances (.method x args), (.field x); shortcuts for classes (class/method args), (class/field).
 * Macros
 * Tail recursion macro support
 * Web UI in ClojureScript

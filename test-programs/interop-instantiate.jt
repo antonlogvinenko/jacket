@@ -1,0 +1,2 @@
+(let ((obj (java.lang.String. "cakes")))
+     (println obj))
