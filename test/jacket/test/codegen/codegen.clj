@@ -58,6 +58,8 @@
             "closure-closed-with-global-variable" "" "42"
 
             "interop-instantiate" "" "cakezzz"
+            "interop-instance-get-field" "" "false"
+            "interop-instance-invoke-method" "" "true" 
             
             "readln" "cake is a" "cake is a lie"
             "println" ""  "cake"

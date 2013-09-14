@@ -509,8 +509,13 @@
 
 
                                         ;java interop
+(defn generate-oop-access [context args])
+
+(defn generate-class-access [context args])
+
+                                        ;java interop: instantiation
 (defn generate-instantiation [context args]
-  (let [class-name (->> args first .toString (drop-last 1) (apply str))
+  (let [class-name (->> args first .toString seq (drop-last 1) (apply str))
         fun-args (rest args)]
     (-> ops
         (with ldc_w class-name)
@@ -522,11 +527,22 @@
               [(gen-path 'java 'lang 'String) [(gen-path 'java 'lang 'Object)]]
               (gen-path 'java 'lang 'Object)))))
 
-(defn generate-oop-access [context args])
-
-(defn generate-instance-access [context args])
-
-(defn generate-class-access [context args])
+                                        ;java interop: instance access
+(defn generate-instance-access [context args]
+  (let [access-name (->> args first .toString (drop 1) vec (apply str))
+        fun-args (drop 2 args)]
+    (-> ops
+        (with (generate-ast context (second args)))
+        (with ldc_w access-name)
+        (with ldc_w (count fun-args))
+        (with anewarray (gen-path 'java 'lang 'Object))
+        (with (generate-invokation-arguments context fun-args))
+        (with invokestatic ['Interop]
+              'accessInstance
+              [(gen-path 'java 'lang 'Object)
+               (gen-path 'java 'lang 'String)
+               [(gen-path 'java 'lang 'Object)]]
+              (gen-path 'java 'lang 'Object)))))
 
 (defn generate-sexpr [context sexpr]
   (let [type (first sexpr)
@@ -535,12 +551,13 @@
                     (get sexpr-table (.value type)
                          (let [value (-> type .value .toString)]
                            (cond
+                            (= value ".") generate-oop-access
                             (.endsWith value ".") generate-instantiation
                             (.startsWith value ".") generate-instance-access
-                            (= value ".") generate-oop-access
                             (.contains value "/") generate-class-access
                             :else generate-invokation))))]
-    (if (some (partial = handler) [generate-invokation generate-instantiation])
+    (if (some (partial = handler)
+              [generate-invokation generate-instantiation generate-instance-access])
       (handler context sexpr)
       (handler context args))))
 

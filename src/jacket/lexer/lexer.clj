@@ -39,7 +39,7 @@
                      whitespace? [:done skip-all]
                      \# [:boolean skip-char]
                      digit? [:integer append]
-                     letter? [:name append]
+                     [letter? \.] [:name append]
                      [\!] [:not-equal append]
                      [\< \>] [:strict-inequality append]
                      [\+ \/ \* \=] [:keyword append]

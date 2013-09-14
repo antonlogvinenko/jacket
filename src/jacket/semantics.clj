@@ -20,9 +20,10 @@
 (defn +exprs [s ex] (super-update s 3 ex))
 
 (defn symbol-undefined? [[global local _] sym]
-  (if (-> sym .value .toString (.endsWith ".")) false
-      (let [legal-syms (concat (map keywordize KEYWORDS) (flatten local) global)]
-        (not-any? #(= sym %) legal-syms))))
+  (let [str-repr (-> sym .value .toString)]
+    (if (or (.startsWith str-repr ".") (.endsWith str-repr ".")) false
+        (let [legal-syms (concat (map keywordize KEYWORDS) (flatten local) global)]
+          (not-any? #(= sym %) legal-syms)))))
 
 (defn check-define [sexpr]
   (let [length (count sexpr)
