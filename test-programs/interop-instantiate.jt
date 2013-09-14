@@ -1,2 +1,2 @@
-(let ((obj (java.lang.String. "cakes")))
+(let ((obj (java.lang.String. "cakezzz")))
      (println obj))

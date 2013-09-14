@@ -57,7 +57,7 @@
             "closure-closed-with-closed-term" "" "42"
             "closure-closed-with-global-variable" "" "42"
 
-            "interop-instantiate" "" "cake"
+            "interop-instantiate" "" "cakezzz"
             
             "readln" "cake is a" "cake is a lie"
             "println" ""  "cake"
