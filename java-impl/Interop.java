@@ -61,7 +61,6 @@ final public class Interop {
 
     static Constructor find(String className, Object[] arguments) throws ClassNotFoundException {
 	int argsLength = arguments.length;
-	Class<?> c = Class.forName(className);
 
 	Class<?>[] argTypes = new Class<?>[argsLength];
 	for (int i = 0; i < argsLength; i++) {
