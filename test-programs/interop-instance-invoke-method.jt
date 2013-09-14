@@ -1,0 +1,3 @@
+(let ((a (java.util.Date. 0))
+     (b (java.util.Date. 1)))
+     (println (.after b a)))

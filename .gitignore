@@ -10,3 +10,6 @@
 /.lein-deps-sum
 /jasmin-2.4
 .DS_Store
+java-impl/.idea/
+java-impl/java-impl.iml
+java-impl/target
