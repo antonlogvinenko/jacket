@@ -90,8 +90,7 @@ final public class Interop {
 	}
 
 	static Method findMethod(Class<?> c, String methodName, Object[] arguments) throws ClassNotFoundException {
-		Method[] ctors = c.getDeclaredMethods();
-		for (Method method : ctors) {
+		for (Method method : c.getDeclaredMethods()) {
 			if (method.getName().equals(methodName)) {
 				Class<?>[] ctorTypes = method.getParameterTypes();
 				if (signaturesMatch(arguments, ctorTypes)) {
