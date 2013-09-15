@@ -3,6 +3,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.lang.reflect.Method;
 
+import static java.lang.Class.forName;
+
 final public class Interop {
 
 	private Interop() {
@@ -35,7 +37,7 @@ final public class Interop {
 	 */
 	public static Object accessStatic(String className, String objectThing, Object[] arguments)
 		throws ClassNotFoundException, InvocationTargetException, IllegalAccessException {
-		Class<?> c = Class.forName(className);
+		Class<?> c = forName(className);
 		return accessSomething(c, null, objectThing, arguments);
 	}
 
@@ -98,7 +100,7 @@ final public class Interop {
 	 * Find utilities
 	 */
 	private static Constructor findConstructor(String className, Object[] arguments) throws ClassNotFoundException {
-		Constructor[] ctors = Class.forName(className).getDeclaredConstructors();
+		Constructor[] ctors = forName(className).getDeclaredConstructors();
 		for (Constructor ctor : ctors) {
 			Class<?>[] ctorTypes = ctor.getParameterTypes();
 			if (signaturesMatch(arguments, ctorTypes)) {
