@@ -61,6 +61,7 @@
             "interop-instance-get-field" "" "false"
             "interop-instance-invoke-method" "" "true"
             "interop-static-method" "" "420.0"
+            "interop-static-field" "" "32767"
             
             "readln" "cake is a" "cake is a lie"
             "println" ""  "cake"

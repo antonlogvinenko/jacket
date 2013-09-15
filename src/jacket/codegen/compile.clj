@@ -462,26 +462,6 @@
         (generate-closed-variable closed-number context atom)
         (generate-global-variable context atom)))))
 
-                                        ;Atoms
-(defn generate-atom [context atom]
-  (cond
-   (is? atom string?) (generate-string-const context atom)
-   (is? atom number?) (generate-number-const context atom)
-   (is? atom boolean?) (generate-boolean-const context atom)
-   (is? atom symbol?) (generate-variable context atom)
-   :else (codegen-error context atom)))
-
-(def sexpr-table
-  {:println generate-println :print generate-print :readln generate-readln
-   :+ generate-add :* generate-mul :- generate-sub (keyword "/") generate-div
-   :and generate-and :or generate-or :not generate-not :xor generate-xor
-   :< generate-l :> generate-g :<= generate-le :>= generate-ge := generate-eq :!= generate-neq
-   :if generate-if :cond generate-cond
-   :list generate-list :cons generate-cons :get generate-list-get :set generate-list-set
-   :let generate-let :define generate-define
-   :lambda generate-closure
-   })
-
 (defn generate-single-argument [context idx arg]
   (-> ops
       (with dup)
@@ -528,6 +508,17 @@
                [(gen-path 'java 'lang 'Object)]]
               (gen-path 'java 'lang 'Object)))))
 
+(defn generate-static-field [context atom]
+  (let [[class-name access-name] (-> atom .toString (.split "/"))]
+    (-> ops
+        (with ldc_w class-name)
+        (with ldc_w access-name)
+        (with invokestatic ['Interop]
+              'accessStaticField
+              [(gen-path 'java 'lang 'String)
+               (gen-path 'java 'lang 'String)]
+              (gen-path 'java 'lang 'Object)))))
+
                                         ;java interop: instantiation
 (defn generate-instantiation [context args]
   (let [class-name (->> args first .toString seq (drop-last 1) (apply str))
@@ -559,6 +550,17 @@
                [(gen-path 'java 'lang 'Object)]]
               (gen-path 'java 'lang 'Object)))))
 
+(def sexpr-table
+  {:println generate-println :print generate-print :readln generate-readln
+   :+ generate-add :* generate-mul :- generate-sub (keyword "/") generate-div
+   :and generate-and :or generate-or :not generate-not :xor generate-xor
+   :< generate-l :> generate-g :<= generate-le :>= generate-ge := generate-eq :!= generate-neq
+   :if generate-if :cond generate-cond
+   :list generate-list :cons generate-cons :get generate-list-get :set generate-list-set
+   :let generate-let :define generate-define
+   :lambda generate-closure
+   })
+
 (defn generate-sexpr [context sexpr]
   (let [type (first sexpr)
         args (rest sexpr)
@@ -576,6 +578,17 @@
                generate-static-method])
       (handler context sexpr)
       (handler context args))))
+
+(defn generate-atom [context atom]
+  (cond
+   (is? atom string?) (generate-string-const context atom)
+   (is? atom number?) (generate-number-const context atom)
+   (is? atom boolean?) (generate-boolean-const context atom)
+   (is? atom symbol?) (let [idx (-> atom .value .toString (.lastIndexOf "/"))]
+                        (if (= idx -1)
+                          (generate-variable context atom)
+                          (generate-static-field context atom)))
+   :else (codegen-error context atom)))
 
 (defn generate-ast [context ast]
   (if (vector? ast)
