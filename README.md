@@ -20,7 +20,7 @@ Progress:
 * Local variables scopes, let-expressions, variables evaluation
 * Global variables
 * First-class partially applied closures
-* Java objects intantiation (class. args),  fields and methods access: (.FALSE #t), (.after (java.util.Date. 1) (java.util.Date. 0)); static methods access (java.lang.Double/valueOf "42E1"), static fields access (println java.lang.Short/MAX_VALUE); invokaton (. x method args), field access (. x field).
+* Java objects intantiation (class. args),  fields and methods access: (.FALSE #t), (.after (java.util.Date. 1) (java.util.Date. 0)); static methods access (java.lang.Double/valueOf "42E1"), static fields access (println java.lang.Short/MAX_VALUE); invokation (. x method args), field access (. x field).
 
 Next episodes:
 * Macros
