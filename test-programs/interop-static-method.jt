@@ -1,0 +1,1 @@
+(println (java.lang.Double/valueOf "42E1"))

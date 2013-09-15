@@ -59,7 +59,8 @@
 
             "interop-instantiate" "" "cakezzz"
             "interop-instance-get-field" "" "false"
-            "interop-instance-invoke-method" "" "true" 
+            "interop-instance-invoke-method" "" "true"
+            "interop-static-method" "" "420.0"
             
             "readln" "cake is a" "cake is a lie"
             "println" ""  "cake"
