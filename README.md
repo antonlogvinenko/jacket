@@ -20,7 +20,7 @@ Progress:
 * Local variables scopes, let-expressions, variables evaluation
 * Global variables
 * First-class partially applied closures
-* Java objects intantiation, fields and methods access: (.FALSE #t), (.after (java.util.Date. 1) (java.util.Date. 0))
+* Java objects intantiation, fields and methods access: (.FALSE #t), (.after (java.util.Date. 1) (java.util.Date. 0)); static methods access (java.lang.Double/valueOf "42E1").
 
 Next episodes:
 * Java interop: instantiation (class. args); invokation (. x method args); field-access (. x field); shortcuts for instances (.method x args), (.field x); shortcuts for classes (class/method args), (class/field).
