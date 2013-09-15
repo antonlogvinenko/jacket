@@ -511,7 +511,22 @@
                                         ;java interop
 (defn generate-oop-access [context args])
 
-(defn generate-class-access [context args])
+(defn generate-static-method [context args]
+  (let [invokation (->> args first .toString)
+        [class-name access-name] (.split invokation "/")
+        fun-args (rest args)]
+    (-> ops
+        (with ldc_w class-name)
+        (with ldc_w access-name)
+        (with ldc_w (count fun-args))
+        (with anewarray (gen-path 'java 'lang 'Object))
+        (with (generate-invokation-arguments context fun-args))
+        (with invokestatic ['Interop]
+              'invokeStatic
+              [(gen-path 'java 'lang 'String)
+               (gen-path 'java 'lang 'String)
+               [(gen-path 'java 'lang 'Object)]]
+              (gen-path 'java 'lang 'Object)))))
 
                                         ;java interop: instantiation
 (defn generate-instantiation [context args]
@@ -554,10 +569,11 @@
                             (= value ".") generate-oop-access
                             (.endsWith value ".") generate-instantiation
                             (.startsWith value ".") generate-instance-access
-                            (.contains value "/") generate-class-access
+                            (.contains value "/") generate-static-method
                             :else generate-invokation))))]
     (if (some (partial = handler)
-              [generate-invokation generate-instantiation generate-instance-access])
+              [generate-invokation generate-instantiation generate-instance-access
+               generate-static-method])
       (handler context sexpr)
       (handler context args))))
 

@@ -11,7 +11,9 @@ final public class Interop {
 	public static void main(String... args)
 		throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InstantiationException,
 		InvocationTargetException, NoSuchFieldException {
-		System.out.println(accessInstance(new Long(42), "doubleValue", new Object[]{}));
+		System.out.println(invokeStatic("java.lang.System", "currentTimeMillis", new Object[]{}));
+		System.out.println(Double.valueOf("42E1"));
+
 	}
 
 	private final static Map<Class, Class> typingMap = new HashMap<Class, Class>() {{
@@ -29,17 +31,27 @@ final public class Interop {
 	}};
 
 	/**
+	 * Static access
+	 */
+	public static Object invokeStatic(String className, String methodName, Object[] arguments)
+		throws InvocationTargetException, IllegalAccessException, ClassNotFoundException {
+		Class<?> c = Class.forName(className);
+		return invokeMethod(c, null, methodName, arguments);
+	}
+
+	/**
 	 * Accessing
 	 */
 	public static Object accessInstance(Object object, String objectThing, Object[] arguments)
 		throws IllegalAccessException, InvocationTargetException, ClassNotFoundException {
+		Class<?> c = object.getClass();
 		if (arguments.length > 0) {
-			return invokeMethod(object, objectThing, arguments);
+			return invokeMethod(c, object, objectThing, arguments);
 		}
 		try {
 			return getField(object, objectThing);
 		} catch (NoSuchFieldException e) {
-			return invokeMethod(object, objectThing, arguments);
+			return invokeMethod(c, object, objectThing, arguments);
 		}
 	}
 
@@ -48,9 +60,9 @@ final public class Interop {
 		return object.getClass().getField(fieldName).get(object);
 	}
 
-	private static Object invokeMethod(Object object, String methodName, Object[] arguments)
+	private static Object invokeMethod(Class<?> c, Object object, String methodName, Object[] arguments)
 		throws ClassNotFoundException, InvocationTargetException, IllegalAccessException {
-		Method method = findMethod(object.getClass(), methodName, arguments);
+		Method method = findMethod(c, methodName, arguments);
 		if (method == null) {
 			throw new RuntimeException("No method '" + methodName + "' found");
 		}
