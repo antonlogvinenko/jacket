@@ -1,3 +1,5 @@
+import static java.lang.System.arraycopy;
+
 public abstract class AClosure implements Cloneable {
 
 	final private int arity;
@@ -25,12 +27,8 @@ public abstract class AClosure implements Cloneable {
 		}
 
 		Object[] newArguments = new Object[arguments.length + args.length];
-		for (int i = 0; i < arguments.length; i++) {
-			newArguments[i] = arguments[i];
-		}
-		for (int i = 0; i < args.length; i++) {
-			newArguments[i + arguments.length] = args[i];
-		}
+		arraycopy(arguments, 0, newArguments, 0, arguments.length);
+		arraycopy(args, 0, newArguments, arguments.length, args.length);
 
 		AClosure aclosure = (AClosure) this.clone();
 		aclosure.setArguments(newArguments);
