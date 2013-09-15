@@ -488,36 +488,33 @@
               (gen-path 'java 'lang 'Object)))))
 
 
-                                        ;java interop
-(defn generate-oop-access [context args])
-
-(defn generate-static-method [context args]
-  (let [invokation (->> args first .toString)
-        [class-name access-name] (.split invokation "/")
-        fun-args (rest args)]
+                                        ;java interop: static access
+(defn static-something [context invokation arguments]
+  (let [invokation (str invokation)
+        [class-name access-name] (.split invokation "/")]
     (-> ops
         (with ldc_w class-name)
         (with ldc_w access-name)
-        (with ldc_w (count fun-args))
+        (with ldc_w (count arguments))
         (with anewarray (gen-path 'java 'lang 'Object))
-        (with (generate-invokation-arguments context fun-args))
+        (with (generate-invokation-arguments context arguments))
         (with invokestatic ['Interop]
-              'invokeStatic
+              'accessStatic
               [(gen-path 'java 'lang 'String)
                (gen-path 'java 'lang 'String)
                [(gen-path 'java 'lang 'Object)]]
               (gen-path 'java 'lang 'Object)))))
 
+(defn generate-static-method [context args]
+  (let [invokation (->> args first .toString)
+        fun-args (rest args)]
+    (-> ops
+        (with (static-something context invokation fun-args)))))
+
 (defn generate-static-field [context atom]
   (let [[class-name access-name] (-> atom .toString (.split "/"))]
     (-> ops
-        (with ldc_w class-name)
-        (with ldc_w access-name)
-        (with invokestatic ['Interop]
-              'accessStaticField
-              [(gen-path 'java 'lang 'String)
-               (gen-path 'java 'lang 'String)]
-              (gen-path 'java 'lang 'Object)))))
+        (with (static-something context (.toString atom) [])))))
 
                                         ;java interop: instantiation
 (defn generate-instantiation [context args]
@@ -534,21 +531,36 @@
               (gen-path 'java 'lang 'Object)))))
 
                                         ;java interop: instance access
+(defn instance-something [context ref thing arguments]
+  (-> ops
+      (with (generate-ast context ref))
+      (with ldc_w thing)
+      (with ldc_w (count arguments))
+      (with anewarray (gen-path 'java 'lang 'Object))
+      (with (generate-invokation-arguments context arguments))
+      (with invokestatic ['Interop]
+            'accessInstance
+            [(gen-path 'java 'lang 'Object)
+             (gen-path 'java 'lang 'String)
+             [(gen-path 'java 'lang 'Object)]]
+            (gen-path 'java 'lang 'Object))))
+
 (defn generate-instance-access [context args]
   (let [access-name (->> args first .toString (drop 1) vec (apply str))
+        ref (second args)
         fun-args (drop 2 args)]
     (-> ops
-        (with (generate-ast context (second args)))
-        (with ldc_w access-name)
-        (with ldc_w (count fun-args))
-        (with anewarray (gen-path 'java 'lang 'Object))
-        (with (generate-invokation-arguments context fun-args))
-        (with invokestatic ['Interop]
-              'accessInstance
-              [(gen-path 'java 'lang 'Object)
-               (gen-path 'java 'lang 'String)
-               [(gen-path 'java 'lang 'Object)]]
-              (gen-path 'java 'lang 'Object)))))
+        (with (instance-something context ref access-name fun-args)))))
+
+(defn generate-oop-access [context args]
+  (let [arg1 (-> args first)
+        arg2 (-> args second)
+        arguments (drop 2 args)]
+    (if (and (-> arg1 vector? not)
+             (is? arg1 symbol?)
+             (-> arg1 .value .toString (.contains "."))) 
+      (static-something context (str (.value arg1) \/ (.value arg2)) arguments)
+      (instance-something context arg1 (-> arg2 .value str) arguments))))
 
 (def sexpr-table
   {:println generate-println :print generate-print :readln generate-readln

@@ -1,0 +1,4 @@
+(print (. java.lang.Boolean TRUE))
+(print (. java.lang.Double valueOf "42E1"))
+(print (. #t FALSE))
+(print (. (java.util.Date. 0) before (java.util.Date. 1)))

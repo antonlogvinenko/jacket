@@ -11,8 +11,8 @@ final public class Interop {
 	public static void main(String... args)
 		throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InstantiationException,
 		InvocationTargetException, NoSuchFieldException {
-		System.out.println(invokeStatic("java.lang.System", "currentTimeMillis", new Object[]{}));
-		System.out.println(accessStaticField("java.lang.Boolean", "TRUE"));
+		System.out.println(accessStatic("java.lang.System", "currentTimeMillis", new Object[]{}));
+		System.out.println(accessStatic("java.lang.Boolean", "TRUE", new Object[]{}));
 
 	}
 
@@ -33,19 +33,21 @@ final public class Interop {
 	/**
 	 * Static access
 	 */
-	public static Object accessStaticField(String className, String fieldName)
-		throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
-		return getField(Class.forName(className), null, fieldName);
-	}
-
-	public static Object invokeStatic(String className, String methodName, Object[] arguments)
-		throws InvocationTargetException, IllegalAccessException, ClassNotFoundException {
+	public static Object accessStatic(String className, String objectThing, Object[] arguments)
+		throws ClassNotFoundException, InvocationTargetException, IllegalAccessException {
 		Class<?> c = Class.forName(className);
-		return invokeMethod(c, null, methodName, arguments);
+		if (arguments.length > 0) {
+			return invokeMethod(c, null, objectThing, arguments);
+		}
+		try {
+			return getField(Class.forName(className), null, objectThing);
+		} catch (NoSuchFieldException e) {
+			return invokeMethod(c, null, objectThing, arguments);
+		}
 	}
 
 	/**
-	 * Accessing
+	 * Instance access
 	 */
 	public static Object accessInstance(Object object, String objectThing, Object[] arguments)
 		throws IllegalAccessException, InvocationTargetException, ClassNotFoundException {
@@ -58,22 +60,6 @@ final public class Interop {
 		} catch (NoSuchFieldException e) {
 			return invokeMethod(c, object, objectThing, arguments);
 		}
-	}
-
-	private static Object getField(Class<?> c, Object object, String fieldName)
-		throws NoSuchFieldException, IllegalAccessException {
-		return c.getField(fieldName).get(object);
-	}
-
-	private static Object invokeMethod(Class<?> c, Object object, String methodName, Object[] arguments)
-		throws ClassNotFoundException, InvocationTargetException, IllegalAccessException {
-		Method method = findMethod(c, methodName, arguments);
-		if (method == null) {
-			throw new RuntimeException("No method '" + methodName + "' found");
-		}
-		Class<?>[] types = method.getParameterTypes();
-		arguments = castArguments(arguments, types);
-		return method.invoke(object, arguments);
 	}
 
 	/**
@@ -89,6 +75,25 @@ final public class Interop {
 		Class<?>[] types = ctor.getParameterTypes();
 		arguments = castArguments(arguments, types);
 		return ctor.newInstance(arguments);
+	}
+
+	/**
+	 * Access utilities
+	 */
+	private static Object getField(Class<?> c, Object object, String fieldName)
+		throws NoSuchFieldException, IllegalAccessException {
+		return c.getField(fieldName).get(object);
+	}
+
+	private static Object invokeMethod(Class<?> c, Object object, String methodName, Object[] arguments)
+		throws ClassNotFoundException, InvocationTargetException, IllegalAccessException {
+		Method method = findMethod(c, methodName, arguments);
+		if (method == null) {
+			throw new RuntimeException("No method '" + methodName + "' found");
+		}
+		Class<?>[] types = method.getParameterTypes();
+		arguments = castArguments(arguments, types);
+		return method.invoke(object, arguments);
 	}
 
 	/**
