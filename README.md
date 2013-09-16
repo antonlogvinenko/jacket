@@ -23,10 +23,10 @@ Progress:
 * Java interop:  objects intantiation (class. args),  fields and methods access: (.FALSE #t), (.after (java.util.Date. 1) (java.util.Date. 0)); static methods access (java.lang.Double/valueOf "42E1"), static fields access (println java.lang.Short/MAX_VALUE); invokation (. x method args), field access (. x field).
 
 Next episodes:
-* Macros
-* Web UI in ClojureScript
-* Tail recursion macro support
-* Performance tests
+* Macros (sept 21, 22; sept 28, 29)
+* Web UI in ClojureScript (oct 5, 6; oct 12, 13)
+* Tail recursion macro support (oct 19, 20)
+* Performance tests (oct 26, 27)
 
 Ideas:
 * Implement (optional) type system (defn-t determinant [m] [Matrix -> Number] (...))
