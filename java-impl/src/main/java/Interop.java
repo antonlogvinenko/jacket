@@ -15,7 +15,7 @@ final public class Interop {
 		InvocationTargetException, NoSuchFieldException {
 		System.out.println(accessStatic("java.lang.System", "currentTimeMillis", new Object[]{}));
 		System.out.println(accessStatic("java.lang.Boolean", "TRUE", new Object[]{}));
-
+		System.out.println(accessInstance(System.out, "println", new Object[]{"cake"}));
 	}
 
 	private final static Map<Class, Class> typingMap = new HashMap<Class, Class>() {{
@@ -57,9 +57,6 @@ final public class Interop {
 		throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException,
 		InstantiationException {
 		Constructor ctor = findConstructor(className, arguments);
-		if (ctor == null) {
-			throw new RuntimeException("Constructor not found");
-		}
 		Class<?>[] types = ctor.getParameterTypes();
 		arguments = castArguments(arguments, types);
 		return ctor.newInstance(arguments);
@@ -88,9 +85,6 @@ final public class Interop {
 	private static Object invokeMethod(Class<?> c, Object object, String methodName, Object[] arguments)
 		throws ClassNotFoundException, InvocationTargetException, IllegalAccessException {
 		Method method = findMethod(c, methodName, arguments);
-		if (method == null) {
-			throw new RuntimeException("No method '" + methodName + "' found");
-		}
 		Class<?>[] types = method.getParameterTypes();
 		arguments = castArguments(arguments, types);
 		return method.invoke(object, arguments);
@@ -99,7 +93,8 @@ final public class Interop {
 	/**
 	 * Find utilities
 	 */
-	private static Constructor findConstructor(String className, Object[] arguments) throws ClassNotFoundException {
+	private static Constructor findConstructor(String className, Object[] arguments)
+		throws ClassNotFoundException {
 		Constructor[] ctors = forName(className).getDeclaredConstructors();
 		for (Constructor ctor : ctors) {
 			Class<?>[] ctorTypes = ctor.getParameterTypes();
@@ -107,11 +102,11 @@ final public class Interop {
 				return ctor;
 			}
 		}
-
-		return null;
+		throw new RuntimeException("Constructor for class '" + className + "'not found");
 	}
 
-	static Method findMethod(Class<?> c, String methodName, Object[] arguments) throws ClassNotFoundException {
+	static Method findMethod(Class<?> c, String methodName, Object[] arguments)
+		throws ClassNotFoundException {
 		for (Method method : c.getDeclaredMethods()) {
 			if (method.getName().equals(methodName)) {
 				Class<?>[] ctorTypes = method.getParameterTypes();
@@ -120,8 +115,7 @@ final public class Interop {
 				}
 			}
 		}
-
-		return null;
+		throw new RuntimeException("Method '" + methodName + "' not found for class '" + c.getName() + "'");
 	}
 
 	/**

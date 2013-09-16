@@ -443,6 +443,85 @@
       ["putstatic" "/a Ljava/lang/Object;"]]
 
 
+     [[:java.lang.String. "cake"]] generate-ast
+     [["ldc_w" "\":java.lang.String\""]
+      ["ldc_w" 1]
+      ["anewarray" "java/lang/Object"]
+      "dup"
+      ["ldc_w" 0]
+      ["ldc" "\"cake\""]
+      "aastore"
+      ["invokestatic" "Interop/instantiate(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/Object;"]]
+  
+     [java.lang.Boolean/TRUE] generate-ast
+     [["getstatic" "java/lang/Boolean/TRUE Ljava/lang/Boolean;"]]
+
+     [['. 'java.lang.Boolean 'TRUE]] generate-ast
+     [["ldc_w" "\"java.lang.Boolean\""]
+      ["ldc_w" "\"TRUE\""]
+      ["ldc_w" 0]
+      ["anewarray" "java/lang/Object"]
+      ["invokestatic" "Interop/accessStatic(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/Object;"]]
+
+     [['java.lang.Double/valueOf "42E1"]] generate-ast
+     [["ldc_w" "\"java.lang.Double\""]
+      ["ldc_w" "\"valueOf\""]
+      ["ldc_w" 1]
+      ["anewarray" "java/lang/Object"]
+      "dup"
+      ["ldc_w" 0]
+      ["ldc" "\"42E1\""]
+      "aastore"
+      ["invokestatic" "Interop/accessStatic(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/Object;"]]
+
+     [['. 'java.lang.Double 'valueOf "42E1"]] generate-ast
+     [["ldc_w" "\"java.lang.Double\""]
+      ["ldc_w" "\"valueOf\""]
+      ["ldc_w" 1]
+      ["anewarray" "java/lang/Object"]
+      "dup"
+      ["ldc_w" 0]
+      ["ldc" "\"42E1\""]
+      "aastore"
+      ["invokestatic" "Interop/accessStatic(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/Object;"]]
+
+     [['.TRUE true]] generate-ast
+     [["getstatic" "java/lang/Boolean/TRUE Ljava/lang/Boolean;"]
+      ["ldc_w" "\"TRUE\""]
+      ["ldc_w" 0]
+      ["anewarray" "java/lang/Object"]
+      ["invokestatic" "Interop/accessInstance(Ljava/lang/Object;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/Object;"]]
+
+     [['. true 'TRUE]] generate-ast
+     [["getstatic" "java/lang/Boolean/TRUE Ljava/lang/Boolean;"]
+      ["ldc_w" "\"TRUE\""]
+      ["ldc_w" 0]
+      ["anewarray" "java/lang/Object"]
+      ["invokestatic" "Interop/accessInstance(Ljava/lang/Object;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/Object;"]]
+
+     [['.intValue 42.0]] generate-ast
+     [["new" "java/lang/Double"]
+      "dup"
+      ["ldc_w" 42.0]
+      "f2d"
+      ["invokenonvirtual" "java/lang/Double/<init>(D)V"]
+      ["ldc_w" "\"intValue\""]
+      ["ldc_w" 0]
+      ["anewarray" "java/lang/Object"]
+      ["invokestatic" "Interop/accessInstance(Ljava/lang/Object;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/Object;"]]
+
+     [['. 42.0 'intValue]] generate-ast
+     [["new" "java/lang/Double"]
+      "dup"
+      ["ldc_w" 42.0]
+      "f2d"
+      ["invokenonvirtual" "java/lang/Double/<init>(D)V"]
+      ["ldc_w" "\"intValue\""]
+      ["ldc_w" 0]
+      ["anewarray" "java/lang/Object"]
+      ["invokestatic" "Interop/accessInstance(Ljava/lang/Object;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/Object;"]]
+     
+
     ))
 
 (deftest generate-closures-test
