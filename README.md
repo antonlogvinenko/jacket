@@ -24,8 +24,8 @@ Progress:
 
 Next episodes:
 * Macros
-* Tail recursion macro support
 * Web UI in ClojureScript
+* Tail recursion macro support
 * Performance tests
 
 Ideas:
