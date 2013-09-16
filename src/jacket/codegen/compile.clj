@@ -506,19 +506,19 @@
               (gen-path 'java 'lang 'Object)))))
 
 (defn generate-static-method [context args]
-  (let [invokation (->> args first .toString)
+  (let [invokation (->> args first .value .toString)
         fun-args (rest args)]
     (-> ops
         (with (static-something context invokation fun-args)))))
 
 (defn generate-static-field [context atom]
-  (let [[class-name access-name] (-> atom .toString (.split "/"))]
+  (let [[class-name access-name] (-> atom .value .toString (.split "/"))]
     (-> ops
-        (with (static-something context (.toString atom) [])))))
+        (with (static-something context (-> atom .value .toString) [])))))
 
                                         ;java interop: instantiation
 (defn generate-instantiation [context args]
-  (let [class-name (->> args first .toString seq (drop-last 1) (apply str))
+  (let [class-name (->> args first .value .toString seq (drop-last 1) (apply str))
         fun-args (rest args)]
     (-> ops
         (with ldc_w class-name)
@@ -546,7 +546,7 @@
             (gen-path 'java 'lang 'Object))))
 
 (defn generate-instance-access [context args]
-  (let [access-name (->> args first .toString (drop 1) vec (apply str))
+  (let [access-name (->> args first .value .toString (drop 1) vec (apply str))
         ref (second args)
         fun-args (drop 2 args)]
     (-> ops
