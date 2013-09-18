@@ -14,13 +14,31 @@ Progress:
 * Lexer with regular grammar recognized by a finite state machine. Batteries included (FSM)
 * Parser
 * Semantic analysis
-* Basic language constructs: readln; println, print, arithmetics (+, -, *, /), logical operations (and, or, xor, not), comparison operations(<, <=, >, >=, =, !=). All operations are polymorphic, n-arity functions meaning "(<= 100 101 200)", "(= 100 100 100)" and "(and (not true) true false)" are legal expressions.
-* Conditionals: if- and cond-expressions
+* Language basics, n-arity polymorphic structures
+    * readln; println, print
+    * arithmetics (+, -, *, /)
+    * logical operations (and, or, xor, not)
+    * comparison operations(<, <=, >, >=, =, !=)
+* Conditionals
+    * if-expressions
+    * cond-expressions
 * Lists and list operations: list, cons, get, set
-* Local variables scopes, let-expressions, variables evaluation
-* Global variables
-* First-class partially applied closures
-* Java interop:  objects intantiation (class. args),  fields and methods access: (.FALSE #t), (.after (java.util.Date. 1) (java.util.Date. 0)); static methods access (java.lang.Double/valueOf "42E1"), static fields access (println java.lang.Short/MAX_VALUE); invokation (. x method args), field access (. x field).
+* Variables
+    * local definitions with let-expressions
+    * global definitions with define
+    * variable evaluation
+* Functions
+    * First-class
+    * Anonymous
+    * Closures
+    * Partially applied
+* Java interop
+    * Objects intantiation (class. args)
+    * Static fields access: (println java.lang.Short/MAX_VALUE)
+    * Static methods invokation: (java.lang.Double/valueOf "42E1")
+    * Instance fields access: (.FALSE #t)
+    * Instance methods invokation: (.after (java.util.Date. 1) (java.util.Date. 0))
+    * Shortcut syntax for all above: (. x method args), field access (. x field)
 * Macros - in progress
     * new compile phase: preprocessor
     * skip defmacro in codegeneration
