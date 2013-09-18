@@ -22,8 +22,8 @@ Progress:
 * First-class partially applied closures
 * Java interop:  objects intantiation (class. args),  fields and methods access: (.FALSE #t), (.after (java.util.Date. 1) (java.util.Date. 0)); static methods access (java.lang.Double/valueOf "42E1"), static fields access (println java.lang.Short/MAX_VALUE); invokation (. x method args), field access (. x field).
 * Macros - in progress
-    * new keywords: defmacro, quote ~, ~@
     * new compile phase: preprocessor
+    * skip defmacro in codegeneration
     * working quote ~ ~@
     * working preprocessor
     * ' keyword

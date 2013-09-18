@@ -2,6 +2,7 @@
   (:use [jacket.codegen.classgen]
         [jacket.codegen.instructions]
         [jacket.codegen.compile]
+        [jacket.codegen.macro]
         [jacket.lexer.lexer]
         [jacket.parser]
         [jacket.semantics])
@@ -159,7 +160,7 @@
           [name (->> ops (apply concat) (generate-main-class name fields))])))
 
 (defn compile-jacket [in location name]
-  (let [asm (->> in slurp tokenize parse semantics (generate name))]
+  (let [asm (->> in slurp tokenize parse semantics expand-macro (generate name))]
     (doall
      (for [[name code] asm]
        (->> code

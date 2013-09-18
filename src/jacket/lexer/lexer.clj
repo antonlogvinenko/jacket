@@ -7,7 +7,7 @@
                "print" "read" "println" "readln"
                "if" "cond"
                "list" "cons" "get" "set"
-               "define" "let"
+               "define" "let" "defmacro" "~" "~@" "'"
                "lambda"
                "quote"])
 
