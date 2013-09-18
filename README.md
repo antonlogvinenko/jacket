@@ -38,7 +38,7 @@ Progress:
     * Static methods invokation: (java.lang.Double/valueOf "42E1")
     * Instance fields access: (.FALSE #t)
     * Instance methods invokation: (.after (java.util.Date. 1) (java.util.Date. 0))
-    * Shortcut syntax for all above: (. x method args), field access (. x field)
+    * Shortcut syntax for all above: (. x method args), (. x field)
 * Macros - in progress
     * new compile phase: preprocessor
     * skip defmacro in codegeneration
