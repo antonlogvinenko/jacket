@@ -14,17 +14,17 @@ Progress:
 * Lexer with regular grammar recognized by a finite state machine. Batteries included (FSM)
 * Parser
 * Semantic analysis
-* Language basics, n-arity polymorphic structures
-    * readln; println, print
+* Language basics, n-arity polymorphic functions
+    * readln, println, print
     * arithmetics (+, -, *, /)
     * logical operations (and, or, xor, not)
-    * comparison operations(<, <=, >, >=, =, !=)
+    * comparison operations (<, <=, >, >=, =, !=)
 * Conditionals
     * if-expressions
     * cond-expressions
 * Lists and list operations: list, cons, get, set
 * Variables
-    * local definitions with let-expressions
+    * local definitions with let
     * global definitions with define
     * variable evaluation
 * Functions
