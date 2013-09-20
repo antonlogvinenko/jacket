@@ -5,6 +5,7 @@
         [jacket.codegen.macro]
         [jacket.lexer.lexer]
         [jacket.parser]
+        [clojure.java.shell]
         [jacket.semantics])
   (:import [jacket.lexer.fsm Token]))
 
@@ -144,7 +145,7 @@
        (filter #(-> % first (= :define)))
        (map second)))
 
-(defn generate [name ast]
+(defn generate [ast name]
   (let [fields (get-fields-names ast)
         code (loop [code [] ast ast globals []]
                (if (empty? ast) code
@@ -159,11 +160,27 @@
     (conj (->> closures (apply concat) generate-closures)
           [name (->> ops (apply concat) (generate-main-class name fields))])))
 
-(defn compile-jacket [in location name]
-  (let [asm (->> in slurp tokenize parse semantics expand-macro (generate name))]
-    (doall
-     (for [[name code] asm]
-       (->> code
-            program-text
-            (spit (str location name ".jasm")))))))
+(defn compile-code [asm location name]
+  (doall
+   (for [[name code] asm]
+     (->> code
+          program-text
+          (spit (str location name ".jasm"))))))
+
+(defn build-jacket-ast [in location name]
+  (let [ast (->> in slurp tokenize parse semantics)]
+    (fetch-definitions ast)))
+
+
+(defn compile-jacket-macro [code location name]
+  (-> code
+      (generate name)
+      (compile-code location name)))
+
+(defn compile-jacket [code location name]
+  (-> code
+      expand-macro
+      (generate name)
+      (compile-code location name)))    
+
 
