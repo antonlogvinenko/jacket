@@ -163,23 +163,19 @@
 (defn compile-code [asm location name]
   (doall
    (for [[name code] asm]
-     (->> code
-          program-text
-          (spit (str location name ".jasm"))))))
+     (do
+       (->> code
+              program-text
+              (spit (str location name ".jasm")))
+         name))))
 
-(defn build-jacket-ast [in location name]
-  (let [ast (->> in slurp tokenize parse semantics)]
-    (fetch-definitions ast)))
-
-
-(defn compile-jacket-macro [code location name]
-  (-> code
-      (generate name)
-      (compile-code location name)))
-
-(defn compile-jacket [code location name]
-  (-> code
-      expand-macro
+(defn compile-jacket [in location name]
+  (-> in
+      slurp
+      tokenize
+      parse
+      semantics
+      macro-definitions
       (generate name)
       (compile-code location name)))    
 

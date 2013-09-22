@@ -4,6 +4,19 @@
         [clojure.walk])
   (:import [jacket.lexer.fsm Token]))
 
+(defn expand-macro-definition [[key & others :as block]]
+  (if (not= key :defmacro)
+    block
+    (let [name (first others)
+          args (second others)
+          body (nth others 2)]
+      [(Token. :define (.line key) (.column key))
+       name
+       [(Token. :lambda (.line name) (.column name)) args body]])))
+
+(defn macro-definitions [definitions]
+  (map expand-macro-definition definitions))
+
 (defn replace-symbols [symbols obj]
   (cond
    (vector? obj) obj

@@ -1,3 +1,0 @@
-(defmacro test (x) x)
-
-(println 42)
