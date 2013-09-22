@@ -44,6 +44,30 @@
                 (+global name)
                 (+exprs body)))))
 
+(defn check-defmacro [sexpr]
+  (let [length (count sexpr)
+        name (second sexpr)
+        args (nth sexpr 2)
+        body (last sexpr)]
+    (cond
+     (not= length 4)
+     (-> ok
+         (+error (str "Wrong 'defmacro' arguments count: " length)))
+
+     (-> name (is? symbol?) not)
+     (-> ok
+         (+error (str "First 'defmacro' argument must be a symbol, not '" (.value name) "'"))
+         (+exprs body))
+     
+     (->> args (every? #(is? % symbol?)) not)
+     (-> ok
+         (+error (str "Wrong defmacro arguments, must be symbols"))
+         (+exprs body))
+
+     :else (-> ok
+               (+local (seq args))
+               (+exprs body)))))
+
 (defn check-lambda [sexpr]
   (let [length (count sexpr)
         args (second sexpr)
@@ -172,6 +196,7 @@
 (defn check-sexpr [state sexpr]
   (let [f (first sexpr)
         dispatch {:define check-define
+                  :defmacro check-defmacro
                   :lambda check-lambda
                   :quote check-quote
                   :println check-print-utility

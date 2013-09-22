@@ -40,13 +40,26 @@ Progress:
     * Instance methods invokation: (.after (java.util.Date. 1) (java.util.Date. 0))
     * Shortcut syntax for all above: (. x method args), (. x field)
 * Macros - in progress
-    * new compile phase: preprocessor
-    * skip defmacro in codegeneration
-    * working quote ~ ~@
-    * working preprocessor
-    * ' keyword
+    * macros do not call functions
+        * compile macro
+	* invoke macro to modify code
+	* compile code
+
+    * lists correct support
+
+    * full macroexpand phase:
+        * compile methods with no macro usage
+	* compile macro methods
+	* invoke macro to expand code
+	* repeat until all code is compilef
+	* remove old code
+
+    * `, ~, ~@, lists correct support
     * variable names generation
-    * ?
+
+    * n-level expansion
+    * macroexpand-1, macroexpand-n, macroexpand-all
+    * partially applied macros? O_O
 
 Next episodes:
 * Web UI in ClojureScript (oct 5, 6; oct 12, 13)

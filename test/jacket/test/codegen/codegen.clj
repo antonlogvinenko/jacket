@@ -63,6 +63,8 @@
             "interop-static-method" "" "420.0"
             "interop-static-field" "" "32767"
             "interop-instance-static-field-method" "" "true420.0falsetrue"
+
+;;            "macro-simple" "" "42"
             
             "readln" "cake is a" "cake is a lie"
             "println" ""  "cake"
@@ -80,7 +82,11 @@
 )
 
 (doall (for [name (->> tests (partition 3) (map first))]
-         (compile-jacket (str "test-programs/" name ".jt") "wardrobe/" name)))
+         (let [in (str "test-programs/" name ".jt")
+               location "wardrobe/"
+               [macro code] (build-jacket-ast in location name)]
+           (compile-jacket-macro macro location (str name "-macro"))
+           (compile-jacket code location name))))
 
 (gen-hello-world)
 
