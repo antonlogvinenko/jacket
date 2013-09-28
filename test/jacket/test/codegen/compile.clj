@@ -541,6 +541,7 @@
                                ["invokestatic" "Console/print(Ljava/lang/Object;)V"]
                                ["invokestatic" "Console/println()V"] "aconst_null" "areturn"]]],
      :globals [],
+     :macro false,
      :ops [[".limit stack" 30]
            ["new" "-closure-0"]
            "dup"

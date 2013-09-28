@@ -82,11 +82,8 @@
 )
 
 (doall (for [name (->> tests (partition 3) (map first))]
-         (let [in (str "test-programs/" name ".jt")
-               location "wardrobe/"
-               names (compile-jacket in location name)]
-           (doall (for [name names]
-                    (with-sh-dir "." (sh "./compile-wardrobe-single.sh" name)))))))
+         (let [in (str "test-programs/" name ".jt")]
+           (compile-jacket in "wardrobe/" name))))
 
 (gen-hello-world)
 (with-sh-dir "." (sh "./compile-wardrobe-single.sh" "HelloWorld"))

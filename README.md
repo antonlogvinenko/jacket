@@ -11,14 +11,14 @@ With this project I mean to:
 * Have fun
 
 Progress:
-* Lexer with regular grammar recognized by a finite state machine. Batteries included (FSM)
+* [Lexer with regular grammar](https://github.com/antonlogvinenko/jacket/blob/master/src/jacket/lexer/lexer.clj) recognized by a finite state machine. [Batteries included (FSM)](https://github.com/antonlogvinenko/jacket/blob/master/src/jacket/lexer/fsm.clj)
 * Parser
 * Semantic analysis
 * Language basics, n-arity polymorphic functions
-    * readln, println, print
-    * arithmetics (+, -, *, /)
-    * logical operations (and, or, xor, not)
-    * comparison operations (<, <=, >, >=, =, !=)
+    * [readln](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/readln.jt), [println](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/println.jt), [print](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/print.jt)
+    * arithmetics ([sum +](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/println-sum-n.jt), [substraction -](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/println-sub-n.jt), [multiplication *](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/println-mul-n.jt), [division /](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/println-div-n.jt))
+    * logical operations ([and](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/bool-and-n-arity.jt), [or](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/bool-or.jt), [xor](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/bool-xor.jt), [not](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/bool-not.jt))
+    * comparison operations ([less <](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/comp-less.jt), [less or equal <=](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/comp-less-or-equal.jt), [greater >](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/comp-greater.jt), [greater or equal >=](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/comp-greater-or-equal.jt), [equal =](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/comp-equal.jt), [not equal !=](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/comp-nequal.jt))
 * Conditionals
     * if-expressions
     * cond-expressions
@@ -28,10 +28,10 @@ Progress:
     * global definitions with define
     * variable evaluation
 * Functions
-    * First-class
-    * Anonymous
-    * Closures
-    * Partially applied
+    * [First-class](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/closure-first-class.jt)
+    * [Anonymous](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/closure-single-arg.jt)
+    * [Closures](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/closure-closed.jt)
+    * [Partially applied](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/closure-currying.jt)
 * Java interop
     * Objects intantiation (class. args)
     * Static fields access: (println java.lang.Short/MAX_VALUE)
