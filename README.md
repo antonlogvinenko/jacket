@@ -41,24 +41,19 @@ Progress:
     * Shortcut syntax for all above: (. x method args), (. x field)
 * Macros - in progress
     * macros do not call functions
-        * compile macro
-	* invoke macro to modify code
-	* compile code
+	* semantics phase: return list of all macro names
 
-    * lists correct support
+	* START: compile all (something uses macro - don't compile it, report ast position)
+	* if nothing uses macro (prev step reported nothing) then we're DONE, all code compiled
+	* on reported pieces invoke macroexpansions, supress errors (not compiled macro)
+	* start from the beginning with the new AST
 
-    * full macroexpand phase:
-        * compile methods with no macro usage
-	* compile macro methods
-	* invoke macro to expand code
-	* repeat until all code is compilef
+        * lists correct support
 	* remove old code
 
     * `, ~, ~@, lists correct support
     * variable names generation
 
-    * n-level expansion
-    * macroexpand-1, macroexpand-n, macroexpand-all
     * partially applied macros? O_O
 
 Next episodes:
