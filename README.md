@@ -41,8 +41,6 @@ Progress:
     * Shortcut syntax for all above: (. x method args), (. x field)
 * Macros - in progress
     * macros do not call functions
-	* semantics phase: return list of all macro names
-
 	* START: compile all (something uses macro - don't compile it, report ast position)
 	* if nothing uses macro (prev step reported nothing) then we're DONE, all code compiled
 	* on reported pieces invoke macroexpansions, supress errors (not compiled macro)

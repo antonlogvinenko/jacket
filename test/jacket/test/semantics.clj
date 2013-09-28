@@ -18,7 +18,7 @@
 (deftest check-define-test
   (are [sexpr sym-g sym-l errors sexprs]
        (= (check-define (to-tokens sexpr))
-          [sym-g sym-l errors sexprs])
+          [sym-g sym-l errors sexprs []])
 
        [:define 'b 42]
        ['b] ['b] [] [42]
@@ -36,7 +36,7 @@
 (deftest check-lambda-test
   (are [sexpr sym-g sym-l errors sexprs]
        (= (check-lambda (to-tokens sexpr))
-          [sym-g sym-l errors sexprs])
+          [sym-g sym-l errors sexprs []])
 
        [:lambda ['a 'b] true]
        [] ['a 'b] [] [true]
@@ -54,7 +54,7 @@
 (deftest merge-states-test
   (are [states sym-g sym-l errors sexprs]
        (= (merge-states (to-tokens states))
-          [sym-g sym-l errors sexprs])
+          [sym-g sym-l errors sexprs []])
        
        [['a 42] ['b 1] 32 [1 2]]
        [] ['a 'b] ["Pair must be a list of 2 elements" "Pair first element must be symbol"] [42 1 2]
@@ -64,7 +64,7 @@
 (deftest check-pair-test
   (are [sexpr sym-g sym-l errors sexprs]
        (= (check-pair (to-tokens sexpr))
-          [sym-g sym-l errors sexprs])
+          [sym-g sym-l errors sexprs []])
 
        ['a 42]
        [] ['a] [] [42]
@@ -85,7 +85,7 @@
 (deftest check-let-test 
   (are [sexpr sym-g sym-l errors sexprs]
        (= (check-let (to-tokens sexpr))
-          [sym-g sym-l errors sexprs])
+          [sym-g sym-l errors sexprs []])
        
        [:let [['a 41] ['b 1]] [:+ 'a 'b]]
        [] ['a 'b] [] [41 1 [:+ 'a 'b]]
@@ -102,7 +102,7 @@
 (deftest check-quote-test
   (are [sexpr sym-g sym-l errors sexprs]
        (= (check-quote (to-tokens sexpr))
-          [sym-g sym-l errors sexprs])
+          [sym-g sym-l errors sexprs []])
 
        [:quote ['a 'b] true]
        [] [] ["Quote may have a single argument"] []
@@ -115,7 +115,7 @@
 (deftest check-not-utility-test
   (are [sexpr sym-g sym-l errors sexprs]
     (= (check-not-utility (to-tokens sexpr))
-       [sym-g sym-l errors sexprs])
+       [sym-g sym-l errors sexprs []])
 
     [:not]
     [] [] ["':not' requires a single argument"] []
@@ -131,7 +131,7 @@
 (deftest check-dynamic-utility-test
   (are [sexpr n sym-g sym-l errors sexprs]
     (= ((check-dynamic-utility > n) (to-tokens sexpr))
-       [sym-g sym-l errors sexprs])
+       [sym-g sym-l errors sexprs []])
 
     [:not] 2
     [] [] ["':not' requires at least 2 argument(s)"] []
@@ -148,7 +148,7 @@
 (deftest check-print-utility-test
   (are [sexpr sym-g sym-l errors sexprs]
     (= (check-print-utility (to-tokens sexpr))
-       [sym-g sym-l errors sexprs])
+       [sym-g sym-l errors sexprs []])
 
     [:println]
     [] [] ["':println' requires at least a single argument"] []
@@ -166,7 +166,7 @@
 (deftest check-read-utility-test
   (are [sexpr sym-g sym-l errors sexprs]
     (= (check-read-utility (to-tokens sexpr))
-       [sym-g sym-l errors sexprs])
+       [sym-g sym-l errors sexprs []])
 
     [:readln 1]
     [] [] ["':readln' requires no arguments"] []
@@ -185,7 +185,7 @@
   (are [sexpr sym-g sym-l errors
         sym-g-out sym-l-out errors-out sexprs-out]
        (= (check-dynamic-list [sym-g sym-l errors] (to-tokens sexpr))
-          [sym-g-out sym-l-out errors-out sexprs-out])
+          [sym-g-out sym-l-out errors-out sexprs-out []])
 
        ['a 3]
        [] [] []
@@ -208,7 +208,7 @@
 (deftest check-sexpr-test
   (are [sexpr sym-g sym-l errors sexprs]
        (= (check-sexpr [] (to-tokens sexpr))
-          [sym-g sym-l errors sexprs])
+          [sym-g sym-l errors sexprs []])
 
        []
        [] [] ["First token in s-expression must be function"] []
@@ -242,7 +242,7 @@
 (deftest check-atom-test
   (are [state sexpr sym-g sym-l errors sexprs]
        (= (check-atom state (to-tokens sexpr))
-          [sym-g sym-l errors sexprs])
+          [sym-g sym-l errors sexprs []])
        
        [[] [] []] :de
        [] [] ["Undefined symbol: :de"] []
@@ -258,7 +258,7 @@
 (deftest check-expr-test
   (are [state sexpr sym-g sym-l errors sexprs]
        (= (check-expr state (to-tokens sexpr))
-          [sym-g sym-l errors sexprs])
+          [sym-g sym-l errors sexprs []])
 
        [] 42
        [] [] [] []
@@ -279,8 +279,8 @@
 
 (deftest analyze-sexpr-tree-test
   (are [sexpr sym-g sym-l errors]
-       (= (analyze-sexpr-tree [[] [] []] (to-tokens sexpr))
-          [sym-g sym-l errors])
+       (= (analyze-sexpr-tree [[] [] [] []] (to-tokens sexpr))
+          [sym-g sym-l errors []])
        
        [:define 'a [:lambda ['a '42] 42]]
        ['a] [] ["Wrong lambda function arguments, must be symbols"]
@@ -318,8 +318,8 @@
 
 (deftest analyze-file-expr-test
   (are [sexpr sym-g sym-l errors]
-       (= (analyze-file-expr [[] [] []] (to-tokens sexpr))
-          [sym-g sym-l errors])
+       (= (analyze-file-expr [[] [] [] []] (to-tokens sexpr))
+          [sym-g sym-l errors []])
 
        [:define 'a 42]
        ['a] [] []
@@ -335,11 +335,10 @@
 
 (deftest semantics-test
   (are [program]
-       (= (to-tokens program) (-> program to-tokens semantics))
+       (= (to-tokens program) (-> program to-tokens semantics first))
 
        [[:define 'c [:lambda ['a] [:+ 'a 3]]]]
 
        [[:define 'a 1] [:define 'b [:lambda ['x 'y] [:+ 'x 'y 'a]]]]
 
-       ))       
-
+       ))
