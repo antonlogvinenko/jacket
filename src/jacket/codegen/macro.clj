@@ -14,8 +14,8 @@
        name
        [(Token. :lambda (.line name) (.column name)) args body]])))
 
-(defn macro-definitions [definitions]
-  (map expand-macro-definition definitions))
+(defn macro-definitions [[definitions macro]]
+  [(map expand-macro-definition definitions) macro])
 
 (defn replace-symbols [symbols obj]
   (cond

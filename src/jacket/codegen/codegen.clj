@@ -145,7 +145,7 @@
        (filter #(-> % first (= :define)))
        (map second)))
 
-(defn generate [ast name]
+(defn generate [[ast macro] name]
   (let [fields (get-fields-names ast)
         code (loop [code [] ast ast globals []]
                (if (empty? ast) code

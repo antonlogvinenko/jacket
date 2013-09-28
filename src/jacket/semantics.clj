@@ -8,7 +8,7 @@
 (defn is-sexpr? [expr]
   (vector? expr))
 
-(def ok [[] [] [] []])
+(def ok [[] [] [] [] []])
 (defn super-update [s i v]
   (update-in s [i]
              #(if (seq? v)
@@ -18,6 +18,7 @@
 (defn +local [s l] (super-update s 1 l))
 (defn +error [s er] (super-update s 2 er))
 (defn +exprs [s ex] (super-update s 3 ex))
+(defn +macro [s m] (super-update s 4 m))
 
 (defn symbol-undefined? [[global local _] sym]
   (let [str-repr (-> sym .value .toString)]
@@ -65,6 +66,7 @@
          (+exprs body))
 
      :else (-> ok
+               (+macro (.value name) )
                (+local (seq args))
                (+exprs body)))))
 
@@ -128,7 +130,7 @@
           (+exprs body))
       
       :else (let [analysis (merge-states args)]
-              (conj (pop analysis) (into (peek analysis) body))))))
+              (update-in analysis [3] #(into % body))))))
 
 (defn check-quote [sexpr]
   (let [length (count sexpr)]
@@ -226,27 +228,29 @@
                   check-atom)]
     (check state expr)))                    
   
-(defn analyze-sexpr-tree [[global local errors] sexpr]
-  (loop [g global, l [[]], e errors, s [[sexpr]]]
+(defn analyze-sexpr-tree [[global local errors macro] sexpr]
+  (loop [g global, l [[]], e errors, s [[sexpr]], m macro]
     (let [current-level (last s)
           current-s (last current-level)]
       (cond
-        (empty? s) [g [] e]
-        (empty? current-level) (recur g (pop l) e (pop s))
-        :else (let [[g2 l2 e2 s2] (check-expr [g l e s] current-s)]
+        (empty? s) [g [] e m]
+        (empty? current-level) (recur g (pop l) e (pop s) m)
+        :else (let [[g2 l2 e2 s2 m2] (check-expr [g l e s m] current-s)]
                 (recur (into g g2)
                        (conj l l2)
                        (into e e2)
                        (-> s
                            pop
                            (conj (pop current-level))
-                           (conj s2))))))))
+                           (conj s2))
+                       (into m m2)
+                       ))))))
 
 (defn analyze-lonely-atom [_ expr]
-  (->> expr
-       (str "Only s-expressions allowed in program top-level, found ")
-       (+error ok)
-       (drop-last 1)))
+  (let [[g l e exprs m] (->> expr
+                             (str "Only s-expressions allowed in program top-level, found ")
+                             (+error ok))]
+    [g l e m]))
 
 (defn analyze-file-expr [state expr]
   (let [analyze (if (is-sexpr? expr)
@@ -262,9 +266,7 @@
        raise))
 
 (defn semantics [program]
-  (let [errors (->> program
-                    (reduce analyze-file-expr [])
-                    last)]
+  (let [[_ _ errors macro] (reduce analyze-file-expr [] program)]
     (if (empty? errors)
-      program
+      [program macro]
       (raise-semantics-errors errors))))
