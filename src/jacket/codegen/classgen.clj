@@ -91,3 +91,54 @@
 
 
 
+(def default-init
+  {:access :public :name "<init>"
+   :arguments [] :return :void
+   :instructions [aload_0
+                  (invokenonvirtual ['java 'lang 'Object] '<init> [] :void)
+                  return]})
+
+(defn clinit [instructions]
+  {:access :public :name "<clinit>"
+   :arguments [] :return :void
+   :instructions (concat [(limitstack 10) (limitlocals 10)] instructions [return])})
+
+(defn generate-class [name super implements fields methods]
+  {:access :public :type :class :name name
+   :super super
+   :implements implements
+   :fields fields
+   :methods methods})
+
+
+(defn generate-main-class [name fields clinit-instructions instructions]
+  (generate-class name object-path [] fields
+                  [default-init
+                   (clinit clinit-instructions)
+                   {:access :public :static true :name "main"
+                    :arguments [[(gen-path 'java 'lang 'String)]]
+                    :return :void
+                    :instructions (concat instructions [return])}]))
+
+(defn generate-closures [closures]
+  (for [[name code] closures]
+    [name (generate-class name (gen-path 'AClosure) [] []
+                          [{:access :public :static false :name "<init>"
+                            :arguments [[(gen-path 'java 'lang 'Object)]  :int]
+                            :return :void
+                            :instructions [(limitstack 3)
+                                           (limitlocals 3)
+                                           aload_0
+                                           aload_1
+                                           iload_2
+                                           (invokenonvirtual
+                                            ['AClosure] '<init>
+                                            [[(gen-path 'java 'lang 'Object)] :int]
+                                            :void)
+                                           return]}
+                           {:access :public :static false :name "invoke"
+                            :arguments []
+                            :return (gen-path 'java 'lang 'Object)
+                            :instructions (into [(limitstack 30)
+                                                 (limitlocals 30)]
+                                                code)}])]))

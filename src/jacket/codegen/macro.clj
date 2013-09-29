@@ -17,6 +17,17 @@
 (defn macro-definitions [[definitions macro]]
   [(map expand-macro-definition definitions) macro])
 
+(defn expand-macro [[ast macro] macro-usage]
+  ast)
+
+
+
+
+
+
+
+
+
 (defn replace-symbols [symbols obj]
   (cond
    (vector? obj) obj
@@ -53,6 +64,8 @@
         body (clusters false)]
     [definitions body]))
 
-(defn expand-macro [ast]
-  (let [[definitions ast] (fetch-definitions ast)]
-    (expand-with-macro-definitions ast definitions)))
+
+;; (defn expand-macro [ast]
+;;   (let [[definitions ast] (fetch-definitions ast)]
+;;     (expand-with-macro-definitions ast definitions)))
+

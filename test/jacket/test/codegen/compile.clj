@@ -18,6 +18,23 @@
   (is (true? (boolean? true)))
   (is (false? (boolean? 42))))
 
+
+
+
+(deftest generate-define-test
+  (are [args gen-fn result]
+    (= result (:def (apply gen-fn {:closed {} :label 0
+                                   :closure (agent 0) :local '([] ())} (to-tokens args))))
+    [[:define 'a 42]] generate-ast
+    [["new" "java/lang/Long"]
+     "dup"
+     ["ldc_w" 42]
+     "i2l"
+     ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
+     ["putstatic" "/a Ljava/lang/Object;"]]
+
+    ))
+
 (deftest generate-test
   (are [args gen-fn result]
     (= result (:ops (apply gen-fn {:closed {} :label 0
@@ -434,15 +451,6 @@
       ["invokestatic" "Console/println()V"]
       "aconst_null"]
 
-     [[:define 'a 42]] generate-ast
-     [["new" "java/lang/Long"]
-      "dup"
-      ["ldc_w" 42]
-      "i2l"
-      ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
-      ["putstatic" "/a Ljava/lang/Object;"]]
-
-
      [[:java.lang.String. "cake"]] generate-ast
      [["ldc_w" "\":java.lang.String\""]
       ["ldc_w" 1]
@@ -542,6 +550,7 @@
                                ["invokestatic" "Console/println()V"] "aconst_null" "areturn"]]],
      :globals [],
      :macro false,
+     :def []
      :ops [[".limit stack" 30]
            ["new" "-closure-0"]
            "dup"

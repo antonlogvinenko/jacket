@@ -1,6 +1,5 @@
 (ns jacket.codegen.compile
-  (:use [jacket.codegen.classgen]
-        [jacket.codegen.instructions]
+  (:use [jacket.codegen.instructions]
         [jacket.lexer.lexer]
         [jacket.lexer.fsm]
         [jacket.parser]
@@ -14,18 +13,36 @@
 (defn codegen-error [context args]
   (throw (RuntimeException. "Who is Mr. Putin?")))
 
-(def ops {:ops [] :closures [] :globals [] :macro false})
+(def ops {:def [] :ops [] :closures [] :globals [] :macro false})
 
-(defn with [{ops :ops closures :closures globals :globals macro :macro :as p} arg1 & args]
+(defn with [{ops :ops def :def closures :closures globals :globals macro :macro :as p}
+            arg1 & args]
   (if (map? arg1)
     (assoc (merge-with into (dissoc p :macro) arg1)
       :macro (or macro (:macro arg1)))
     {:closures closures
      :globals globals
      :macro macro
+     :def def
      :ops (into ops (cond (vector? arg1) arg1
                           (empty? args) [arg1]
                           :else [(apply arg1 args)]))}))
+
+(defn with-def [{ops :ops def :def closures :closures globals :globals macro :macro :as p}
+            arg1 & args]
+  (if (map? arg1)
+    (assoc (merge-with into (dissoc p :macro :def) arg1)
+      :macro (or macro (:macro arg1))
+      :def (into def (arg1 :ops))
+      :ops ops)
+    {:closures closures
+     :globals globals
+     :macro macro
+     :ops ops
+     :def (into def (cond (vector? arg1) arg1
+                          (empty? args) [arg1]
+                          :else [(apply arg1 args)]))}))
+
 
 (defn generate-sexpr [])
 (defn generate-ast [])
@@ -370,8 +387,8 @@
 
 (defn generate-define [context args]
   (-> ops
-      (with (->> args second (generate-ast context)))
-      (with putstatic
+      (with-def (->> args second (generate-ast context)))
+      (with-def putstatic
             [(context :class) (first args)]
             (gen-type (gen-path 'java 'lang 'Object)))
       (with {:globals [(first args)]})))
