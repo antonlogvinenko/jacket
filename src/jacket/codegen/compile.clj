@@ -14,13 +14,15 @@
 (defn codegen-error [context args]
   (throw (RuntimeException. "Who is Mr. Putin?")))
 
-(def ops {:ops [] :closures [] :globals []})
+(def ops {:ops [] :closures [] :globals [] :macro false})
 
-(defn with [{ops :ops closures :closures globals :globals :as p} arg1 & args]
+(defn with [{ops :ops closures :closures globals :globals macro :macro :as p} arg1 & args]
   (if (map? arg1)
-    (merge-with into p arg1)
+    (assoc (merge-with into (dissoc p :macro) arg1)
+      :macro (or macro (:macro arg1)))
     {:closures closures
      :globals globals
+     :macro macro
      :ops (into ops (cond (vector? arg1) arg1
                           (empty? args) [arg1]
                           :else [(apply arg1 args)]))}))
@@ -476,8 +478,12 @@
        (reduce with ops)))
 
 (defn generate-invokation [context args]
-  (let [fun-args (rest args)]
+  (let [fun-args (rest args)
+        name (-> args first)
+        macro-names (:macro context)]
     (-> ops
+        (with {:macro (and (-> name vector? not)
+                           (some (partial = (.value name)) macro-names))})
         (with (->> args first (generate-ast context)))
         (with checkcast (gen-path 'AClosure))
         (with ldc_w (count fun-args))
