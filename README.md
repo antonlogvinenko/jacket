@@ -44,6 +44,8 @@ Progress:
     * Instance methods invokation: [(.after (java.util.Date. 1) (java.util.Date. 0))](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/interop-instance-invoke-method.jt)
     * Shortcut syntax for all above: [(. x method args), (. x field)](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/interop-instance-static-field-method.jt)
 * Macros - in progress
+    * [The simplest identity macro](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-definition.jt)
+    * [The simplest macro processing s-expression](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-sexpr.jt)
     * lists correct support
     * `, ~, ~@, lists correct support
     * variable names generation
