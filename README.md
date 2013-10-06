@@ -56,10 +56,12 @@ Progress:
     * partially applied macros? O_O
 
 Next episodes:
-* Web UI in ClojureScript (oct 5, 6; oct 12, 13)
-* Tail recursion macro support (oct 19, 20)
-* Performance tests (oct 26, 27)
+* Web UI in ClojureScript
+* Tail recursion macro support
+* Performance test
+* Small bugfixes
 
 Ideas:
+* Namespaces?
 * Implement (optional) type system (defn-t determinant [m] [Matrix -> Number] (...))
 * Green threads scheduler, actor model implementation (option for lmax disruptor scheduling mode)
