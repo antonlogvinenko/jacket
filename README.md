@@ -40,23 +40,13 @@ Progress:
     * Instance methods invokation: (.after (java.util.Date. 1) (java.util.Date. 0))
     * Shortcut syntax for all above: (. x method args), (. x field)
 * Macros - in progress
-    * Access macro from Main class by it's static field name
-    * macroexpand - load main class, invoke macro code, pass symbol, return, substitute
-    * simple test
-
-    * ignore errors of macroexpansion (circular dependences)
-
-    * START: compile all (something uses macro - don't compile it, report ast position)
-    * if nothing uses macro (prev step reported nothing) then we're DONE, all code compiled
-    * on reported pieces invoke macroexpansions, supress errors (not compiled macro)
-    * start from the beginning with the new AST
-
-    * What about macros using macros? Exclude from expansion or preexpand them?
-    
     * lists correct support
-    * remove old code
     * `, ~, ~@, lists correct support
     * variable names generation
+
+    * Ignore errors of macroexpansion (circular dependences)
+    * What about macros using macros? Exclude from expansion or preexpand them?
+    
     * partially applied macros? O_O
 
 Next episodes:

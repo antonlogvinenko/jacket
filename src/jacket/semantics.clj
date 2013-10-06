@@ -66,6 +66,7 @@
          (+exprs body))
 
      :else (-> ok
+               (+global name)
                (+macro (.value name) )
                (+local (seq args))
                (+exprs body)))))

@@ -67,6 +67,7 @@
             "interop-instance-static-field-method" "" "true420.0falsetrue"
 
             "macro-definition" "" "42"
+            "macro-sexpr" "" "42"
             
             "readln" "cake is a" "cake is a lie"
             "println" ""  "cake"

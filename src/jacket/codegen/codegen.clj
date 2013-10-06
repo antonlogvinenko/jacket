@@ -50,7 +50,7 @@
           macro-expand-required (reduce #(or %1 %2) macro-usage)]
       (compile-code assembly location name)
       (if macro-expand-required
-        (->> asm (apply expand-macro name) recur)
+        (->> asm (apply macroexpand-jacket name) recur)
         true))))
 
 (defn compile-jacket [in location name]

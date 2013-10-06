@@ -1,0 +1,3 @@
+(defmacro identity-macro (x) x)
+
+(identity-macro (println 42))

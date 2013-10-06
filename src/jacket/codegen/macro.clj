@@ -4,7 +4,7 @@
         [clojure.walk])
   (:import [jacket.lexer.fsm Token]))
 
-(defn expand-macro-definition [[key & others :as block]]
+(defn- expand-macro-definition [[key & others :as block]]
   (if (not= key :defmacro)
     block
     (let [name (first others)
@@ -18,33 +18,23 @@
   [(map expand-macro-definition definitions) macro])
 
 
+(defn- expand-macro [[f & args :as expr] macro-fn]
+  (->> args .toArray (._invoke macro-fn)))
 
-
-
-
-(defn replace-symbols [symbols obj]
-  (cond
-   (vector? obj) obj
-   (is? obj symbol?) (get symbols obj obj)
-   :else obj))
-
-(defn expand-macro-with [[f & args :as expr] macro-fn]
-  (._invoke macro-fn (.toArray args)))
-
-(defn expand-macro-all [definitions obj]
+(defn- expand-macro-with [definitions obj]
   (if (-> obj vector? not) obj
       (let [f (.value (first obj))
             def (get definitions f)]
         (if (nil? def) obj
-            (expand-macro-with obj def)))))
+            (expand-macro obj def)))))
 
-(defn expand-with-macro-definitions [ast definitions]
-  (postwalk (partial expand-macro-all definitions) ast))
+(defn- expand-with-macro-definitions [ast definitions]
+  (postwalk (partial expand-macro-with definitions) ast))
 
-(defn expand-macro [class-name ast macro-names]
+(defn macroexpand-jacket [class-name ast macro-names]
   (let [loaded-class (Class/forName class-name)
         fields (.getDeclaredFields loaded-class)
         pairs (->> fields
-                   (map (fn [field] [(symbol (.getName field)) (.get field nil)]))
+                   (map (fn [field] [(-> field .getName symbol) (.get field nil)]))
                    (into {}))]
     [(expand-with-macro-definitions ast pairs) macro-names]))
