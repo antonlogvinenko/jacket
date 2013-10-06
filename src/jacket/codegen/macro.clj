@@ -17,12 +17,6 @@
 (defn macro-definitions [[definitions macro]]
   [(map expand-macro-definition definitions) macro])
 
-(defn expand-macro [[ast macro] macro-usage]
-  ast)
-
-
-
-
 
 
 
@@ -34,38 +28,23 @@
    (is? obj symbol?) (get symbols obj obj)
    :else obj))
 
-(defn expand-macro-with [[f & args :as expr] [pars & body :as definition]]
-  (if (not= (count args) (count expr))
-    (-> "Not enough arguments for macro expansion" RuntimeException. throw)
-    (let [symbols (zipmap pars args)]
-      (walk (partial replace-symbols symbols) identity body))))
+(defn expand-macro-with [[f & args :as expr] macro-fn]
+  (._invoke macro-fn (.toArray args)))
 
 (defn expand-macro-all [definitions obj]
   (if (-> obj vector? not) obj
-      (let [f (first obj)
+      (let [f (.value (first obj))
             def (get definitions f)]
         (if (nil? def) obj
             (expand-macro-with obj def)))))
 
-
-
-
 (defn expand-with-macro-definitions [ast definitions]
-  (walk (partial expand-macro-all definitions) identity ast))
+  (postwalk (partial expand-macro-all definitions) ast))
 
-(defn fetch-definitions [ast]
-  (let [clusters (group-by #(-> % first (= :defmacro)) ast)
-        definitions (->> true
-                         clusters
-;;                         (map (partial drop 1))
-  ;;                       (map #(vector (first %) (rest %)))
-    ;;                     (into {})
-                         )
-        body (clusters false)]
-    [definitions body]))
-
-
-;; (defn expand-macro [ast]
-;;   (let [[definitions ast] (fetch-definitions ast)]
-;;     (expand-with-macro-definitions ast definitions)))
-
+(defn expand-macro [class-name ast macro-names]
+  (let [loaded-class (Class/forName class-name)
+        fields (.getDeclaredFields loaded-class)
+        pairs (->> fields
+                   (map (fn [field] [(symbol (.getName field)) (.get field nil)]))
+                   (into {}))]
+    [(expand-with-macro-definitions ast pairs) macro-names]))
