@@ -20,13 +20,17 @@ Progress:
     * logical operations ([and](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/bool-and-n-arity.jt), [or](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/bool-or.jt), [xor](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/bool-xor.jt), [not](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/bool-not.jt))
     * comparison operations ([less <](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/comp-less.jt), [less or equal <=](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/comp-less-or-equal.jt), [greater >](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/comp-greater.jt), [greater or equal >=](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/comp-greater-or-equal.jt), [equal =](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/comp-equal.jt), [not equal !=](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/comp-nequal.jt))
 * Conditionals
-    * if-expressions
-    * cond-expressions
-* Lists and list operations: list, cons, get, set
+    * [if-expressions](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/cond-if-false.jt)
+    * [cond-expressions](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/cond-cond.jt)
+* Lists and list operations
+    * [list](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/list-list-args.jt)
+    * [cons](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/list-cons.jt)
+    * [get](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/list-get.jt)
+    * [set](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/list-set.jt)
 * Variables
-    * local definitions with let
-    * global definitions with define
-    * variable evaluation
+    * [local definitions with let](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/let-cool-one.jt)
+    * [global definitions with define](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/define.jt)
+    * [variable evaluation](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/define-big.jt)
 * Functions
     * [First-class](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/closure-first-class.jt)
     * [Anonymous](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/closure-single-arg.jt)
