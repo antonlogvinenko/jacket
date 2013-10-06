@@ -66,7 +66,7 @@
             "interop-static-field" "" "32767"
             "interop-instance-static-field-method" "" "true420.0falsetrue"
 
-;;            "macro-definition" "" "42"
+            "macro-definition" "" "41"
             
             "readln" "cake is a" "cake is a lie"
             "println" ""  "cake"
