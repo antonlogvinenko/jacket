@@ -51,6 +51,8 @@ Progress:
     * on reported pieces invoke macroexpansions, supress errors (not compiled macro)
     * start from the beginning with the new AST
 
+    * What about macros using macros? Exclude from expansion or preexpand them?
+    
     * lists correct support
     * remove old code
     * `, ~, ~@, lists correct support
