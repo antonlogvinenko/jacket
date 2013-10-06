@@ -34,11 +34,11 @@ Progress:
     * [Partially applied](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/closure-currying.jt)
 * Java interop
     * Objects intantiation [(class. args)](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/interop-instantiate.jt)
-    * Static fields access: (println java.lang.Short/MAX_VALUE)
-    * Static methods invokation: (java.lang.Double/valueOf "42E1")
-    * Instance fields access: (.FALSE #t)
-    * Instance methods invokation: (.after (java.util.Date. 1) (java.util.Date. 0))
-    * Shortcut syntax for all above: (. x method args), (. x field)
+    * Static fields access: [(println java.lang.Short/MAX_VALUE)](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/interop-static-field.jt)
+    * Static methods invokation: [(java.lang.Double/valueOf "42E1")](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/interop-static-method.jt)
+    * Instance fields access: [(.FALSE #t)](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/interop-instance-get-field.jt)
+    * Instance methods invokation: [(.after (java.util.Date. 1) (java.util.Date. 0))](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/interop-instance-invoke-method.jt)
+    * Shortcut syntax for all above: [(. x method args), (. x field)](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/interop-instance-static-field-method.jt)
 * Macros - in progress
     * lists correct support
     * `, ~, ~@, lists correct support
