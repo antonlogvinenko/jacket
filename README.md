@@ -46,8 +46,12 @@ Progress:
 * Macros - in progress
     * [The simplest identity macro](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-definition.jt)
     * [The simplest macro processing s-expression](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-sexpr.jt)
-    * lists correct support
-    * `, ~, ~@, lists correct support
+    * lists correct support - jacket-45: construct clojure lists
+    * (defmacro f (l) (cons l 1)) (println (f (+ 41)))
+
+    * implement template ` - jacket-46
+    
+    * ~, ~@ support
     * variable names generation
 
     * Ignore errors of macroexpansion (circular dependences)
