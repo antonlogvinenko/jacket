@@ -1,1 +1,1 @@
-java -cp wardrobe:java-impl $1
+java -cp wardrobe:java-impl:deps/* $1

@@ -25,11 +25,11 @@
             "cond-default-expr" "" "default"
 
             "list-list" "" "[]"
-            "list-list-args" "" "[1, 2, 3]"
-            "list-cons" "" "[1, 2, 3, 100500, 42]"
+            "list-list-args" "" "[1 2 3]"
+            "list-cons" "" "[1 2 3 100500 42]"
             "list-get" "" "42"
-            "list-set" "" "[1, 54, 3]"
-            "list-combined" "" "[1, 2, 44, 4, 5]"
+            "list-set" "" "[1 54 3]"
+            "list-combined" "" "[1 2 44 4 5]"
 
             "let-simple" "" "3"
             "let-cool-one" "" "hey 100500"
@@ -68,6 +68,7 @@
 
             "macro-definition" "" "42"
             "macro-sexpr" "" "42"
+            "macro-list" "" "42"
             
             "readln" "cake is a" "cake is a lie"
             "println" ""  "cake"

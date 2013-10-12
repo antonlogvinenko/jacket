@@ -338,90 +338,85 @@
 
 
      [[:list]] generate-ast
-     [["new" "java/util/ArrayList"]
-      "dup"
-      ["invokenonvirtual" "java/util/ArrayList/<init>()V"]]
+     [["ldc_w" 0]
+      ["anewarray" "java/lang/Object"]
+      ["invokestatic" "clojure/lang/PersistentVector/create([Ljava/lang/Object;)Lclojure/lang/PersistentVector;"]]
 
      [[:list 1]] generate-ast
-     [["new" "java/util/ArrayList"]
+     [["ldc_w" 1]
+      ["anewarray" "java/lang/Object"]
       "dup"
-      ["invokenonvirtual" "java/util/ArrayList/<init>()V"]
-      "dup"
+      ["ldc_w" 0]
       ["new" "java/lang/Long"]
       "dup"
       ["ldc_w" 1]
       "i2l"
       ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
-      ["invokevirtual" "java/util/ArrayList/add(Ljava/lang/Object;)Z"]
-      "pop"]
+      "aastore"
+      ["invokestatic" "clojure/lang/PersistentVector/create([Ljava/lang/Object;)Lclojure/lang/PersistentVector;"]]
 
      [[:cons [:list 2] 42]] generate-ast
-     [["new" "java/util/ArrayList"]
+     [["ldc_w" 1]
+      ["anewarray" "java/lang/Object"]
       "dup"
-      ["invokenonvirtual" "java/util/ArrayList/<init>()V"]
-      "dup"
+      ["ldc_w" 0]
       ["new" "java/lang/Long"]
       "dup"
       ["ldc_w" 2]
       "i2l"
       ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
-      ["invokevirtual" "java/util/ArrayList/add(Ljava/lang/Object;)Z"]
-      "pop"
-      "dup"
+      "aastore"
+      ["invokestatic" "clojure/lang/PersistentVector/create([Ljava/lang/Object;)Lclojure/lang/PersistentVector;"]
       ["new" "java/lang/Long"]
       "dup"
       ["ldc_w" 42]
       "i2l"
       ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
-      ["invokevirtual" "java/util/ArrayList/add(Ljava/lang/Object;)Z"]
-      "pop"]
+      ["invokevirtual" "clojure/lang/PersistentVector/cons(Ljava/lang/Object;)Lclojure/lang/PersistentVector;"]]
 
      [[:get [:list 1] 0]] generate-ast
-     [["new" "java/util/ArrayList"]
+     [["ldc_w" 1]
+      ["anewarray" "java/lang/Object"]
       "dup"
-      ["invokenonvirtual" "java/util/ArrayList/<init>()V"]
-      "dup"
+      ["ldc_w" 0]
       ["new" "java/lang/Long"]
       "dup"
       ["ldc_w" 1]
       "i2l"
       ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
-      ["invokevirtual" "java/util/ArrayList/add(Ljava/lang/Object;)Z"]
-      "pop"
+      "aastore"
+      ["invokestatic" "clojure/lang/PersistentVector/create([Ljava/lang/Object;)Lclojure/lang/PersistentVector;"]
       ["new" "java/lang/Long"]
       "dup"
       ["ldc_w" 0]
       "i2l"
       ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
       ["invokevirtual" "java/lang/Number/intValue()I"]
-      ["invokevirtual" "java/util/ArrayList/get(I)Ljava/lang/Object;"]]
+      ["invokevirtual" "clojure/lang/PersistentVector/get(I)Ljava/lang/Object;"]]
 
      [[:set [:list 42] 0 1]] generate-ast
-     [["new" "java/util/ArrayList"]
+     [["ldc_w" 1]
+      ["anewarray" "java/lang/Object"]
       "dup"
-      ["invokenonvirtual" "java/util/ArrayList/<init>()V"]
-      "dup"
+      ["ldc_w" 0]
       ["new" "java/lang/Long"]
       "dup"
       ["ldc_w" 42]
       "i2l"
       ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
-      ["invokevirtual" "java/util/ArrayList/add(Ljava/lang/Object;)Z"]
-      "pop"
-      "dup"
+      "aastore"
+      ["invokestatic" "clojure/lang/PersistentVector/create([Ljava/lang/Object;)Lclojure/lang/PersistentVector;"]
       ["new" "java/lang/Long"]
       "dup"
       ["ldc_w" 0]
       "i2l"
       ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
-      ["invokevirtual" "java/lang/Number/intValue()I"]
       ["new" "java/lang/Long"]
       "dup"
       ["ldc_w" 1]
       "i2l"
       ["invokenonvirtual" "java/lang/Long/<init>(J)V"]
-      ["invokevirtual" "java/util/ArrayList/set(ILjava/lang/Object;)Ljava/lang/Object;"]
-      "pop"]
+      ["invokevirtual" "clojure/lang/PersistentVector/assoc(Ljava/lang/Object;Ljava/lang/Object;)Lclojure/lang/IPersistentVector;"]]
      
      [[:+ 1 2]] generate-ast
      [["new" "java/lang/Long"]
@@ -527,10 +522,7 @@
       ["ldc_w" "\"intValue\""]
       ["ldc_w" 0]
       ["anewarray" "java/lang/Object"]
-      ["invokestatic" "Interop/accessInstance(Ljava/lang/Object;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/Object;"]]
-     
-
-    ))
+      ["invokestatic" "Interop/accessInstance(Ljava/lang/Object;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/Object;"]]))
 
 (deftest generate-closures-test
   (are [args result]

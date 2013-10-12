@@ -46,8 +46,6 @@ Progress:
 * Macros - in progress
     * [The simplest identity macro](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-definition.jt)
     * [The simplest macro processing s-expression](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-sexpr.jt)
-    * lists correct support - jacket-45: construct clojure lists
-    * (defmacro f (l) (cons l 1)) (println (f (+ 41)))
 
     * implement template ` - jacket-46
     
@@ -58,6 +56,8 @@ Progress:
     * What about macros using macros? Exclude from expansion or preexpand them?
     
     * partially applied macros? O_O
+
+    * macro system - remove "defmacro f" as "define f (lambda...", add Token info, don't add Token. after macro expansion
 
 Next episodes:
 * Web UI in ClojureScript

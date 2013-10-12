@@ -19,7 +19,10 @@
 
 
 (defn- expand-macro [[f & args :as expr] macro-fn]
-  (->> args .toArray (._invoke macro-fn)))
+  (->> args
+       .toArray
+       (._invoke macro-fn)
+       (postwalk (fn [x] (if (vector? x) x (Token. 1 1 x))))))
 
 (defn- expand-macro-with [definitions obj]
   (if (-> obj vector? not) obj

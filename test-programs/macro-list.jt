@@ -1,0 +1,3 @@
+(defmacro f (l) (cons l 1))
+
+(println (f (+ 41)))

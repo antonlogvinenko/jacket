@@ -304,13 +304,11 @@
                                         ;Lists
 (defn generate-single-cons [context arg]
   (-> ops
-      (with dup)
       (with (generate-ast context arg))
-      (with invokevirtual ['java 'util 'ArrayList]
-            'add
+      (with invokevirtual ['clojure 'lang 'PersistentVector]
+            'cons
             [(gen-path 'java 'lang 'Object)]
-            :boolean)
-      (with pop1)))
+            (gen-path 'clojure 'lang 'PersistentVector))))
 
 (defn generate-multiple-cons [context args]
   (->> args
@@ -320,37 +318,37 @@
 (defn generate-cons [context args]
   (-> ops
       (with (->> args first (generate-ast context)))
+      (with checkcast (gen-path 'clojure 'lang 'PersistentVector))
       (with (->> args rest (generate-multiple-cons context)))))
 
+(defn generate-invokation-arguments [context args])
 (defn generate-list [context args]
   (-> ops
-      (with jnew (gen-path 'java 'util 'ArrayList))
-      (with dup)
-      (with invokenonvirtual ['java 'util 'ArrayList] '<init> [] :void)
-      (with (->> args
-                 (map (partial generate-single-cons context))
-                 (reduce with ops)))))
+      (with ldc_w (count args))
+      (with anewarray (gen-path 'java 'lang 'Object))
+      (with (generate-invokation-arguments context args))
+      (with invokestatic ['clojure 'lang 'PersistentVector]
+            'create [[(gen-path 'java 'lang 'Object)]]
+            (gen-path 'clojure 'lang 'PersistentVector))))
 
 (defn generate-list-get [context args]
   (-> ops
       (with (->> args first (generate-ast context)))
+      (with checkcast (gen-path 'clojure 'lang 'PersistentVector))
       (with (->> args second (generate-ast context)))
       (with invokevirtual ['java 'lang 'Number] 'intValue [] :int)
-      (with invokevirtual ['java 'util 'ArrayList]
+      (with invokevirtual ['clojure 'lang 'PersistentVector]
             'get [:int] (gen-path 'java 'lang 'Object))))
 
 (defn generate-list-set [context args]
   (-> ops
       (with (->> args first (generate-ast context)))
-      (with dup)
+      (with checkcast (gen-path 'clojure 'lang 'PersistentVector))
       (with (->> args second (generate-ast context)))
-      (with invokevirtual ['java 'lang 'Number] 'intValue [] :int)
       (with (->> 2 (nth args) (generate-ast context)))
-      (with invokevirtual ['java 'util 'ArrayList]
-            'set [:int (gen-path 'java 'lang 'Object)]
-            (gen-path 'java 'lang 'Object))
-      (with pop1)))
-
+      (with invokevirtual ['clojure 'lang 'PersistentVector]
+            'assoc [(gen-path 'java 'lang 'Object) (gen-path 'java 'lang 'Object)]
+            (gen-path 'clojure 'lang 'IPersistentVector))))
 
 
                                         ;Let expression
@@ -627,6 +625,6 @@
    :else (codegen-error context atom)))
 
 (defn generate-ast [context ast]
-  (if (vector? ast)
+   (if (vector? ast)
     (generate-sexpr context ast)
     (generate-atom context ast)))
