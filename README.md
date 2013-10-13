@@ -46,20 +46,21 @@ Progress:
 * Macros - in progress
     * [The simplest identity macro](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-definition.jt)
     * [The simplest macro processing s-expression](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-sexpr.jt)
+    * [Using list operations to modify s-expressions](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-list.jt)
 
-    * implement template ` - jacket-46
-    
-    * ~, ~@ support
-    * variable names generation
+    * 47, 48, 49 - backtick, unquote, uquote-
+    * syntax sugar: ' ` ~ ~@
 
-    * Ignore errors of macroexpansion (circular dependences)
-    * What about macros using macros? Exclude from expansion or preexpand them?
+    * variable names generation - jacket-50
+    * Ignore errors of macroexpansion (circular dependences) - jacket-51
+    * What about macros using macros? Exclude from expansion or preexpand them? - jacket-52
     
     * partially applied macros? O_O
 
     * macro system - remove "defmacro f" as "define f (lambda...", add Token info, don't add Token. after macro expansion
 
 Next episodes:
+* eval, REPL?
 * Web UI in ClojureScript
 * Tail recursion macro support
 * Performance test

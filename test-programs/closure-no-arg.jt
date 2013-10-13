@@ -1,1 +1,3 @@
-((lambda () (println 42)))
+(define f (lambda () (println 42)))
+
+(f)

@@ -23,7 +23,7 @@
 (defn symbol-undefined? [[global local _] sym]
   (let [str-repr (-> sym .value .toString)]
     (if (or (.startsWith str-repr ".") (.endsWith str-repr ".")) false
-        (let [legal-syms (concat (map keywordize KEYWORDS) (flatten local) global)]
+        (let [legal-syms (concat (map keywordize (concat KEYWORDS OPERATORS)) (flatten local) global)]
           (not-any? #(= sym %) legal-syms)))))
 
 (defn check-define [sexpr]
@@ -180,7 +180,7 @@
         new-state (if (empty? sexprs) ok (+exprs ok sexprs))]
     (cond
      (is-sexpr? f)
-     (check-sexpr new-state f)
+     (check-sexpr state f)
      
      (symbol-undefined? state f)
      (-> new-state

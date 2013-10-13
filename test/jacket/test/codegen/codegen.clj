@@ -69,6 +69,11 @@
             "macro-definition" "" "42"
             "macro-sexpr" "" "42"
             "macro-list" "" "42"
+            "macro-quoted-atom" "" "42"
+            "macro-quoted-symbol" "" "42"
+            "macro-quoted-keyword" "" "42"
+            "macro-quoted-list" "" "42"
+            "macro-no-arg" "" "42"
             
             "readln" "cake is a" "cake is a lie"
             "println" ""  "cake"

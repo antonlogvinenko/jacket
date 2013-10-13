@@ -1,0 +1,5 @@
+(defmacro f() (quote (+ y 1)))
+
+(define y 41)
+
+(println (f))

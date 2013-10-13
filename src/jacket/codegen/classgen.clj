@@ -118,7 +118,7 @@
                    {:access :public :static true :name "main"
                     :arguments [[(gen-path 'java 'lang 'String)]]
                     :return :void
-                    :instructions (concat instructions [return])}]))
+                    :instructions (concat [(limitstack 10) (limitlocals 10)] instructions [return])}]))
 
 (defn generate-closures [closures]
   (for [[name code] closures]

@@ -7,9 +7,10 @@
                "print" "read" "println" "readln"
                "if" "cond"
                "list" "cons" "get" "set"
-               "define" "let" "defmacro" "~" "~@" "'"
-               "lambda"
-               "quote"])
+               "define" "let" "defmacro"
+               "lambda" "quote" "backtick" "unquote" "unquote-splicing"])
+
+(def OPERATORS ["'" "`" "~" "~@"])
 
 (defn matches [coll key]
   (if (coll? coll)
@@ -29,7 +30,7 @@
 
 (defn keywordize [sb]
   (let [str (.toString sb)]
-    (if (some (partial = str) KEYWORDS)
+    (if (some (partial = str) (concat KEYWORDS OPERATORS))
       (keyword str)
       (symbol str))))
 
@@ -43,8 +44,13 @@
                      [\!] [:not-equal append]
                      [\< \>] [:strict-inequality append]
                      [\+ \/ \* \=] [:keyword append]
-                     \- [:minus append]}
+                     \- [:minus append]
+                     [\' \`] [:done append keywordize]
+                     \~ [:unquote append]}
 
+              :unquote {\@ [:done append keywordize]
+                        separator? [:done skip-char keywordize]}
+              
               :minus {digit? [:integer append]
                       separator? [:done return-char keywordize]}
               

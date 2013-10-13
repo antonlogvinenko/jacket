@@ -322,14 +322,16 @@
       (with (->> args rest (generate-multiple-cons context)))))
 
 (defn generate-invokation-arguments [context args])
-(defn generate-list [context args]
+(defn generate-list-with-fn [generate-fn context args]
   (-> ops
       (with ldc_w (count args))
       (with anewarray (gen-path 'java 'lang 'Object))
-      (with (generate-invokation-arguments context args))
+      (with (generate-invokation-arguments generate-fn context args))
       (with invokestatic ['clojure 'lang 'PersistentVector]
             'create [[(gen-path 'java 'lang 'Object)]]
             (gen-path 'clojure 'lang 'PersistentVector))))
+(defn generate-list [context args]
+  (generate-list-with-fn generate-ast context args))
 
 (defn generate-list-get [context args]
   (-> ops
@@ -480,16 +482,16 @@
         (generate-closed-variable closed-number context atom)
         (generate-global-variable context atom)))))
 
-(defn generate-single-argument [context idx arg]
+(defn generate-single-argument [generate-fn context idx arg]
   (-> ops
       (with dup)
       (with ldc_w idx)
-      (with (generate-ast context arg))
+      (with (generate-fn context arg))
       (with aastore)))
 
-(defn generate-invokation-arguments [context args]
+(defn generate-invokation-arguments [generate-fn context args]
   (->> args
-       (map-indexed (partial generate-single-argument context))
+       (map-indexed (partial generate-single-argument generate-fn context))
        (reduce with ops)))
 
 (defn generate-invokation [context args]
@@ -503,7 +505,7 @@
         (with checkcast (gen-path 'AClosure))
         (with ldc_w (count fun-args))
         (with anewarray (gen-path 'java 'lang 'Object))
-        (with (generate-invokation-arguments context fun-args))
+        (with (generate-invokation-arguments generate-ast context fun-args))
         (with invokevirtual ['AClosure]
               '_invoke
               [[(gen-path 'java 'lang 'Object)]]
@@ -519,7 +521,7 @@
         (with ldc_w access-name)
         (with ldc_w (count arguments))
         (with anewarray (gen-path 'java 'lang 'Object))
-        (with (generate-invokation-arguments context arguments))
+        (with (generate-invokation-arguments generate-ast context arguments))
         (with invokestatic ['Interop]
               'accessStatic
               [(gen-path 'java 'lang 'String)
@@ -546,7 +548,7 @@
         (with ldc_w class-name)
         (with ldc_w (count fun-args))
         (with anewarray (gen-path 'java 'lang 'Object))
-        (with (generate-invokation-arguments context fun-args))
+        (with (generate-invokation-arguments generate-ast context fun-args))
         (with invokestatic ['Interop]
               'instantiate
               [(gen-path 'java 'lang 'String) [(gen-path 'java 'lang 'Object)]]
@@ -559,7 +561,7 @@
       (with ldc_w thing)
       (with ldc_w (count arguments))
       (with anewarray (gen-path 'java 'lang 'Object))
-      (with (generate-invokation-arguments context arguments))
+      (with (generate-invokation-arguments generate-ast context arguments))
       (with invokestatic ['Interop]
             'accessInstance
             [(gen-path 'java 'lang 'Object)
@@ -584,6 +586,47 @@
       (static-something context (str (.value arg1) \/ (.value arg2)) arguments)
       (instance-something context arg1 (-> arg2 .value str) arguments))))
 
+
+                                        ;Macros
+(defn generate-atom [context args])
+(defn generate-quoted-list [context args])
+(defn generate-quote [context args])
+(defn generate-quoted-symbol [context sym])
+(defn generate-quoted-keyword [context key])
+
+(defn generate-quoted-object [context expr]
+  (cond
+   (vector? expr) (generate-quoted-list context expr)
+   (is? expr symbol?) (generate-quoted-symbol context expr)
+   (is? expr keyword?) (generate-quoted-keyword context expr)
+   :else (generate-atom context expr)))
+(defn generate-quote [context args]
+  (let [expr (first args)]
+    (generate-quoted-object context expr)))
+
+(defn generate-quoted-list [context args]
+  (generate-list-with-fn generate-quoted-object context args))
+
+(defn generate-quoted-symbol [context sym]
+  (let [name (-> sym .value .getName)]
+    (-> ops
+        (with ldc_w name)
+        (with invokestatic ['clojure 'lang 'Symbol]
+              'create
+              [(gen-path 'java 'lang 'String)]
+              (gen-path 'clojure 'lang 'Symbol)))))
+
+(defn generate-quoted-keyword [context key]
+  (let [name (-> key .value .getName)]
+    (-> ops
+        (with ldc_w name)
+        (with invokestatic ['clojure 'lang 'Keyword]
+              'intern
+              [(gen-path 'java 'lang 'String)]
+              (gen-path 'clojure 'lang 'Keyword)))))
+
+
+
 (def sexpr-table
   {:println generate-println :print generate-print :readln generate-readln
    :+ generate-add :* generate-mul :- generate-sub (keyword "/") generate-div
@@ -593,6 +636,7 @@
    :list generate-list :cons generate-cons :get generate-list-get :set generate-list-set
    :let generate-let :define generate-define
    :lambda generate-closure
+   :quote generate-quote
    })
 
 (defn generate-sexpr [context sexpr]

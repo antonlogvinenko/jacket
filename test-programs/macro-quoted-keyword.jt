@@ -1,0 +1,3 @@
+(defmacro f () (quote println))
+
+((f) 42)

@@ -17,21 +17,25 @@
 (defn macro-definitions [[definitions macro]]
   [(map expand-macro-definition definitions) macro])
 
+(defn debug2 [x] (println x) x)
 
 (defn- expand-macro [[f & args :as expr] macro-fn]
   (->> args
+       vec
        .toArray
        (._invoke macro-fn)
        (postwalk (fn [x] (cond (vector? x) x
                                (instance? Token x) x
-                               :else (Token. 1 1 x))))))
+                               :else (Token. x 1 1))))))
 
 (defn- expand-macro-with [definitions obj]
-  (if (-> obj vector? not) obj
-      (let [f (.value (first obj))
-            def (get definitions f)]
-        (if (nil? def) obj
-            (expand-macro obj def)))))
+  (cond
+   (-> obj vector? not) obj
+   (empty? obj) obj
+   :else (let [f (.value (first obj))
+               def (get definitions f)]
+           (if (nil? def) obj
+               (expand-macro obj def)))))
 
 (defn- expand-with-macro-definitions [ast definitions]
   (postwalk (partial expand-macro-with definitions) ast))

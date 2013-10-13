@@ -67,6 +67,10 @@
   (are [text keyword] (-> text tokenize first (= keyword))
        "asd" 'asd
        "lambda" :lambda "define" :define "+" :+ "print" :print
+       "quote" :quote
+       "backtick" :backtick
+       "unquote" :unquote
+       "unquote-splicing" :unquote-splicing
        ))
 
 (deftest read-literal-test
@@ -79,6 +83,10 @@
        "a" 'a
        "(" :LB
        ")" :RB
+       "'" :'
+       "`" (keyword "`")
+       "~" (keyword "~")
+       "~@" (keyword "~@")
        "" nil
        "\t" nil
        "\r" nil
@@ -109,6 +117,6 @@
        "-1 -1.2"
        [-1 -1.2]
        
-       "\"\n\"define\"asd\"4.56\"s\")lambda+4.56lambda\r\"\"lambda()quote"
-       ["\n" :define "asd" 4.56 "s" :RB 'lambda+4.56lambda "" :lambda :LB :RB :quote]
+       "\"\n\"define\"asd\"4.56\"s\")lambda+4.56lambda\r\"\"lambda()quote backtick"
+       ["\n" :define "asd" 4.56 "s" :RB 'lambda+4.56lambda "" :lambda :LB :RB :quote :backtick]
        ))

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo "Lines of code"
-find src/ -name "*.clj" | xargs wc -l $1
+find src -name "*.clj" | xargs wc -l $1
 
 echo
 
