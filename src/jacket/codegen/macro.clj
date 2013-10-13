@@ -22,7 +22,9 @@
   (->> args
        .toArray
        (._invoke macro-fn)
-       (postwalk (fn [x] (if (vector? x) x (Token. 1 1 x))))))
+       (postwalk (fn [x] (cond (vector? x) x
+                               (instance? Token x) x
+                               :else (Token. 1 1 x))))))
 
 (defn- expand-macro-with [definitions obj]
   (if (-> obj vector? not) obj
