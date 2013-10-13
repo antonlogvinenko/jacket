@@ -49,9 +49,9 @@ Progress:
     * [Using list operations to modify s-expressions](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-list.jt)
     * Quote operation
         * [lists](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-quoted-list.jt)
-	* keywords(https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-quoted-keyword.jt)
-	* [symbols](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-quoted-symbol.jt)
-	* [atoms](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-quoted-atom.jt)
+        * keywords(https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-quoted-keyword.jt)
+        * [symbols](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-quoted-symbol.jt)
+        * [atoms](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-quoted-atom.jt)
     * 47, 48, 49 - backtick, unquote, uquote-
     * syntax sugar: ' ` ~ ~@
 
