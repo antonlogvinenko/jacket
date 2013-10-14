@@ -52,7 +52,9 @@ Progress:
         * [keywords](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-quoted-keyword.jt)
         * [symbols](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-quoted-symbol.jt)
         * [atoms](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-quoted-atom.jt)
-    * 47, 48, 49 - backtick, unquote, uquote-
+    * [Backtick, unquote operations](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-backtick-unquoted.jt)
+    
+    * 48, 49 - backtick, unquote, uquote-
     * syntax sugar: ' ` ~ ~@
 
     * variable names generation - jacket-50
