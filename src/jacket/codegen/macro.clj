@@ -32,10 +32,12 @@
   (cond
    (-> obj vector? not) obj
    (empty? obj) obj
-   :else (let [f (.value (first obj))
-               def (get definitions f)]
-           (if (nil? def) obj
-               (expand-macro obj def)))))
+   :else (let [f (first obj)]
+           (if (vector? f) obj
+               (let [fv (.value f)
+                     def (get definitions fv)]
+                 (if (nil? def) obj
+                     (expand-macro obj def)))))))
 
 (defn- expand-with-macro-definitions [ast definitions]
   (postwalk (partial expand-macro-with definitions) ast))
@@ -43,7 +45,9 @@
 (defn macroexpand-jacket [class-name ast macro-names]
   (let [loaded-class (Class/forName class-name)
         fields (.getDeclaredFields loaded-class)
-        pairs (->> fields
+        pairs (->> macro-names
+                   (map str)
+                   (map (fn [macro-name] (.getDeclaredField loaded-class macro-name)))
                    (map (fn [field] [(-> field .getName symbol) (.get field nil)]))
                    (into {}))]
     [(expand-with-macro-definitions ast pairs) macro-names]))

@@ -589,25 +589,36 @@
 
                                         ;Macros
 (defn generate-atom [context args])
-(defn generate-quoted-list [context args])
-(defn generate-quote [context args])
-(defn generate-quoted-symbol [context sym])
-(defn generate-quoted-keyword [context key])
+(defn generate-screened-list [context args])
+(defn generate-screen [context args])
+(defn generate-screened-symbol [context sym])
+(defn generate-screened-keyword [context key])
 
-(defn generate-quoted-object [context expr]
+(defn generate-screened-object [context expr]
   (cond
-   (vector? expr) (generate-quoted-list context expr)
-   (is? expr symbol?) (generate-quoted-symbol context expr)
-   (is? expr keyword?) (generate-quoted-keyword context expr)
+   (vector? expr) (generate-screened-list context expr)
+   (is? expr symbol?) (generate-screened-symbol context expr)
+   (is? expr keyword?) (generate-screened-keyword context expr)
    :else (generate-atom context expr)))
-(defn generate-quote [context args]
+
+(defn generate-screened [context args]
   (let [expr (first args)]
-    (generate-quoted-object context expr)))
+    (generate-screened-object context expr)))
 
-(defn generate-quoted-list [context args]
-  (generate-list-with-fn generate-quoted-object context args))
+(defn generate-backtick [context args]
+  (generate-screened (assoc context :unquote true) args))
 
-(defn generate-quoted-symbol [context sym]
+(defn generate-quote [context args]
+  (generate-screened (assoc context :unquote false) args))
+
+(defn generate-screened-list [context args]
+  (let [arg1 (first args)
+        arg2 (second args)]
+    (if (and (= arg1 :unquote) (:unquote context))
+      (generate-ast (dissoc context :unquote) arg2)
+      (generate-list-with-fn generate-screened-object context args))))
+
+(defn generate-screened-symbol [context sym]
   (let [name (-> sym .value .getName)]
     (-> ops
         (with ldc_w name)
@@ -616,7 +627,7 @@
               [(gen-path 'java 'lang 'String)]
               (gen-path 'clojure 'lang 'Symbol)))))
 
-(defn generate-quoted-keyword [context key]
+(defn generate-screened-keyword [context key]
   (let [name (-> key .value .getName)]
     (-> ops
         (with ldc_w name)
@@ -636,7 +647,7 @@
    :list generate-list :cons generate-cons :get generate-list-get :set generate-list-set
    :let generate-let :define generate-define
    :lambda generate-closure
-   :quote generate-quote
+   :quote generate-quote :backtick generate-backtick
    })
 
 (defn generate-sexpr [context sexpr]

@@ -1,0 +1,7 @@
+(define x 100500)
+
+(defmacro f () (backtick (+ y (unquote (let ((x 1)) (+ x 1))))))
+
+(define y 40)
+
+(println (f))

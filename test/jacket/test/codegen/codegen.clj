@@ -74,6 +74,9 @@
             "macro-quoted-keyword" "" "42"
             "macro-quoted-list" "" "42"
             "macro-no-arg" "" "42"
+
+            "macro-backticked-list" "" "42"
+            "macro-backtick-unquoted" "" "42"
             
             "readln" "cake is a" "cake is a lie"
             "println" ""  "cake"

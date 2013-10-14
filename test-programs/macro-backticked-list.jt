@@ -1,0 +1,5 @@
+(defmacro f() (backtick (+ y 1)))
+
+(define y 41)
+
+(println (f))

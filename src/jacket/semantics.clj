@@ -202,6 +202,7 @@
                   :defmacro check-defmacro
                   :lambda check-lambda
                   :quote check-quote
+                  :backtick check-quote
                   :println check-print-utility
                   :print check-print-utility
                   :read check-read-utility
