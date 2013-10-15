@@ -54,8 +54,8 @@ Progress:
         * [atoms](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-quoted-atom.jt)
     * [Backtick, unquote operations](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-backtick-unquoted.jt)
     
-    * 48, 49 - backtick, unquote, uquote-
-    * syntax sugar: ' ` ~ ~@
+    * jacket-48 uquote-splicing
+    * jacket-49 syntax sugar: ' ` ~ ~@
 
     * variable names generation - jacket-50
     * Ignore errors of macroexpansion (circular dependences) - jacket-51
