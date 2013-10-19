@@ -58,9 +58,9 @@ Progress:
     * jacket-49 syntax sugar: ' ` ~ ~@
 
     * variable names generation - jacket-50
+
     * Ignore errors of macroexpansion (circular dependences) - jacket-51
     * What about macros using macros? Exclude from expansion or preexpand them? - jacket-52
-    
     * partially applied macros? O_O
 
     * macro system - remove "defmacro f" as "define f (lambda...", add Token info, don't add Token. after macro expansion

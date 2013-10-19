@@ -611,12 +611,57 @@
 (defn generate-quote [context args]
   (generate-screened (assoc context :unquote false) args))
 
+
+
+                                        ;Macro list
+(defn generate-unquote-splicing-and-into [context arg]
+  (-> ops
+      (with dup)
+      (with (generate-ast (dissoc context :unquote) arg))
+      (with invokevirtual ['java 'util 'LinkedList]
+            'addAll [(gen-path 'java 'util 'Collection)]
+            :boolean)
+      (with pop1)))
+
+(defn generate-screened-object-and-conj [context args]
+  (-> ops
+      (with dup)
+      (with (generate-screened-object context args))
+      (with invokevirtual ['java 'util 'LinkedList]
+            'add [(gen-path 'java 'lang 'Object)]
+            :boolean)
+      (with pop1)))
+
+(defn generate-screened-list-object [context args]
+  (if (-> args vector? not)
+    (generate-screened-object-and-conj context args)
+    (let [arg1 (first args)
+          arg2 (second args)]
+      (if (and (= arg1 :unquote-splicing) (:unquote context))
+        (generate-unquote-splicing-and-into context arg2)
+        (generate-screened-object-and-conj context args)))))
+
+(defn generate-macro-list [context args]
+  (-> ops
+      (with jnew (gen-path 'java 'util 'LinkedList))
+      (with dup)
+      (with invokenonvirtual ['java 'util 'LinkedList] '<init> [] :void)
+      (with (->> args
+                 (map (partial generate-screened-list-object context))
+                 (reduce with ops)))
+      (with invokestatic ['clojure 'lang 'PersistentVector]
+            'create [(gen-path 'java 'util 'List)]
+            (gen-path 'clojure 'lang 'PersistentVector))))
+
 (defn generate-screened-list [context args]
   (let [arg1 (first args)
         arg2 (second args)]
     (if (and (= arg1 :unquote) (:unquote context))
       (generate-ast (dissoc context :unquote) arg2)
-      (generate-list-with-fn generate-screened-object context args))))
+      (generate-macro-list context args))))
+
+
+
 
 (defn generate-screened-symbol [context sym]
   (let [name (-> sym .value .getName)]

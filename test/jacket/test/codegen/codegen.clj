@@ -77,6 +77,7 @@
 
             "macro-backticked-list" "" "42"
             "macro-backtick-unquoted" "" "42"
+            "macro-backtick-unquote-splicing" "" "42"
             
             "readln" "cake is a" "cake is a lie"
             "println" ""  "cake"

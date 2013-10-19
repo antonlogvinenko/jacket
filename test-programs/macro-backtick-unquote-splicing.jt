@@ -1,0 +1,9 @@
+(define x 100500)
+
+(defmacro f () (backtick (+ y (unquote-splicing (let ((x 1)) (list x (quote z)))))))
+
+(define y 40)
+
+(define z 1)
+
+(println (f))
