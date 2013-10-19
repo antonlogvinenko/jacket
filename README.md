@@ -54,7 +54,7 @@ Progress:
         * [atoms](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-quoted-atom.jt)
     * [Backtick, unquote operations](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-backtick-unquoted.jt)
     
-    * jacket-48 uquote-splicing
+    * [Uquote-splicing](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-backtick-unquote-splicing.jt)
     * jacket-49 syntax sugar: ' ` ~ ~@
 
     * variable names generation - jacket-50
