@@ -1,4 +1,4 @@
-(defmacro f() (quote (+ y 1)))
+(defmacro f() '(+ y 1))
 
 (define y 41)
 

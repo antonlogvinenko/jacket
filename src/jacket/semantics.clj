@@ -203,6 +203,8 @@
                   :lambda check-lambda
                   :quote check-quote
                   :backtick check-quote
+                  :unquote check-quote
+                  :unquote-splicing check-quote
                   :println check-print-utility
                   :print check-print-utility
                   :read check-read-utility

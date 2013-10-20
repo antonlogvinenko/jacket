@@ -1,6 +1,6 @@
 (define x 100500)
 
-(defmacro f () (backtick (+ y (unquote-splicing (let ((x 1)) (list x (quote z)))))))
+(defmacro f () `(+ y ~@(let ((x 1)) (list x 'z))))
 
 (define y 40)
 

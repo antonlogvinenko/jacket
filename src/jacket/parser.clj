@@ -2,7 +2,8 @@
   (:use [jacket.lexer.lexer]
         [jacket.errors]
         [jacket.lexer.fsm]
-        ))
+        [clojure.walk])
+  (:import [jacket.lexer.fsm Token]))
 
 (defn conj-last [stack elem]
   (conj (pop stack)
@@ -28,7 +29,22 @@
                             :RB (conj-last (pop stack) (peek stack))
                             (conj-last stack token))]
             (recur token tokens new-stack)))))))
-  
+
+(def sugar {:' :quote
+            (keyword "`") :backtick
+            (keyword "~") :unquote
+            (keyword "~@") :unquote-splicing})
+
+(defn ab [coll x]
+  (if-let [t (get sugar (last coll))]
+    (conj (into [] (drop-last 1 coll)) [(Token. t 1 1) x])
+    (conj coll x)))
+
+(defn macro-template [sexpr]
+  (if (vector? sexpr)
+    (reduce ab [] sexpr)
+    sexpr))
+
 (defn parse-expr [tokens]
   (let [token (first tokens)
         token-value (.value token)]
@@ -41,4 +57,4 @@
     (if (empty? tokens)
       expressions
       (let [{expr :expr tokens :tokens} (parse-expr tokens)]
-        (->> expr (conj expressions) (recur tokens))))))
+        (->> expr (postwalk macro-template) (conj expressions) (recur tokens))))))
