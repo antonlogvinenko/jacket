@@ -57,18 +57,18 @@ Progress:
     * [Uquote-splicing](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-backtick-unquote-splicing.jt)
     * variable names generation - jacket-50
 
-    * Ignore errors of macroexpansion (circular dependences) - jacket-51
-    * What about macros using macros? Exclude from expansion or preexpand them? - jacket-52
+    * errors of macroexpansion + circular dependences - jacket-51
+    * Check macros using macros - jacket-52
 
-    * partially applied macros? O_O
+    * Partially applied macros? X_X or O_O?
     
-    * macro system - remove "defmacro f" as "define f (lambda...", add Token info, don't add Token. after macro expansion
-
-Next episodes:
-* eval, REPL?
+    * macro system - remove "defmacro f" as "define f (lambda...", add Token info, don't add Token. after expansion
 * Web UI in ClojureScript
-* Tail recursion macro support
-* Performance test
+
+Probably:
+* eval, REPL?
+* Tail recursion support
+* Performance testing
 * Small bugfixes
 
 Ideas:
