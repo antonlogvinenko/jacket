@@ -55,8 +55,8 @@ Progress:
     * [Backtick, unquote operations](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-backtick-unquoted.jt)
     
     * [Uquote-splicing](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-backtick-unquote-splicing.jt)
-    * variable names generation - jacket-50
 
+    * variable names generation - jacket-50
     * errors of macroexpansion + circular dependences - jacket-51
     * Check macros using macros - jacket-52
 
