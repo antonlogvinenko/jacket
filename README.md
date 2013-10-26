@@ -57,11 +57,10 @@ Progress:
     * [Uquote-splicing](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-backtick-unquote-splicing.jt)
     * [Macro gensym](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-gensym.jt)
 
-    * errors of macroexpansion + circular dependences - jacket-51
-
-    * ~x not working (lexer bug), fix, change (unquote x) with ~x in tests
     * ~ needs a var - semantic analysis
     * ~ is not unquote - split functions
+
+    * errors of macroexpansion + circular dependences - jacket-51
     
     * Check macros using macros - jacket-52
     * Partially applied macros? X_X or O_O?
@@ -73,7 +72,7 @@ Probably:
 * eval, REPL?
 * Tail recursion support
 * Performance testing
-* Small bugfixes
+* Small bugfixes, using more protocols between modules
 
 Ideas:
 * Namespaces?

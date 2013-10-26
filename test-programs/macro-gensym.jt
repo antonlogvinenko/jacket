@@ -1,4 +1,4 @@
-(defmacro g(x) `(let ((a# 2)) (+ a# (unquote x))))
+(defmacro g(x) `(let ((a# 2)) (+ a# ~x)))
 
 
 (print (let ((a 1)) (g (+ a 39))))

@@ -49,6 +49,7 @@
                      \~ [:unquote append]}
 
               :unquote {\@ [:done append keywordize]
+                        letter? [:done return-char keywordize]
                         separator? [:done return-char keywordize]}
               
               :minus {digit? [:integer append]
