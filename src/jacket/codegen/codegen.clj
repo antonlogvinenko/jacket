@@ -23,7 +23,8 @@
                                       {:label 0 :class name
                                        :macro macro
                                        :closure (agent 0)
-                                       :globals globals :arguments {} :closed {} :local '()}
+                                       :hygienic (atom {})
+                                       :globals globals :arguments {} :closed {} :local []}
                                       (first ast))]
                      (recur (conj code ops) (rest ast) (into globals (:globals ops))))))
         ops (map :ops code)

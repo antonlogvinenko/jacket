@@ -369,11 +369,11 @@
             instructions (with code (->> pair second (generate-ast context)))
             local (->> context :local first)
             variable-name (first pair)
-            variable-number (-> context :local first count)
+            variable-number (->> context :local (map count) (apply +))
             instructions (with instructions astore variable-number)
             context (->> variable-number
                          (assoc local variable-name)
-                         (conj (drop 1 local))
+                         (conj (drop 1 (context :local)))
                          (assoc context :local))]
         (recur context (rest pairs) instructions)))))
 
@@ -418,7 +418,7 @@
                   (map-indexed (fn [i x] [x i]))
                   (into {}))
         new-context (assoc context
-                      :local '()
+                      :local []
                       :class new-closure-name
                       :closed closed
                       :arguments (->> args
@@ -657,14 +657,29 @@
   (let [arg1 (first args)
         arg2 (second args)]
     (if (and (= arg1 :unquote) (:unquote context))
-      (generate-ast (dissoc context :unquote) arg2)
+      (generate-variable (dissoc context :unquote) arg2)
       (generate-macro-list context args))))
 
+(defn get-name [name]
+  (str name (System/currentTimeMillis) "#" (System/nanoTime)))
 
+(defn get-unique-name [names name]
+  (if-let [presented-name (get @names name)]
+    presented-name
+    (loop [new-name (get-name name)]
+      (if (some (partial = new-name) (vals @names))
+        (recur (get-name name))
+        new-name))))
 
+(defn generate-name [context name]
+  (if (.endsWith name "#")
+    (let [hygienic (:hygienic context)
+          new-name (get-unique-name hygienic name)]
+      (-> hygienic (swap! assoc name new-name) (get name)))
+    name))
 
 (defn generate-screened-symbol [context sym]
-  (let [name (-> sym .value .getName)]
+  (let [name (->> sym .value .getName (generate-name context))]
     (-> ops
         (with ldc_w name)
         (with invokestatic ['clojure 'lang 'Symbol]

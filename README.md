@@ -56,10 +56,13 @@ Progress:
     
     * [Uquote-splicing](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-backtick-unquote-splicing.jt)
 
-    * variable names generation - jacket-50
     * errors of macroexpansion + circular dependences - jacket-51
-    * Check macros using macros - jacket-52
 
+    * ~x not working (lexer bug), fix, change (unquote x) with ~x in tests
+    * ~ needs a var - semantic analysis
+    * ~ is not unquote - split functions
+    
+    * Check macros using macros - jacket-52
     * Partially applied macros? X_X or O_O?
     
     * macro system - remove "defmacro f" as "define f (lambda...", add Token info, don't add Token. after expansion

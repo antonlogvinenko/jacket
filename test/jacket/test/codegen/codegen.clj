@@ -66,6 +66,7 @@
             "interop-static-field" "" "32767"
             "interop-instance-static-field-method" "" "true420.0falsetrue"
 
+            "macro-gensym" "" "42"
             "macro-definition" "" "42"
             "macro-sexpr" "" "42"
             "macro-list" "" "42"

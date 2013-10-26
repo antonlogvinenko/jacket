@@ -71,6 +71,7 @@
        "backtick" :backtick
        "unquote" :unquote
        "unquote-splicing" :unquote-splicing
+       "cake#" 'cake#
        ))
 
 (deftest read-literal-test

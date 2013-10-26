@@ -1,7 +1,8 @@
 (define x 100500)
 
-(defmacro f () `(+ y ~(let ((x 1)) (+ x 1))))
+(defmacro f (z) `(+ y (let ((x 1)) (+ x 1 (unquote z)))))
 
-(define y 40)
+(define y 38)
+(define p 1)
 
-(println (f))
+(println (f (+ p 1)))
