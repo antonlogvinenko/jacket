@@ -140,6 +140,19 @@
       (-> ok
           (+error "Quote may have a single argument")))))
 
+(defn check-unquote [sexpr]
+  (let [length (count sexpr)]
+    (cond
+     (not= length 2)
+     (-> ok
+         (+error "Unquote may have a single argument")))
+
+    (not (symbol? (second sexpr)))
+    (-> ok
+        (+error "Unquote argument must be a symbol"))
+
+    :else ok))
+
 (defn check-not-utility [sexpr]
   (if (-> sexpr count (- 2) zero?)
     ok
@@ -203,7 +216,7 @@
                   :lambda check-lambda
                   :quote check-quote
                   :backtick check-quote
-                  :unquote check-quote
+                  :unquote check-unquote
                   :unquote-splicing check-quote
                   :println check-print-utility
                   :print check-print-utility

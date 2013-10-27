@@ -57,22 +57,23 @@ Progress:
     * [Uquote-splicing](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-backtick-unquote-splicing.jt)
     * [Macro gensym](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-gensym.jt)
 
-    * ~ needs a var - semantic analysis
-    * ~ is not unquote - split functions
+    * errors of macroexpansion + circular dependences - jacket-52
+    (defmacro plus1 (x) `(+ 1 ~x))
+    (defmacro f (stmt) `(println (plus1 ~stmt) (plus1 ~stmt)))
+    (println (f (+ 1 40)))
 
-    * errors of macroexpansion + circular dependences - jacket-51
-    
-    * Check macros using macros - jacket-52
-    * Partially applied macros? X_X or O_O?
-    
+    * Check macros using macros - jacket-53
+    * review implemented macro system based on http://clojure.org/reader
     * macro system - remove "defmacro f" as "define f (lambda...", add Token info, don't add Token. after expansion
+    
+    * Partially applied macros? X_X or O_O?
 * Web UI in ClojureScript
 
 Probably:
 * eval, REPL?
 * Tail recursion support
 * Performance testing
-* Small bugfixes, using more protocols between modules
+* Small bugfixes, using more protocols between modules, building project report
 
 Ideas:
 * Namespaces?
