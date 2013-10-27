@@ -64,8 +64,6 @@ Progress:
 
     * review implemented macro system based on http://clojure.org/reader
     * macro system - remove "defmacro f" as "define f (lambda...", add Token info, don't add Token. after expansion
-    
-    * Partially applied macros? X_X or O_O?
 * Web UI in ClojureScript
 
 Probably:
