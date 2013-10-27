@@ -63,7 +63,7 @@ Progress:
     (println (f (+ 1 40)))
 
     * review implemented macro system based on http://clojure.org/reader
-    * macro system - remove "defmacro f" as "define f (lambda...", add Token info, don't add Token. after expansion
+    * macro system - remove "defmacro f" as "define f (lambda...", add Token info, don't add Token. after expansion - should I (october, 27 2013)
 * Web UI in ClojureScript
 
 Probably:
