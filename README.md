@@ -62,7 +62,6 @@ Progress:
     (defmacro f (stmt) `(println (plus1 ~stmt) (plus1 ~stmt)))
     (println (f (+ 1 40)))
 
-    * Check macros using macros - jacket-53
     * review implemented macro system based on http://clojure.org/reader
     * macro system - remove "defmacro f" as "define f (lambda...", add Token info, don't add Token. after expansion
     
