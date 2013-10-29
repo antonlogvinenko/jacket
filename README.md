@@ -65,14 +65,7 @@ Progress:
     * review implemented macro system based on http://clojure.org/reader
     * macro system - remove "defmacro f" as "define f (lambda...", add Token info, don't add Token. after expansion - should I (october, 27 2013)
 * Web UI in ClojureScript
-
-Probably:
-* eval, REPL?
+* eval, REPL
 * Tail recursion support
-* Performance testing
+* Some performance testing
 * Small bugfixes, using more protocols between modules, building project report
-
-Ideas:
-* Namespaces?
-* Implement (optional) type system (defn-t determinant [m] [Matrix -> Number] (...))
-* Green threads scheduler, actor model implementation (option for lmax disruptor scheduling mode)
