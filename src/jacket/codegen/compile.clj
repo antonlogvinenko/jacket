@@ -657,7 +657,7 @@
   (let [arg1 (first args)
         arg2 (second args)]
     (if (and (= arg1 :unquote) (:unquote context))
-      (generate-variable (dissoc context :unquote) arg2)
+      (generate-ast (dissoc context :unquote) arg2)
       (generate-macro-list context args))))
 
 (defn get-name [name]

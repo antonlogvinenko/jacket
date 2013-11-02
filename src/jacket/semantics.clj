@@ -146,11 +146,6 @@
      (not= length 2)
      (-> ok
          (+error "Unquote may have a single argument")))
-
-    (not (symbol? (second sexpr)))
-    (-> ok
-        (+error "Unquote argument must be a symbol"))
-
     :else ok))
 
 (defn check-not-utility [sexpr]

@@ -59,7 +59,7 @@ Progress:
 
     * [Macro called from a macro](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-twice.jt)
 
-    * errors of macroexpansion + circular dependences
+    * [Factorial calculated with macro expansion](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-fact.jt)
 
     * review implemented macro system based on http://clojure.org/reader
     * macro system - remove "defmacro f" as "define f (lambda...", add Token info, don't add Token. after expansion - should I (october, 27 2013)

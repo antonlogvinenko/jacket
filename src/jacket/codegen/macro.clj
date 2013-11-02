@@ -22,6 +22,7 @@
                                         ;Macro expansion during compilation
 (defn- expand-macro [[f & args :as expr] macro-fn]
   (->> args
+       (map #(if (instance? Token %) (.value %) %))
        vec
        .toArray
        (._invoke macro-fn)
