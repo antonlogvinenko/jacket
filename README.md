@@ -64,7 +64,8 @@ Progress:
     * macro depending on a function depending on a macro and alike scenarios - jacket-54
 
     * macro system - remove "defmacro f" as "define f (lambda...", add Token info, don't add Token. after expansion - should I (october, 27 2013)?
-* Tail recursion support
+    
+    * Tail recursion support?
 * eval, REPL
 * Web UI in ClojureScript
 * A bit of performance testing
