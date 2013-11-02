@@ -61,8 +61,9 @@ Progress:
 
     * [Factorial calculated with macro expansion](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-fact.jt)
 
-    * review implemented macro system based on http://clojure.org/reader
-    * macro system - remove "defmacro f" as "define f (lambda...", add Token info, don't add Token. after expansion - should I (october, 27 2013)
+    * macro depending on a function depending on a macro and alike scenarios - jacket-54
+
+    * macro system - remove "defmacro f" as "define f (lambda...", add Token info, don't add Token. after expansion - should I (october, 27 2013) - jacket-55
 * Web UI in ClojureScript
 * eval, REPL
 * Tail recursion support
