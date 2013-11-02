@@ -17,12 +17,13 @@
 
 (defn generate [[ast macro] name]
   (let [fields (get-fields-names ast)
+        closure-name (atom -1)
         code (loop [code [], ast ast, globals []]
                (if (empty? ast) code
                    (let [ops (generate-ast
                                       {:label 0 :class name
                                        :macro macro
-                                       :closure (agent 0)
+                                       :closure closure-name
                                        :hygienic (atom {})
                                        :globals globals :arguments {} :closed {} :local []}
                                       (first ast))]

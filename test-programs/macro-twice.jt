@@ -1,0 +1,5 @@
+(defmacro plus1 (x) `(+ 1 ~x))
+
+(defmacro f (stmt) `(println (plus1 ~stmt) (plus1 ~stmt)))
+
+(f (+ 1 40))

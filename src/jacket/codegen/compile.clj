@@ -239,10 +239,10 @@
         label-name (str "Label-" last-label)]
     [label-name (assoc context :label last-label)]))
 
-(defn get-unique-id [id-agent] (send id-agent inc) @id-agent)
+(defn get-unique-id [id-agent] (swap! id-agent + 1) @id-agent)
 
-(defn generate-fun [{closure-agent :closure class-name :class}]
-  (->> closure-agent get-unique-id (str class-name "-closure-")))
+(defn generate-fun [{closure-atom :closure class-name :class}]
+  (->> closure-atom get-unique-id (str class-name "-closure-")))
 
 
                                         ;Conditionals

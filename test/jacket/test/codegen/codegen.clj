@@ -75,7 +75,7 @@
             "macro-quoted-keyword" "" "42"
             "macro-quoted-list" "" "42"
             "macro-no-arg" "" "42"
-;            "macro-twice" "" "42"
+            "macro-twice" "" "4242"
 
             "macro-backticked-list" "" "42"
             "macro-backtick-unquoted" "" "42"
