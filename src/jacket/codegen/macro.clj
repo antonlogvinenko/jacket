@@ -4,6 +4,7 @@
         [clojure.walk])
   (:import [jacket.lexer.fsm Token]))
 
+                                        ;Making (define macro (lambda ...)) out of (defmacro ...)
 (defn- expand-macro-definition [[key & others :as block]]
   (if (not= key :defmacro)
     block
@@ -17,8 +18,8 @@
 (defn macro-definitions [[definitions macro]]
   [(map expand-macro-definition definitions) macro])
 
-(defn debug2 [x] (println x) x)
 
+                                        ;Macro expansion during compilation
 (defn- expand-macro [[f & args :as expr] macro-fn]
   (->> args
        vec
@@ -39,8 +40,20 @@
                  (if (nil? def) obj
                      (expand-macro obj def)))))))
 
+(defn macrodef? [names def]
+  (and (vector? def)
+       (-> def count (> 1))
+       (-> def first (= :define))
+       (let [snd (second def)]
+         (->> names (some (partial = snd)) nil? not))))
+
 (defn- expand-with-macro-definitions [ast definitions]
-  (postwalk (partial expand-macro-with definitions) ast))
+  (let [grouped (group-by (partial macrodef? (keys definitions)) ast)
+        macro (grouped true)
+        ast (grouped false)]
+    (->> ast
+         (postwalk (partial expand-macro-with definitions))
+         (into macro))))
 
 (defn macroexpand-jacket [class-name ast macro-names]
   (let [loaded-class (Class/forName class-name)

@@ -530,7 +530,7 @@
 (deftest generate-closures-test
   (are [args result]
     (= result (generate-ast {:label 0 :closed {}
-                             :closure (agent 0) :local '({})} (to-tokens args)))
+                             :closure (atom -1) :local '({})} (to-tokens args)))
 
     [[:lambda [] [:println 42]]]
 

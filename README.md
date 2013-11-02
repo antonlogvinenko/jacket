@@ -57,10 +57,9 @@ Progress:
     * [Uquote-splicing](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-backtick-unquote-splicing.jt)
     * [Macro gensym](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-gensym.jt)
 
-    * errors of macroexpansion + circular dependences - jacket-52
-    (defmacro plus1 (x) `(+ 1 ~x))
-    (defmacro f (stmt) `(println (plus1 ~stmt) (plus1 ~stmt)))
-    (println (f (+ 1 40)))
+    * [Macro called from a macro](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-twice.jt)
+
+    * errors of macroexpansion + circular dependences
 
     * review implemented macro system based on http://clojure.org/reader
     * macro system - remove "defmacro f" as "define f (lambda...", add Token info, don't add Token. after expansion - should I (october, 27 2013)
