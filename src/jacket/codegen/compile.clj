@@ -429,6 +429,7 @@
         closures (conj (:closures body)
                        [new-closure-name (conj (:ops body) areturn)])]
     (-> ops
+        (with {:macro (:macro body)})
         (with {:closures closures})
         (with limitstack 30)
         (with jnew (gen-path new-closure-name))
@@ -740,6 +741,6 @@
    :else (codegen-error context atom)))
 
 (defn generate-ast [context ast]
-   (if (vector? ast)
+  (if (vector? ast)
     (generate-sexpr context ast)
     (generate-atom context ast)))

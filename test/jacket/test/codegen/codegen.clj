@@ -77,6 +77,7 @@
             "macro-no-arg" "" "42"
             "macro-twice" "" "4242"
             "macro-fact" "" "120"
+            "macro-fun-macro" "" "42"
 
             "macro-backticked-list" "" "42"
             "macro-backtick-unquoted" "" "42"
@@ -97,9 +98,11 @@
             "println-div-n" "" "20.0"]
 )
 
+(defn compile-jacket-wardrobe [name]
+  (compile-jacket (str "test-programs/" name ".jt") "wardrobe/" name))
+
 (doall (for [name (->> tests (partition 3) (map first))]
-         (let [in (str "test-programs/" name ".jt")]
-           (compile-jacket in "wardrobe/" name))))
+         (compile-jacket-wardrobe name)))
 
 (gen-hello-world)
 (with-sh-dir "." (sh "./compile-wardrobe-single.sh" "HelloWorld"))

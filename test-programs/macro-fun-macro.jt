@@ -1,0 +1,5 @@
+(defmacro f1 (x) `(+ ~x 1))
+
+(define f2 (lambda (x) (f1 x)))
+
+(println (f2 41))
