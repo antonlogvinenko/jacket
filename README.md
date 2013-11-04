@@ -61,7 +61,5 @@ Progress:
 
     * [Factorial calculated with macro expansion](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-fact.jt)
 
-* Macro depending on a function depending on a macro and alike scenarios, tail recursion support?
-* Eval, REPL
 * Web UI in ClojureScript
 * Small bugfixes, using more protocols between modules, building project report
