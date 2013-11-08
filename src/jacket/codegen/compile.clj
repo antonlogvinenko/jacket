@@ -15,18 +15,16 @@
 
 (def ops {:def [] :ops [] :closures [] :globals [] :macro false})
 
-(defn with [{ops :ops def :def closures :closures globals :globals macro :macro :as p}
-            arg1 & args]
-  (if (map? arg1)
-    (assoc (merge-with into (dissoc p :macro) arg1)
-      :macro (or macro (:macro arg1)))
-    {:closures closures
-     :globals globals
-     :macro macro
-     :def def
-     :ops (into ops (cond (vector? arg1) arg1
-                          (empty? args) [arg1]
-                          :else [(apply arg1 args)]))}))
+(defmulti with (fn [ops arg1 & args] (class arg1)))
+(defmethod with clojure.lang.PersistentArrayMap [{macro :macro :as p} arg1]
+  (assoc (merge-with into (dissoc p :macro) arg1)
+    :macro (or macro (:macro arg1))))
+(defmethod with clojure.lang.PersistentVector [{ops :ops :as p} arg1]
+  (assoc p :ops (into ops arg1)))
+(defmethod with clojure.lang.Fn [{ops :ops :as p} arg1 & args]
+  (assoc p :ops (into ops [(apply arg1 args)])))
+(defmethod with java.lang.String [{ops :ops :as p} arg1]
+  (assoc p :ops (into ops [arg1])))
 
 (defn with-def [{ops :ops def :def closures :closures globals :globals macro :macro :as p}
             arg1 & args]
