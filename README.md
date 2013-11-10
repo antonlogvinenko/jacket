@@ -61,5 +61,4 @@ Progress:
 
     * [Factorial calculated with macro expansion](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-fact.jt)
 
-* Web UI in ClojureScript
 * Small bugfixes, using more protocols between modules, building project report
