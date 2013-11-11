@@ -61,4 +61,4 @@ Progress:
 
     * [Factorial calculated with macro expansion](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-fact.jt)
 
-* Small bugfixes, using more protocols between modules, building project report
+* Small bugfixes, using more protocols between modules
