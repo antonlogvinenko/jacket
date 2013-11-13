@@ -2,7 +2,7 @@
 /lib
 /classes
 /native
-/wardrobe
+/wardrobe/*
 /target
 /.lein-failures
 /checkouts
