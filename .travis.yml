@@ -1,4 +1,4 @@
 language: clojure
-script: lein test
+lein: lein2
 jdk:
   - openjdk7
