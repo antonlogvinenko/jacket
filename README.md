@@ -1,6 +1,4 @@
-[![Build Status](https://travis-ci.org/antonlogvinenko/jacket.png?branch=master)](https://travis-ci.org/antonlogvinenko/jacket)
-
-Jacket
+Jacket [![Build Status](https://travis-ci.org/antonlogvinenko/jacket.png?branch=master)](https://travis-ci.org/antonlogvinenko/jacket)
 ===
 
 Jacket, implementation of Lisp on the JVM.
