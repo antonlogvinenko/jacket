@@ -12,3 +12,6 @@
 java-impl/.idea/
 java-impl/java-impl.iml
 java-impl/target
+/resources/public/js
+/out
+/repl
