@@ -61,8 +61,8 @@ Progress:
 
     * [Factorial calculated with macro expansion](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-fact.jt)
 
-* jacket-54 Use ClojureScript infrastructure in the project
-& jacket-55 Send and compile code
-- jacket-56 github errors reporting, syntax hightlight, syntax hints
+* jacket-55 Use ClojureScript infrastructure in the project
+& jacket-56 Send and compile code
+- jacket-57 github errors reporting, syntax hightlight, syntax hints
 
 * Small bugfixes, using more protocols between modules
