@@ -63,6 +63,6 @@ Progress:
 
 * jacket-56 Send, compile code, return
 * jacket-57 Deploy web app
-* jacket-58 github errors reporting, syntax hightlight, syntax hints
+* jacket-58 github errors reporting, syntax hightlight, syntax hints, return asm code
 
 * jacket-59 Small bugfixes, using more protocols between modules
