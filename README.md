@@ -61,7 +61,9 @@ Progress:
 
     * [Factorial calculated with macro expansion](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-fact.jt)
 
-* jacket-56 Send, compile code, return
+* jacket-56
+  - ui, click, ajax, listen, update; server - rcv, send
+  - compile, run routines
 * jacket-57 Deploy web app
 * jacket-58 github errors reporting, syntax hightlight, syntax hints, return asm code
 
