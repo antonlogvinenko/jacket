@@ -60,11 +60,21 @@ Progress:
     * [Macro called from a macro](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-twice.jt)
 
     * [Factorial calculated with macro expansion](https://github.com/antonlogvinenko/jacket/blob/master/test-programs/macro-fact.jt)
+    
+* In future (may be) - web ui with ClojureScript. Send code, receive output and asm code. Deploying webapp. Github errors reporting, syntax hightlight, syntax hints.
 
-* jacket-56
-  - ui, click, ajax, listen, update; server - rcv, send
-  - compile, run routines
-* jacket-57 Deploy web app
-* jacket-58 github errors reporting, syntax hightlight, syntax hints, return asm code
-
-* jacket-59 Small bugfixes, using more protocols between modules
+* Refactoring. Small bugfixes, using more protocols between modules.
+    * limiting stack
+    * optimal closures (only scope variables than are needed)
+    * check-dynamic-list, with arity and operation, must return sexprs inside
+    * unique labels problem (actual?)
+    * circular dependencies in macro (actual?)
+    * globals - check in list before generating else generate a error
+    * arguments/closed/locals - Token. or just symbol, storing in context?
+    * expressions returning something always (just check, make sure)
+    * if embedded let then inner variables redefine outside variables (just check)
+    * cond: check odd amount of arguments
+    * semantic analysis of some expressions does not return s-expressions (actual?)
+    * nil for printlns (leave on stack)
+    * error in lexer - "-" symbol, test it
+    * other characters inside strings
