@@ -19,3 +19,23 @@
 (defn -main [file & other]
   (info))
 
+
+
+(defn set [x]
+  (fn [g y] (= y (g x))))
+
+(defn union [s1 s2]
+  (fn [g y]
+    (or (s1 g y) (s2 g y))))
+
+(defn exists [s p]
+  (s p true))
+
+(defn map [s f]
+  (fn [g y]
+    (exists s (comp g f))))
+
+(defn filter [s f]
+  (fn [g y]
+    (and (f y) (s g y))))
+
